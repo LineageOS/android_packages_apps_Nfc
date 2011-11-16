@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAALX//+w4\u003d",
+        "filename": "res/values-zh-rCN/strings.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 68
+      },
+      "writtenOn": "2011-11-16T18:50:06Z",
+      "side": 1,
+      "message": "Please remove this, as it isn\u0027t a translatable.",
+      "revId": "ab92849878391e79802a539ac45ad29176de3cbe",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
