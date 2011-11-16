@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAALX//+wk\u003d",
+        "filename": "res/values-zh-rCN/strings.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 68
+      },
+      "writtenOn": "2011-11-16T19:08:45Z",
+      "side": 1,
+      "message": "I meant, actually remove the whole line. It will inherit the one from the base strings.xml.\n\nWhile this would not break anything it will make maintaining much easier.",
+      "revId": "5af550aa3ac79a93e59ba7a31ee96ed1d7e5e4fd",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
