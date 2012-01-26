@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAAPn///P0\u003d",
+        "filename": "jni/com_android_nfc_NativeNfcTag.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 457,
+      "author": {
+        "id": 32
+      },
+      "writtenOn": "2012-01-26T11:41:20Z",
+      "side": 1,
+      "message": "Please use spaces instead of tabs.",
+      "revId": "d41edfd794d4d0fedd91d561114308f0d5f83878",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
