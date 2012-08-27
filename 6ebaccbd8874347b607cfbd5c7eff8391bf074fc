@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "AAAAW3///v0\u003d",
+        "filename": "jni/com_android_nfc_NativeNfcManager.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 2671,
+      "author": {
+        "id": 151
+      },
+      "writtenOn": "2012-08-27T02:10:39Z",
+      "side": 1,
+      "message": "*",
+      "revId": "6ebaccbd8874347b607cfbd5c7eff8391bf074fc",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
