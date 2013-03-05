@@ -34,6 +34,24 @@
       "revId": "c8746c88fbcbf5b28880a12ce1a1bfce91efe837",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "AAAAeX///xs\u003d",
+        "filename": "res/values-fr/strings.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 3150
+      },
+      "writtenOn": "2013-03-05T20:02:47Z",
+      "side": 1,
+      "message": "Perhaps it could be less technical ?\n\nPermet le contrôle et la modification du matériel NFC",
+      "parentUuid": "AAAAeX///yI\u003d",
+      "revId": "c8746c88fbcbf5b28880a12ce1a1bfce91efe837",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
     }
   ]
 }
