@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba0121b8_e055ab1d",
+        "filename": "src/com/android/nfc/NfcService.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 1063
+      },
+      "writtenOn": "2014-07-08T19:35:50Z",
+      "side": 1,
+      "message": "private int mPollingMode\n\n(and move it to the other non-static, non-final fields)",
+      "revId": "cb0e5a8b51cead15589ee94dba616603d4d160cf",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
