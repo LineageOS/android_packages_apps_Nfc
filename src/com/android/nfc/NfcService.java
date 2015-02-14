@@ -624,7 +624,7 @@ public class NfcService implements DeviceHostListener {
                     if (mPrefs.getBoolean(PREF_NFC_ON, NFC_ON_DEFAULT)) {
                         Log.d(TAG, "NFC is on. Doing normal stuff");
                         enableInternal();
-                    } else {
+                    } else if (SystemProperties.getBoolean("ro.nfc.fw_dl_on_boot", true)) {
                         Log.d(TAG, "NFC is off.  Checking firmware version");
                         mDeviceHost.checkFirmware();
                     }
