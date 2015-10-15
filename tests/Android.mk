@@ -27,6 +27,6 @@ LOCAL_SRC_FILES := $(call all-java-files-under, src)
 LOCAL_PACKAGE_NAME := NfcTests
 LOCAL_CERTIFICATE := platform
 
-LOCAL_INSTRUMENTATION_FOR := NfcNci
+LOCAL_INSTRUMENTATION_FOR := Nfc
 
 include $(BUILD_PACKAGE)
