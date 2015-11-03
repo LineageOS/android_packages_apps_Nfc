@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1f2f7f8d_ba1a8d14",
+        "filename": "src/com/android/nfc/ForegroundUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 3134
+      },
+      "writtenOn": "2015-11-03T19:40:47Z",
+      "side": 1,
+      "message": "mForegroundUidPids should be accessed in a synchonized way. what about this snipped of code\n\nint pid \u003d -1;\nsynchronized (mLock) {\n   if (mForegroundUidPids.size() \u003e 0) {\n       int uid \u003d mForegroundUidPids.keyAt(0);\n       if (isInForegroundLocked(uid)) {\n           pid \u003d mForegroundUidPids.get(uid).keyAt(0);\n       }\n   }\n}\nif (pid !\u003d -1) {\n  ... fetch processes\n\n  return pkg;\n}\nreturn null;",
+      "range": {
+        "startLine": 142,
+        "startChar": 44,
+        "endLine": 142,
+        "endChar": 62
+      },
+      "revId": "e469704b4b301d0917a372263d55ad244eb2d86c",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1f2f7f8d_9a17d1ee",
+        "filename": "src/com/android/nfc/ForegroundUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 157,
+      "author": {
+        "id": 3134
+      },
+      "writtenOn": "2015-11-03T19:40:47Z",
+      "side": 1,
+      "message": "Remove the TODO (add an ignore comment instead) and the return null beacuse is return in the line before.",
+      "range": {
+        "startLine": 157,
+        "startChar": 19,
+        "endLine": 157,
+        "endChar": 23
+      },
+      "revId": "e469704b4b301d0917a372263d55ad244eb2d86c",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1f2f7f8d_7ad2e536",
+        "filename": "src/com/android/nfc/P2pLinkManager.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 503,
+      "author": {
+        "id": 3134
+      },
+      "writtenOn": "2015-11-03T19:40:47Z",
+      "side": 1,
+      "message": "we checked previously this uids, so basically search here is unnecessary. So basically we can relay in  mForegroundUtils.getForegroundActivityPkg(), or am i missing something?",
+      "range": {
+        "startLine": 503,
+        "startChar": 66,
+        "endLine": 503,
+        "endChar": 80
+      },
+      "revId": "e469704b4b301d0917a372263d55ad244eb2d86c",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
