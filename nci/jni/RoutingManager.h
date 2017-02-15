@@ -27,6 +27,8 @@
 #include "nfa_api.h"
 #include "nfa_ee_api.h"
 
+#define NAME_ENABLE_NFCF_HCE "ENABLE_NFCF_HCE"
+
 using namespace std;
 
 class RoutingManager {
@@ -86,6 +88,7 @@ class RoutingManager {
   int mAidMatchingMode;
   int mNfcFOnDhHandle;
   bool mIsScbrSupported;
+  bool mNfcFEnabled;
   uint16_t mDefaultSysCode;
   uint16_t mDefaultSysCodeRoute;
   uint8_t mDefaultSysCodePowerstate;

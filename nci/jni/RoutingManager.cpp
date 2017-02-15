@@ -92,6 +92,9 @@ RoutingManager::RoutingManager() {
   mSeTechMask = 0x00;
   mIsScbrSupported = false;
 
+  mNfcFEnabled =
+      (NfcConfig::getUnsigned(NAME_ENABLE_NFCF_HCE, 1) != 0) ? true : false;
+
   mNfcFOnDhHandle = NFA_HANDLE_INVALID;
 }
 
@@ -239,7 +242,10 @@ void RoutingManager::enableRoutingToHost() {
     if (mIsScbrSupported)
       protoMask = NFA_PROTOCOL_MASK_ISO_DEP;
     else
-      protoMask = (NFA_PROTOCOL_MASK_ISO_DEP | NFA_PROTOCOL_MASK_T3T);
+      protoMask = NFA_PROTOCOL_MASK_ISO_DEP;
+      if (mNfcFEnabled) {
+        protoMask |= NFA_PROTOCOL_MASK_T3T;
+      }
 
     nfaStat = NFA_EeSetDefaultProtoRouting(
         mDefaultEe, protoMask, 0, 0, protoMask, mDefaultEe ? protoMask : 0,
@@ -284,7 +290,7 @@ void RoutingManager::enableRoutingToHost() {
             "Fail to set default tech routing for Nfc-F");
     }
     // Default routing for T3T protocol
-    if (!mIsScbrSupported) {
+    if (!mIsScbrSupported && mNfcFEnabled) {
       protoMask = NFA_PROTOCOL_MASK_T3T;
       nfaStat =
           NFA_EeSetDefaultProtoRouting(NFC_DH_ID, protoMask, 0, 0, 0, 0, 0);
