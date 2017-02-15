@@ -216,7 +216,10 @@ void RoutingManager::enableRoutingToHost()
                 ALOGE ("Fail to set default tech routing for Nfc-A/Nfc-F");
         }
         // Default routing for IsoDep and T3T protocol
-        protoMask = (NFA_PROTOCOL_MASK_ISO_DEP | NFA_PROTOCOL_MASK_T3T);
+        protoMask = NFA_PROTOCOL_MASK_ISO_DEP;
+#ifndef WITHOUT_T3T_HCE
+        protoMask |= NFA_PROTOCOL_MASK_T3T;
+#endif
         nfaStat = NFA_EeSetDefaultProtoRouting(mDefaultEe, protoMask, 0, 0);
         if (nfaStat == NFA_STATUS_OK)
             mRoutingEvent.wait ();
@@ -253,6 +256,7 @@ void RoutingManager::enableRoutingToHost()
             else
                 ALOGE ("Fail to set default tech routing for Nfc-F");
         }
+#ifndef WITHOUT_T3T_HCE
         // Default routing for T3T protocol
         protoMask = NFA_PROTOCOL_MASK_T3T;
         nfaStat = NFA_EeSetDefaultProtoRouting(mDefaultEeNfcF, protoMask, 0, 0);
@@ -260,6 +264,7 @@ void RoutingManager::enableRoutingToHost()
             mRoutingEvent.wait ();
         else
             ALOGE ("Fail to set default proto routing for T3T");
+#endif
     }
 }
 
