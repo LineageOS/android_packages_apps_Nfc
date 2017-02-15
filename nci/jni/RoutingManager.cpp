@@ -119,6 +119,9 @@ RoutingManager::RoutingManager()
   mSeTechMask = 0x00;
   mIsScbrSupported = false;
 
+  mNfcFEnabled =
+      (NfcConfig::getUnsigned(NAME_ENABLE_NFCF_HCE, 1) != 0) ? true : false;
+
   mNfcFOnDhHandle = NFA_HANDLE_INVALID;
 
   mDeinitializing = false;
@@ -183,7 +186,7 @@ void RoutingManager::enableRoutingToHost() {
   SyncEventGuard guard(mRoutingEvent);
 
   // Default routing for T3T protocol
-  if (!mIsScbrSupported && mDefaultEe == NFC_DH_ID) {
+  if (!mIsScbrSupported && mDefaultEe == NFC_DH_ID && mNfcFEnabled) {
     nfaStat = NFA_EeSetDefaultProtoRouting(NFC_DH_ID, NFA_PROTOCOL_MASK_T3T, 0,
                                            0, 0, 0, 0);
     if (nfaStat == NFA_STATUS_OK)
@@ -289,7 +292,7 @@ void RoutingManager::disableRoutingToHost() {
   }
 
   // Clear default routing for T3T protocol
-  if (!mIsScbrSupported && mDefaultEe == NFC_DH_ID) {
+  if (!mIsScbrSupported && mDefaultEe == NFC_DH_ID && mNfcFEnabled) {
     nfaStat = NFA_EeClearDefaultProtoRouting(NFC_DH_ID, NFA_PROTOCOL_MASK_T3T);
     if (nfaStat == NFA_STATUS_OK)
       mRoutingEvent.wait();
@@ -578,7 +581,7 @@ void RoutingManager::updateDefaultProtocolRoute() {
     LOG(ERROR) << fn << ": failed to register default ISO-DEP route";
 
   // Default routing for T3T protocol
-  if (!mIsScbrSupported) {
+  if (!mIsScbrSupported && mNfcFEnabled) {
     SyncEventGuard guard(mRoutingEvent);
     tNFA_PROTOCOL_MASK protoMask = NFA_PROTOCOL_MASK_T3T;
     if (mDefaultEe == NFC_DH_ID) {
