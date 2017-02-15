@@ -86,6 +86,7 @@ class RoutingManager {
   int mAidMatchingMode;
   int mNfcFOnDhHandle;
   bool mIsScbrSupported;
+  bool mNfcFEnabled;
   uint16_t mDefaultSysCode;
   uint16_t mDefaultSysCodeRoute;
   uint8_t mDefaultSysCodePowerstate;
