@@ -82,6 +82,7 @@ private:
     int mAidMatchingMode;
     int mNfcFOnDhHandle;
     bool mReceivedEeInfo;
+    bool mNfcFEnabled;
     tNFA_EE_DISCOVER_REQ mEeInfo;
     tNFA_TECHNOLOGY_MASK mSeTechMask;
     static const JNINativeMethod sMethods [];
