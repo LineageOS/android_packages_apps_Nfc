@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa5d592f_68aaed71",
+        "filename": "nci/jni/RoutingManager.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 260,
+      "author": {
+        "id": 2936
+      },
+      "writtenOn": "2017-03-04T22:57:50Z",
+      "side": 1,
+      "message": "I would guess the problematic block is this here, which looks like it should go inside the\n\nif ((mSeTechMask \u0026 NFA_TECHNOLOGY_MASK_F) \u003d\u003d 0)\n\n?",
+      "revId": "950562cc34457c658f926597216babfc487a3cad",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
