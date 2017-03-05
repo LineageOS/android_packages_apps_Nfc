@@ -16,6 +16,24 @@
       "revId": "950562cc34457c658f926597216babfc487a3cad",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa5d592f_0836d152",
+        "filename": "nci/jni/RoutingManager.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 260,
+      "author": {
+        "id": 9394
+      },
+      "writtenOn": "2017-03-05T00:26:09Z",
+      "side": 1,
+      "message": "I agree, this should be able to be run-time detected using the config file.",
+      "parentUuid": "fa5d592f_68aaed71",
+      "revId": "950562cc34457c658f926597216babfc487a3cad",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
     }
   ]
 }
