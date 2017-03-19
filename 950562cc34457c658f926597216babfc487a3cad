@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "ba57610f_3db0d98a",
+        "filename": "nci/jni/RoutingManager.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 221,
+      "author": {
+        "id": 11604
+      },
+      "writtenOn": "2017-03-19T00:29:35Z",
+      "side": 1,
+      "message": "This is what bacon hits.  Maybe protoMask |\u003d NFA_PROTOCOL_MASK_T3T should be wrapped in a check for Nfc-F?",
+      "revId": "950562cc34457c658f926597216babfc487a3cad",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa5d592f_68aaed71",
         "filename": "nci/jni/RoutingManager.cpp",
         "patchSetId": 1
@@ -30,6 +47,24 @@
       "writtenOn": "2017-03-05T00:26:09Z",
       "side": 1,
       "message": "I agree, this should be able to be run-time detected using the config file.",
+      "parentUuid": "fa5d592f_68aaed71",
+      "revId": "950562cc34457c658f926597216babfc487a3cad",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba57610f_5dbb8d72",
+        "filename": "nci/jni/RoutingManager.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 260,
+      "author": {
+        "id": 11604
+      },
+      "writtenOn": "2017-03-19T00:29:35Z",
+      "side": 1,
+      "message": "Bacon doesn\u0027t hit this block, I was only including it for completeness",
       "parentUuid": "fa5d592f_68aaed71",
       "revId": "950562cc34457c658f926597216babfc487a3cad",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
