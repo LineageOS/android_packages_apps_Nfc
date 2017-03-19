@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "ba57610f_4354ce53",
+        "filename": "nci/jni/RoutingManager.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 2936
+      },
+      "writtenOn": "2017-03-19T17:39:12Z",
+      "side": 1,
+      "message": "Oh, interesting, so the default EE is the NFC-F one? It would seem this line is what\u0027s setting this?\n\nhttps://github.com/LineageOS/android_packages_apps_Nfc/blob/cm-14.1/nci/jni/RoutingManager.cpp#L72",
+      "range": {
+        "startLine": 206,
+        "startChar": 8,
+        "endLine": 206,
+        "endChar": 36
+      },
+      "revId": "950562cc34457c658f926597216babfc487a3cad",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ba57610f_3db0d98a",
         "filename": "nci/jni/RoutingManager.cpp",
         "patchSetId": 1
