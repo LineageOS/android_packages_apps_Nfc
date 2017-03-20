@@ -4,7 +4,9 @@
   <string name="app_name">Serviciu Nfc</string>
   <string name="nfcUserLabel">Nfc</string>
   <!-- Content description of the NFC enabled notification icon for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
+  <string name="tap_to_beam">Calca pa unviar</string>
   <string name="cancel">Encaboxar</string>
+  <string name="beam_tap_to_view">Calca pa ver</string>
   <!-- String referring to the device being connected when there is no name for the device -->
   <!-- Toast string informing the user that the device is connecting [CHAR_LIMIT=35] -->
   <!-- Toast string informing the user that the device is connected [CHAR_LIMIT=35] -->
@@ -39,9 +41,11 @@
   <!-- Strings for connecting to a network from WiFi NFC tags -->
   <!-- Dialog button text for confirming the user wants to connect to the network on the tag-->
   <!-- Text informing the user that an error ocurred during the process of connecting to the network-->
+  <string name="status_unable_to_connect">Nun pue coneutase a la rede</string>
   <!-- Text informing the user that the network was connected to successfully -->
   <!-- Title for dialog where user confirms that they want to connect to the network on the tag they tapped-->
   <!-- Message prompt asking the user if they wish to connect to the given network. Contains the network name (ssid).-->
   <!-- Message shown in a dialog when user wants to use Android Beam, but NFC is not enabled -->
   <!-- Used to refer to in the Share Menu Android Beam . This phrase is a trademark. [CHAR LIMIT=32] -->
+  <string name="android_beam">Android Beam</string>
 </resources>
