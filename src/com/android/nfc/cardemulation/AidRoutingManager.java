@@ -68,16 +68,12 @@ public class AidRoutingManager {
     // Easy look-up what the route is for a certain AID
     HashMap<String, Integer> mRouteForAid = new HashMap<String, Integer>();
 
-    private native int doGetDefaultRouteDestination();
-    private native int doGetDefaultOffHostRouteDestination();
-    private native int doGetAidMatchingMode();
-
     public AidRoutingManager() {
-        mDefaultRoute = doGetDefaultRouteDestination();
+        mDefaultRoute = ROUTE_HOST; //I think this is for HCE?
         if (DBG) Log.d(TAG, "mDefaultRoute=0x" + Integer.toHexString(mDefaultRoute));
-        mDefaultOffHostRoute = doGetDefaultOffHostRouteDestination();
+        mDefaultOffHostRoute = 0x01; //Not sure, just guessing
         if (DBG) Log.d(TAG, "mDefaultOffHostRoute=0x" + Integer.toHexString(mDefaultOffHostRoute));
-        mAidMatchingSupport = doGetAidMatchingMode();
+        mAidMatchingSupport = AID_MATCHING_EXACT_OR_PREFIX; //Makes sense to try both?
         if (DBG) Log.d(TAG, "mAidMatchingSupport=0x" + Integer.toHexString(mAidMatchingSupport));
     }
 
