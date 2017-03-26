@@ -30,9 +30,11 @@ import java.util.Set;
 public class AidRoutingManager {
     static final String TAG = "AidRoutingManager";
 
-    static final boolean DBG = false;
+    static final boolean DBG = true;
 
+    // Default routes
     static final int ROUTE_HOST = 0x00;
+    static final int ROUTE_OFFHOST = 0xF4;
 
     // Every routing table entry is matched exact
     static final int AID_MATCHING_EXACT_ONLY = 0x00;
@@ -40,6 +42,8 @@ public class AidRoutingManager {
     static final int AID_MATCHING_EXACT_OR_PREFIX = 0x01;
     // Every routing table entry is matched as a prefix
     static final int AID_MATCHING_PREFIX_ONLY = 0x02;
+    // No routing table entry is matched, fall back to default route
+    static final int AID_MATCHING_NONE = 0x04;
 
     // This is the default IsoDep protocol route; it means
     // that for any AID that needs to be routed to this
@@ -68,16 +72,13 @@ public class AidRoutingManager {
     // Easy look-up what the route is for a certain AID
     HashMap<String, Integer> mRouteForAid = new HashMap<String, Integer>();
 
-    private native int doGetDefaultRouteDestination();
-    private native int doGetDefaultOffHostRouteDestination();
-    private native int doGetAidMatchingMode();
-
     public AidRoutingManager() {
-        mDefaultRoute = doGetDefaultRouteDestination();
+        //I think this is what needs to be set for HCE
+        mDefaultRoute = ROUTE_HOST;
         if (DBG) Log.d(TAG, "mDefaultRoute=0x" + Integer.toHexString(mDefaultRoute));
-        mDefaultOffHostRoute = doGetDefaultOffHostRouteDestination();
+        mDefaultOffHostRoute = ROUTE_OFFHOST;
         if (DBG) Log.d(TAG, "mDefaultOffHostRoute=0x" + Integer.toHexString(mDefaultOffHostRoute));
-        mAidMatchingSupport = doGetAidMatchingMode();
+        mAidMatchingSupport = AID_MATCHING_NONE;
         if (DBG) Log.d(TAG, "mAidMatchingSupport=0x" + Integer.toHexString(mAidMatchingSupport));
     }
 
