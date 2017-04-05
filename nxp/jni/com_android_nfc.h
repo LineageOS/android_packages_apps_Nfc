@@ -24,7 +24,7 @@
 #include <semaphore.h>
 #include <sys/queue.h>
 
-#include <android/log.h>
+#include <log/log.h>
 #include <cutils/properties.h> // for property_get
 
 #include <JNIHelp.h>

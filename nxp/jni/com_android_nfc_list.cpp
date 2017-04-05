@@ -24,7 +24,7 @@
 #include <malloc.h>
 #include <pthread.h>
 
-#include <android/log.h>
+#include <log/log.h>
 
 bool listInit(listHead* pList)
 {
