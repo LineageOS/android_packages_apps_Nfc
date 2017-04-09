@@ -23,5 +23,5 @@ android_test {
     srcs: ["src/**/*.java"],
     platform_apis: true,
     certificate: "platform",
-    instrumentation_for: "NfcNci",
+    instrumentation_for: "Nfc",
 }

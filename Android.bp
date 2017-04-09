@@ -1,3 +1,18 @@
+// NXP Configuration
+android_app {
+    name: "Nfc",
+    srcs: [
+        "src/**/*.java",
+        "nxp/**/*.java",
+    ],
+    platform_apis: true,
+    certificate: "platform",
+    jni_libs: ["libnfc_nci_jni"],
+    optimize: {
+        enabled: false,
+    },
+}
+
 genrule {
     name: "statslog-Nfc-java-gen",
     tools: ["stats-log-api-gen"],
@@ -9,6 +24,7 @@ genrule {
 // NCI Configuration
 android_app {
     name: "NfcNci",
+    overrides: ["Nfc"],
     srcs: [
         "src/**/*.java",
         "nci/**/*.java",
