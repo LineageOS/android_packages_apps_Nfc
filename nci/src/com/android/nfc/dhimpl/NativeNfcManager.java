@@ -30,6 +30,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.HashMap;
 
+import com.android.nfc.R;
+
 /**
  * Native interface to the NFC Manager functions
  */
@@ -281,6 +283,15 @@ public class NativeNfcManager implements DeviceHost {
             case (TagTechnology.NFC_V):
                 return 253; // PN544 RF buffer = 255 bytes, subtract two for CRC
             case (TagTechnology.ISO_DEP):
+                boolean isNfcExtendendLengthEnabled = mContext.getResources().getBoolean(
+                    R.bool.enable_nfc_extended_length);
+                if (isNfcExtendendLengthEnabled) {
+                    /* Support extended length frames */
+                    int nfcExtendendLength = mContext.getResources().getInteger(
+                        R.integer.nfc_extended_length_maximum);
+
+                    return nfcExtendendLength;
+                }
                 /* The maximum length of a normal IsoDep frame consists of:
                  * CLA, INS, P1, P2, LC, LE + 255 payload bytes = 261 bytes
                  * such a frame is supported. Extended length frames however
@@ -310,7 +321,10 @@ public class NativeNfcManager implements DeviceHost {
     @Override
     public boolean getExtendedLengthApdusSupported() {
         // TODO check BCM support
-        return false;
+        boolean isNfcExtendendLengthEnabled = mContext.getResources().getBoolean(
+            R.bool.enable_nfc_extended_length);
+
+        return isNfcExtendendLengthEnabled;
     }
 
     @Override
