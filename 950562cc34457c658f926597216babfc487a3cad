@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "1a486d77_ece704e3",
+        "filename": "nci/jni/RoutingManager.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 5589
+      },
+      "writtenOn": "2017-05-18T03:14:20Z",
+      "side": 1,
+      "message": "Call me crazy but this code includes a \"config.h\" that\u0027s no where in the code and looks for defines for default routes that aren\u0027t set anywhere. It seems to me it would be fairly trivial for a device to include the config.h and set this themselves",
+      "revId": "950562cc34457c658f926597216babfc487a3cad",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ba57610f_4354ce53",
         "filename": "nci/jni/RoutingManager.cpp",
         "patchSetId": 1
