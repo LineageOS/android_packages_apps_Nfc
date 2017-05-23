@@ -20,6 +20,7 @@ import android.content.Context;
 import android.nfc.ErrorCodes;
 import android.nfc.tech.Ndef;
 import android.nfc.tech.TagTechnology;
+import android.os.SystemProperties;
 import android.util.Log;
 
 import com.android.nfc.DeviceHost;
@@ -41,6 +42,9 @@ public class NativeNfcManager implements DeviceHost {
     static final int DEFAULT_LLCP_RWSIZE = 2;
 
     static final String DRIVER_NAME = "android-nci";
+
+    // The extended length system property name
+    private static final String PROPERTY_NFC_EXTENDED_LENGTH = "persist.nfc.extended_length";
 
     static {
         System.loadLibrary("nfc_nci_jni");
@@ -281,6 +285,12 @@ public class NativeNfcManager implements DeviceHost {
             case (TagTechnology.NFC_V):
                 return 253; // PN544 RF buffer = 255 bytes, subtract two for CRC
             case (TagTechnology.ISO_DEP):
+                int nfcExtendedLength =
+                    SystemProperties.getInt(PROPERTY_NFC_EXTENDED_LENGTH, -1);
+                if (nfcExtendedLength > 0) {
+                    /* Support extended length frames */
+                    return nfcExtendedLength;
+                }
                 /* The maximum length of a normal IsoDep frame consists of:
                  * CLA, INS, P1, P2, LC, LE + 255 payload bytes = 261 bytes
                  * such a frame is supported. Extended length frames however
@@ -310,7 +320,10 @@ public class NativeNfcManager implements DeviceHost {
     @Override
     public boolean getExtendedLengthApdusSupported() {
         // TODO check BCM support
-        return false;
+        int nfcExtendedLength =
+                    SystemProperties.getInt(PROPERTY_NFC_EXTENDED_LENGTH, -1);
+
+        return nfcExtendedLength > 0;
     }
 
     @Override
