@@ -21,6 +21,7 @@
 #include "com_android_nfc_list.h"
 #include "phLibNfcStatus.h"
 #include <ScopedLocalRef.h>
+#include "RoutingManager.h"
 
 /*
  * JNI Initialization
@@ -48,6 +49,8 @@ jint JNI_OnLoad(JavaVM *jvm, void* /*reserved*/)
    if (android::register_com_android_nfc_NativeLlcpConnectionlessSocket(e) == -1)
       return JNI_ERR;
    if (android::register_com_android_nfc_NativeLlcpServiceSocket(e) == -1)
+      return JNI_ERR;
+   if (RoutingManager::getInstance().registerJniFunctions (e) == -1)
       return JNI_ERR;
 
    return JNI_VERSION_1_6;
