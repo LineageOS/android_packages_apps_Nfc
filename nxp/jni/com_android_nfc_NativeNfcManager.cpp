@@ -50,6 +50,10 @@ static jmethodID cached_NfcManager_notifyLlcpLinkActivation;
 static jmethodID cached_NfcManager_notifyLlcpLinkDeactivated;
 static jmethodID cached_NfcManager_notifyTargetDeselected;
 
+static jmethodID cached_NfcManager_notifyHostEmuActivated;
+static jmethodID cached_NfcManager_notifyHostEmuData;
+static jmethodID cached_NfcManager_notifyHostEmuDeactivated;
+
 static jmethodID cached_NfcManager_notifyRfFieldActivated;
 static jmethodID cached_NfcManager_notifyRfFieldDeactivated;
 namespace android {
@@ -1619,6 +1623,15 @@ static jboolean com_android_nfc_NfcManager_init_native_struc(JNIEnv *e, jobject 
 
    cached_NfcManager_notifyLlcpLinkDeactivated = e->GetMethodID(cls,
       "notifyLlcpLinkDeactivated","(Lcom/android/nfc/dhimpl/NativeP2pDevice;)V");
+
+   cached_NfcManager_notifyHostEmuActivated = e->GetMethodID(cls.get(),
+            "notifyHostEmuActivated", "(I)V");
+
+   cached_NfcManager_notifyHostEmuData = e->GetMethodID(cls.get(),
+            "notifyHostEmuData", "(I[B)V");
+
+   cached_NfcManager_notifyHostEmuDeactivated = e->GetMethodID(cls.get(),
+            "notifyHostEmuDeactivated", "(I)V");
 
    cached_NfcManager_notifyRfFieldActivated = e->GetMethodID(cls,
       "notifyRfFieldActivated", "()V");
