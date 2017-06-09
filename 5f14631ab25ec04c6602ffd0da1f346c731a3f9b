@@ -22,6 +22,24 @@
       "revId": "5f14631ab25ec04c6602ffd0da1f346c731a3f9b",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da87b5cf_636d6804",
+        "filename": "nci/jni/RoutingManager.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 11604
+      },
+      "writtenOn": "2017-06-09T04:46:30Z",
+      "side": 1,
+      "message": "Is there a better way to go from int to bool?",
+      "parentUuid": "da87b5cf_839e6c55",
+      "revId": "5f14631ab25ec04c6602ffd0da1f346c731a3f9b",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
     }
   ]
 }
