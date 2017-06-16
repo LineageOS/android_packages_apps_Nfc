@@ -31,19 +31,36 @@ public final class MimeTypeUtil {
     public static String getMimeTypeForUri(Context context, Uri uri) {
         if (uri.getScheme() == null) return null;
 
+        String mimeType = null;
         if (uri.getScheme().equals(ContentResolver.SCHEME_CONTENT)) {
             ContentResolver cr = context.getContentResolver();
-            return cr.getType(uri);
+            mimeType = cr.getType(uri);
+            if(mimeType == null){
+                 String extension = MimeTypeMap.getFileExtensionFromUrl(uri.getPath()).toLowerCase();
+                  if (extension != null) {
+                      mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+                  }
+            }
+            if (mimeType == null) {
+                mimeType = "*.*";
+            }
         } else if (uri.getScheme().equals(ContentResolver.SCHEME_FILE)) {
-            String extension = MimeTypeMap.getFileExtensionFromUrl(uri.getPath()).toLowerCase();
+            /*allow to parse chinese file name*/
+            String path = uri.toString().substring("file://".length());
+            //String extension = MimeTypeMap.getFileExtensionFromUrl(uri.getPath()).toLowerCase();
+            String extension = MimeTypeMap.getFileExtensionFromUrl(path).toLowerCase();
             if (extension != null) {
-                return MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
-            } else {
-                return null;
+                mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+            }
+
+            if (mimeType == null) {
+                mimeType = "*.*";
             }
         } else {
             Log.d(TAG, "Could not determine mime type for Uri " + uri);
-            return null;
+            mimeType = null;
         }
+
+        return mimeType;
     }
 }
