@@ -143,7 +143,8 @@ public class HostNfcFEmulationManager {
                 break;
             }
         }
-    }
+
+	}
 
     public void onHostEmulationDeactivated() {
         if (DBG) Log.d(TAG, "notifyHostEmulationDeactivated");
@@ -283,6 +284,7 @@ public class HostNfcFEmulationManager {
                 mServiceName = null;
             }
         }
+
     };
 
     class MessageHandler extends Handler {
@@ -303,14 +305,15 @@ public class HostNfcFEmulationManager {
                     return;
                 }
                 byte[] data = dataBundle.getByteArray("data");
-                if (data == null) {
+                /*if (data == null) {
+                    Log.e(TAG, "Data is null");
                     return;
                 }
                 if (data.length == 0) {
                     Log.e(TAG, "Invalid response packet");
                     return;
-                }
-                if (data.length != (data[0] & 0xff)) {
+                }*/
+                if (data != null && (data.length != (data[0] & 0xff))) {
                     Log.e(TAG, "Invalid response packet");
                     return;
                 }
@@ -327,6 +330,7 @@ public class HostNfcFEmulationManager {
                 }
             }
         }
+
     }
 
     static String bytesToString(byte[] bytes, int offset, int length) {
