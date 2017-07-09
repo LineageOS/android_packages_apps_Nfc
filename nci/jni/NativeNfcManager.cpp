@@ -75,6 +75,7 @@ namespace android
 *****************************************************************************/
 bool                        gActivated = false;
 SyncEvent                   gDeactivatedEvent;
+SyncEvent                   sNfaSetPowerSubState;
 
 namespace android
 {
@@ -130,7 +131,7 @@ static jint                 sLfT3tMax = 0;
 #define DEFAULT_TECH_MASK           (NFA_TECHNOLOGY_MASK_A \
                                      | NFA_TECHNOLOGY_MASK_B \
                                      | NFA_TECHNOLOGY_MASK_F \
-                                     | NFA_TECHNOLOGY_MASK_ISO15693 \
+                                     | NFA_TECHNOLOGY_MASK_V \
                                      | NFA_TECHNOLOGY_MASK_B_PRIME \
                                      | NFA_TECHNOLOGY_MASK_A_ACTIVE \
                                      | NFA_TECHNOLOGY_MASK_F_ACTIVE \
@@ -145,10 +146,12 @@ static bool isListenMode(tNFA_ACTIVATED& activated);
 static void enableDisableLptd (bool enable);
 static tNFA_STATUS stopPolling_rfDiscoveryDisabled();
 static tNFA_STATUS startPolling_rfDiscoveryDisabled(tNFA_TECHNOLOGY_MASK tech_mask);
+static void nfcManager_doSetScreenState(JNIEnv* e, jobject o, jint screen_state_mask);
 
 static uint16_t sCurrentConfigLen;
 static uint8_t sConfig[256];
-
+static int prevScreenState = NFA_SCREEN_STATE_OFF_LOCKED;
+static int NFA_SCREEN_POLLING_TAG_MASK = 0x10;
 /////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////
 
@@ -329,16 +332,19 @@ static void nfaConnectionCallback (uint8_t connEvent, tNFA_CONN_EVT_DATA* eventD
                 break;
             }
             sP2pActive = true;
-            ALOGV("%s: NFA_ACTIVATED_EVT; is p2p", __func__);
-            // Disable RF field events in case of p2p
-            uint8_t  nfa_disable_rf_events[] = { 0x00 };
-            ALOGV("%s: Disabling RF field events", __func__);
-            status = NFA_SetConfig(NCI_PARAM_ID_RF_FIELD_INFO, sizeof(nfa_disable_rf_events),
-                    &nfa_disable_rf_events[0]);
-            if (status == NFA_STATUS_OK) {
-                ALOGV("%s: Disabled RF field events", __func__);
-            } else {
-                ALOGE("%s: Failed to disable RF field events", __func__);
+            ALOGD("%s: NFA_ACTIVATED_EVT; is p2p", __func__);
+            if (NFC_GetNCIVersion() == NCI_VERSION_1_0)
+            {
+                // Disable RF field events in case of p2p
+                uint8_t  nfa_disable_rf_events[] = { 0x00 };
+                ALOGD ("%s: Disabling RF field events", __func__);
+                status = NFA_SetConfig(NCI_PARAM_ID_RF_FIELD_INFO, sizeof(nfa_disable_rf_events),
+                        &nfa_disable_rf_events[0]);
+                if (status == NFA_STATUS_OK) {
+                    ALOGD ("%s: Disabled RF field events", __func__);
+                } else {
+                    ALOGE ("%s: Failed to disable RF field events", __func__);
+                }
             }
         }
         else if (pn544InteropIsBusy() == false)
@@ -391,19 +397,22 @@ static void nfaConnectionCallback (uint8_t connEvent, tNFA_CONN_EVT_DATA* eventD
             } else if (sP2pActive) {
                 sP2pActive = false;
                 // Make sure RF field events are re-enabled
-                ALOGV("%s: NFA_DEACTIVATED_EVT; is p2p", __func__);
-                // Disable RF field events in case of p2p
-                uint8_t  nfa_enable_rf_events[] = { 0x01 };
-
-                if (!sIsDisabling && sIsNfaEnabled)
+                ALOGD("%s: NFA_DEACTIVATED_EVT; is p2p", __func__);
+                if (NFC_GetNCIVersion() == NCI_VERSION_1_0)
                 {
-                    ALOGV("%s: Enabling RF field events", __func__);
-                    status = NFA_SetConfig(NCI_PARAM_ID_RF_FIELD_INFO, sizeof(nfa_enable_rf_events),
-                            &nfa_enable_rf_events[0]);
-                    if (status == NFA_STATUS_OK) {
-                        ALOGV("%s: Enabled RF field events", __func__);
-                    } else {
-                        ALOGE("%s: Failed to enable RF field events", __func__);
+                    // Disable RF field events in case of p2p
+                    uint8_t  nfa_enable_rf_events[] = { 0x01 };
+
+                    if (!sIsDisabling && sIsNfaEnabled)
+                    {
+                        ALOGD ("%s: Enabling RF field events", __func__);
+                        status = NFA_SetConfig(NCI_PARAM_ID_RF_FIELD_INFO, sizeof(nfa_enable_rf_events),
+                                &nfa_enable_rf_events[0]);
+                        if (status == NFA_STATUS_OK) {
+                            ALOGD ("%s: Enabled RF field events", __func__);
+                        } else {
+                            ALOGE ("%s: Failed to enable RF field events", __func__);
+                        }
                     }
                 }
             }
@@ -743,6 +752,14 @@ void nfaDeviceManagementCallback (uint8_t dmEvent, tNFA_DM_CBACK_DATA* eventData
         PowerSwitch::getInstance ().deviceManagementCallback (dmEvent, eventData);
         break;
 
+    case NFA_DM_SET_POWER_SUB_STATE_EVT:
+        {
+            ALOGD("%s: NFA_DM_SET_POWER_SUB_STATE_EVT; status=0x%X",
+                    __FUNCTION__, eventData->power_sub_state.status);
+            SyncEventGuard guard (sNfaSetPowerSubState);
+            sNfaSetPowerSubState.notifyOne();
+        }
+        break;
     default:
         ALOGV("%s: unhandled event", __func__);
         break;
@@ -776,18 +793,19 @@ static jboolean nfcManager_sendRawFrame (JNIEnv* e, jobject, jbyteArray data)
 **
 ** Description:     Route an AID to an EE
 **                  e: JVM environment.
-**                  o: Java object.
+**                  aid: aid to be added to routing table.
+**                  route: aid route location. i.e. DH/eSE/UICC
+**                  aidInfo: prefix or suffix aid.
 **
-** Returns:         True if ok.
+** Returns:         True if aid is accpted by NFA Layer.
 **
 *******************************************************************************/
-static jboolean nfcManager_routeAid (JNIEnv* e, jobject, jbyteArray aid, jint route)
+static jboolean nfcManager_routeAid (JNIEnv* e, jobject, jbyteArray aid, jint route, jint aidInfo)
 {
     ScopedByteArrayRO bytes(e, aid);
     uint8_t* buf = const_cast<uint8_t*>(reinterpret_cast<const uint8_t*>(&bytes[0]));
     size_t bufLen = bytes.size();
-    bool result = RoutingManager::getInstance().addAidRouting(buf, bufLen, route);
-    return result;
+    return RoutingManager::getInstance().addAidRouting(buf, bufLen, route, aidInfo);
 }
 
 /*******************************************************************************
@@ -1634,7 +1652,79 @@ static jstring nfcManager_doDump(JNIEnv* e, jobject)
     return e->NewStringUTF(buffer);
 }
 
+static jint nfcManager_doGetNciVersion(JNIEnv* , jobject)
+{
+    return NFC_GetNCIVersion();
+}
 
+static void nfcManager_doSetScreenState (JNIEnv* e, jobject o, jint screen_state_mask)
+{
+    tNFA_STATUS status = NFA_STATUS_OK;
+    uint8_t state = (screen_state_mask & NFA_SCREEN_STATE_MASK);
+    uint8_t discovry_param = NFA_LISTEN_DH_NFCEE_ENABLE_MASK | NFA_POLLING_DH_ENABLE_MASK;
+
+    ALOGD ("%s: state = %d discovry_param = %d", __FUNCTION__, state, discovry_param);
+
+    if (sIsDisabling || !sIsNfaEnabled ||(NFC_GetNCIVersion() != NCI_VERSION_2_0))
+        return;
+    if (prevScreenState == NFA_SCREEN_STATE_OFF_LOCKED || prevScreenState == NFA_SCREEN_STATE_OFF_UNLOCKED)
+    {
+        SyncEventGuard guard (sNfaSetPowerSubState);
+        status = NFA_SetPowerSubStateForScreenState(state);
+        if (status != NFA_STATUS_OK)
+        {
+            ALOGE ("%s: fail enable SetScreenState; error=0x%X", __FUNCTION__, status);
+            return;
+        }
+        else
+        {
+            sNfaSetPowerSubState.wait();
+        }
+    }
+
+   if (state == NFA_SCREEN_STATE_OFF_LOCKED || state == NFA_SCREEN_STATE_OFF_UNLOCKED)
+   {
+       // disable both poll and listen on DH 0x02
+       discovry_param = NFA_POLLING_DH_DISABLE_MASK | NFA_LISTEN_DH_NFCEE_DISABLE_MASK;
+   }
+
+   if (state == NFA_SCREEN_STATE_ON_LOCKED)
+   {
+       // disable poll and enable listen on DH 0x00
+       discovry_param = (screen_state_mask & NFA_SCREEN_POLLING_TAG_MASK) ?
+           (NFA_LISTEN_DH_NFCEE_ENABLE_MASK | NFA_POLLING_DH_ENABLE_MASK):
+           (NFA_POLLING_DH_DISABLE_MASK | NFA_LISTEN_DH_NFCEE_ENABLE_MASK);
+   }
+
+   if (state == NFA_SCREEN_STATE_ON_UNLOCKED)
+   {
+      // enable both poll and listen on DH 0x01
+      discovry_param = NFA_LISTEN_DH_NFCEE_ENABLE_MASK | NFA_POLLING_DH_ENABLE_MASK;
+   }
+
+   SyncEventGuard guard (sNfaSetConfigEvent);
+   status = NFA_SetConfig(NFC_PMID_CON_DISCOVERY_PARAM, NCI_PARAM_LEN_CON_DISCOVERY_PARAM, &discovry_param);
+   if (status == NFA_STATUS_OK)
+   {
+       sNfaSetConfigEvent.wait ();
+   } else {
+       ALOGE ("%s: Failed to update CON_DISCOVER_PARAM", __FUNCTION__);
+       return;
+   }
+
+   if (prevScreenState == NFA_SCREEN_STATE_ON_LOCKED || prevScreenState == NFA_SCREEN_STATE_ON_UNLOCKED)
+   {
+       SyncEventGuard guard (sNfaSetPowerSubState);
+       status = NFA_SetPowerSubStateForScreenState(state);
+       if (status != NFA_STATUS_OK)
+       {
+           ALOGE ("%s: fail enable SetScreenState; error=0x%X", __FUNCTION__, status);
+       } else {
+           sNfaSetPowerSubState.wait();
+       }
+   }
+   prevScreenState = state;
+}
 /*******************************************************************************
 **
 ** Function:        nfcManager_doSetP2pInitiatorModes
@@ -1722,7 +1812,7 @@ static JNINativeMethod gMethods[] =
     {"sendRawFrame", "([B)Z",
             (void*) nfcManager_sendRawFrame},
 
-    {"routeAid", "([BI)Z",
+    {"routeAid", "([BII)Z",
             (void*) nfcManager_routeAid},
 
     {"unrouteAid", "([B)Z",
@@ -1785,11 +1875,17 @@ static JNINativeMethod gMethods[] =
     {"doEnableScreenOffSuspend", "()V",
             (void *)nfcManager_doEnableScreenOffSuspend},
 
+    {"doSetScreenState", "(I)V",
+            (void*)nfcManager_doSetScreenState},
+
     {"doDisableScreenOffSuspend", "()V",
             (void *)nfcManager_doDisableScreenOffSuspend},
 
     {"doDump", "()Ljava/lang/String;",
             (void *)nfcManager_doDump},
+
+    {"getNciVersion","()I",
+             (void *)nfcManager_doGetNciVersion},
 };
 
 
