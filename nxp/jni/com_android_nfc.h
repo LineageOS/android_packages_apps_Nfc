@@ -27,7 +27,7 @@
 #include <log/log.h>
 #include <cutils/properties.h> // for property_get
 
-#include <JNIHelp.h>
+#include <nativehelper/JNIHelp.h>
 #include <jni.h>
 #include <nativehelper/ScopedLocalRef.h>
 
