@@ -17,8 +17,8 @@
 #include <errno.h>
 #include <malloc.h>
 #include <semaphore.h>
-#include <ScopedLocalRef.h>
-#include <ScopedPrimitiveArray.h>
+#include <nativehelper/ScopedLocalRef.h>
+#include <nativehelper/ScopedPrimitiveArray.h>
 
 #include "com_android_nfc.h"
 #include "phNfcHalTypes.h"
