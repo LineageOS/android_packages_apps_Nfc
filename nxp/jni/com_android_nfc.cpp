@@ -20,7 +20,7 @@
 #include "com_android_nfc.h"
 #include "com_android_nfc_list.h"
 #include "phLibNfcStatus.h"
-#include <ScopedLocalRef.h>
+#include <nativehelper/ScopedLocalRef.h>
 
 /*
  * JNI Initialization
