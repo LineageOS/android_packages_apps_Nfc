@@ -24,7 +24,7 @@
 #include <hardware/hardware.h>
 #include <hardware/nfc.h>
 #include <cutils/properties.h>
-#include <ScopedLocalRef.h>
+#include <nativehelper/ScopedLocalRef.h>
 
 #include "com_android_nfc.h"
 
