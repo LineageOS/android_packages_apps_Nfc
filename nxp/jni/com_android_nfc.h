@@ -29,7 +29,7 @@
 
 #include <JNIHelp.h>
 #include <jni.h>
-#include <ScopedLocalRef.h>
+#include <nativehelper/ScopedLocalRef.h>
 
 extern "C" {
 
