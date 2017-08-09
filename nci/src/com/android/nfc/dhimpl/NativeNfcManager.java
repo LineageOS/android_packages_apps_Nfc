@@ -55,10 +55,33 @@ public class NativeNfcManager implements DeviceHost {
     private final Object mLock = new Object();
     private final HashMap<Integer, byte[]> mT3tIdentifiers = new HashMap<Integer, byte[]>();
 
+    private final int mMaxTransceiveLengthNfcA;
+    private final int mMaxTransceiveLengthMifareClassic;
+    private final int mMaxTransceiveLengthMifareUltralight;
+    private final int mMaxTransceiveLengthNfcB;
+    private final int mMaxTransceiveLengthNfcV;
+    private final int mMaxTransceiveLengthIsoDep;
+    private final int mMaxTransceiveLengthNfcF;
+
     public NativeNfcManager(Context context, DeviceHostListener listener) {
         mListener = listener;
         initializeNativeStructure();
         mContext = context;
+
+        mMaxTransceiveLengthNfcA = mContext.getResources()
+                .getInteger(R.integer.config_max_transceive_length_nfc_a);
+        mMaxTransceiveLengthMifareClassic = mContext.getResources()
+                .getInteger(R.integer.config_max_transceive_length_mifare_classic);
+        mMaxTransceiveLengthMifareUltralight = mContext.getResources()
+                .getInteger(R.integer.config_max_transceive_length_mifare_ultralight);
+        mMaxTransceiveLengthNfcB = mContext.getResources()
+                .getInteger(R.integer.config_max_transceive_length_nfc_b);
+        mMaxTransceiveLengthNfcV = mContext.getResources()
+                .getInteger(R.integer.config_max_transceive_length_nfc_v);
+        mMaxTransceiveLengthIsoDep = mContext.getResources()
+                .getInteger(R.integer.config_max_transceive_length_iso_dep);
+        mMaxTransceiveLengthNfcF = mContext.getResources()
+                .getInteger(R.integer.config_max_transceive_length_nfc_f);
     }
 
     public native boolean initializeNativeStructure();
@@ -270,25 +293,19 @@ public class NativeNfcManager implements DeviceHost {
     public int getMaxTransceiveLength(int technology) {
         switch (technology) {
             case (TagTechnology.NFC_A):
+                return mMaxTransceiveLengthNfcA;
             case (TagTechnology.MIFARE_CLASSIC):
+                return mMaxTransceiveLengthMifareClassic;
             case (TagTechnology.MIFARE_ULTRALIGHT):
-                return 253; // PN544 RF buffer = 255 bytes, subtract two for CRC
+                return mMaxTransceiveLengthMifareUltralight;
             case (TagTechnology.NFC_B):
-                /////////////////////////////////////////////////////////////////
-                // Broadcom: Since BCM2079x supports this, set NfcB max size.
-                //return 0; // PN544 does not support transceive of raw NfcB
-                return 253; // PN544 does not support transceive of raw NfcB
+                return mMaxTransceiveLengthNfcB;
             case (TagTechnology.NFC_V):
-                return 253; // PN544 RF buffer = 255 bytes, subtract two for CRC
+                return mMaxTransceiveLengthNfcB;
             case (TagTechnology.ISO_DEP):
-                /* The maximum length of a normal IsoDep frame consists of:
-                 * CLA, INS, P1, P2, LC, LE + 255 payload bytes = 261 bytes
-                 * such a frame is supported. Extended length frames however
-                 * are not supported.
-                 */
-                return 261; // Will be automatically split in two frames on the RF layer
+                return mMaxTransceiveLengthIsoDep;
             case (TagTechnology.NFC_F):
-                return 252; // PN544 RF buffer = 255 bytes, subtract one for SoD, two for CRC
+                return mMaxTransceiveLengthNfcF;
             default:
                 return 0;
         }
