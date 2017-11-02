@@ -122,6 +122,21 @@ public class NativeNfcManager implements DeviceHost {
         return doInitialize();
     }
 
+    private native void doEnableDtaMode();
+
+    @Override
+    public void enableDtaMode() {
+        doEnableDtaMode();
+    }
+
+    private native void doDisableDtaMode();
+
+    @Override
+    public void disableDtaMode() {
+        Log.d(TAG,"disableDtaMode : entry");
+        doDisableDtaMode();
+    }
+
     private native boolean doDeinitialize();
 
     @Override
@@ -140,7 +155,7 @@ public class NativeNfcManager implements DeviceHost {
     }
 
     @Override
-    public boolean routeAid(byte[] aid, int route) {
+    public boolean routeAid(byte[] aid, int route, int aidInfo) {
         return false;
     }
 
@@ -173,6 +188,12 @@ public class NativeNfcManager implements DeviceHost {
     public int getLfT3tMax() {
         return 0;
     }
+
+    @Override
+    public native void doSetScreenState(int screen_state_mask);
+
+    @Override
+    public native int getNciVersion();
 
     private native void doEnableDiscovery(int techMask,
                                           boolean enableLowPowerPolling,
@@ -364,10 +385,10 @@ public class NativeNfcManager implements DeviceHost {
         return DEFAULT_LLCP_RWSIZE;
     }
 
-    private native String doDump();
+    private native void doDump(FileDescriptor fd);
     @Override
-    public String dump() {
-        return doDump();
+    public void dump(FileDescriptor fd) {
+        doDump(fd);
     }
 
     /**
