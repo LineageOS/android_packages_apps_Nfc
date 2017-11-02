@@ -2356,11 +2356,26 @@ static jboolean com_android_nfc_NfcManager_doDownload(JNIEnv *e, jobject o)
     return performDownload(nat, true);
 }
 
-static jstring com_android_nfc_NfcManager_doDump(JNIEnv *e, jobject)
+static void com_android_nfc_NfcManager_doSetScreenState(JNIEnv*, jobject, jint screen_state_mask)
 {
-    char buffer[100];
-    snprintf(buffer, sizeof(buffer), "libnfc llc error_count=%u", libnfc_llc_error_count);
-    return e->NewStringUTF(buffer);
+    ALOGD("%s: screen_state_mask = %d", __FUNCTION__, screen_state_mask);
+}
+
+static void com_android_nfc_NfcManager_doDump(JNIEnv*, jobject, jobject)
+{
+}
+
+static jint com_android_nfc_NfcManager_doGetNciVersion(JNIEnv*, jobject)
+{
+    return 0x10; /* NCI_VERSION_1_0 */
+}
+
+static void com_android_nfc_NfcManager_doEnableDtaMode(JNIEnv*, jobject)
+{
+}
+
+static void com_android_nfc_NfcManager_doDisableDtaMode(JNIEnv*, jobject)
+{
 }
 
 /*
@@ -2422,8 +2437,18 @@ static JNINativeMethod gMethods[] =
    {"doSetP2pTargetModes","(I)V",
       (void *)com_android_nfc_NfcManager_doSetP2pTargetModes},
 
-   {"doDump", "()Ljava/lang/String;",
+   {"doSetScreenState", "(I)V",
+      (void *)com_android_nfc_NfcManager_doSetScreenState},
+
+   {"doDump", "(Ljava/io/FileDescriptor;)V",
       (void *)com_android_nfc_NfcManager_doDump},
+
+   {"getNciVersion","()I",
+      (void *)com_android_nfc_NfcManager_doGetNciVersion},
+   {"doEnableDtaMode", "()V",
+      (void *)com_android_nfc_NfcManager_doEnableDtaMode},
+   {"doDisableDtaMode", "()V",
+      (void *)com_android_nfc_NfcManager_doDisableDtaMode}
 };
 
 
