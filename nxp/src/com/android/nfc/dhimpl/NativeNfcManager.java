@@ -30,6 +30,7 @@ import android.util.Log;
 import com.android.nfc.NfcDiscoveryParameters;
 
 import java.io.File;
+import java.io.FileDescriptor;
 
 /**
  * Native interface to the NFC Manager functions
