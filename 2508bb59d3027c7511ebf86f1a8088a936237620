@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67d5219f_0a3f02fc",
+        "filename": "nxp/jni/com_android_nfc_NativeNfcManager.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 2364,
+      "author": {
+        "id": 13589
+      },
+      "writtenOn": "2017-11-03T19:57:09Z",
+      "side": 1,
+      "message": "TODO: Output to the FileDescriptor + update the commit message\n\nNCI implementation:\n\n    int fd \u003d jniGetFDFromFileDescriptor(e, fdobj);\n    if (fd \u003c 0)\n        return;\n\n    NfcAdaptation\u0026 theInstance \u003d NfcAdaptation::GetInstance();\n    theInstance.Dump(fd);",
+      "revId": "2508bb59d3027c7511ebf86f1a8088a936237620",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
