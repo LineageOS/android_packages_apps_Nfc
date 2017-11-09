@@ -49,6 +49,7 @@ public class NativeNfcManager implements DeviceHost {
     /* Native structure */
     private long mNative;
 
+    private int mIsoDepMaxTransceiveLength;
     private final DeviceHostListener mListener;
     private final Context mContext;
 
@@ -74,9 +75,13 @@ public class NativeNfcManager implements DeviceHost {
 
     private native boolean doInitialize();
 
+    private native int getIsoDepMaxTransceiveLength();
+
     @Override
     public boolean initialize() {
-        return doInitialize();
+        boolean ret = doInitialize();
+        mIsoDepMaxTransceiveLength = getIsoDepMaxTransceiveLength();
+        return ret;
     }
 
     private native boolean doDeinitialize();
@@ -281,12 +286,7 @@ public class NativeNfcManager implements DeviceHost {
             case (TagTechnology.NFC_V):
                 return 253; // PN544 RF buffer = 255 bytes, subtract two for CRC
             case (TagTechnology.ISO_DEP):
-                /* The maximum length of a normal IsoDep frame consists of:
-                 * CLA, INS, P1, P2, LC, LE + 255 payload bytes = 261 bytes
-                 * such a frame is supported. Extended length frames however
-                 * are not supported.
-                 */
-                return 261; // Will be automatically split in two frames on the RF layer
+                return mIsoDepMaxTransceiveLength;
             case (TagTechnology.NFC_F):
                 return 252; // PN544 RF buffer = 255 bytes, subtract one for SoD, two for CRC
             default:
@@ -309,7 +309,9 @@ public class NativeNfcManager implements DeviceHost {
 
     @Override
     public boolean getExtendedLengthApdusSupported() {
-        // TODO check BCM support
+        /* 261 is the default size if extended length frames aren't supported */
+        if (getMaxTransceiveLength(TagTechnology.ISO_DEP) > 261)
+            return true;
         return false;
     }
 
