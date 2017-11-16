@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0a030e17_f89e01b1",
+        "filename": "nci/src/com/android/nfc/dhimpl/NativeNfcManager.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 289,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2017-11-16T16:48:48Z",
+      "side": 0,
+      "message": "Keep this",
+      "range": {
+        "startLine": 289,
+        "startChar": 27,
+        "endLine": 289,
+        "endChar": 88
+      },
+      "revId": "0ca59490aa7a4f9dfcb3fea70c44cf4d1e3ef7c7",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
