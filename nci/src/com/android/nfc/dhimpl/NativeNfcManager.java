@@ -25,6 +25,7 @@ import android.util.Log;
 import com.android.nfc.DeviceHost;
 import com.android.nfc.LlcpException;
 import com.android.nfc.NfcDiscoveryParameters;
+import com.android.nfc.R;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -55,10 +56,15 @@ public class NativeNfcManager implements DeviceHost {
     private final Object mLock = new Object();
     private final HashMap<Integer, byte[]> mT3tIdentifiers = new HashMap<Integer, byte[]>();
 
+    private final int mMaxFrameLengthIsoDep;
+
     public NativeNfcManager(Context context, DeviceHostListener listener) {
         mListener = listener;
         initializeNativeStructure();
         mContext = context;
+
+        mMaxFrameLengthIsoDep = mContext.getResources()
+                .getInteger(R.integer.config_max_frame_length_iso_dep);
     }
 
     public native boolean initializeNativeStructure();
@@ -281,12 +287,7 @@ public class NativeNfcManager implements DeviceHost {
             case (TagTechnology.NFC_V):
                 return 253; // PN544 RF buffer = 255 bytes, subtract two for CRC
             case (TagTechnology.ISO_DEP):
-                /* The maximum length of a normal IsoDep frame consists of:
-                 * CLA, INS, P1, P2, LC, LE + 255 payload bytes = 261 bytes
-                 * such a frame is supported. Extended length frames however
-                 * are not supported.
-                 */
-                return 261; // Will be automatically split in two frames on the RF layer
+                return mMaxFrameLengthIsoDep; // Will be automatically split in two frames on the RF layer
             case (TagTechnology.NFC_F):
                 return 252; // PN544 RF buffer = 255 bytes, subtract one for SoD, two for CRC
             default:
@@ -309,8 +310,12 @@ public class NativeNfcManager implements DeviceHost {
 
     @Override
     public boolean getExtendedLengthApdusSupported() {
-        // TODO check BCM support
-        return false;
+        /* The maximum length of a normal IsoDep frame consists of:
+         * CLA, INS, P1, P2, LC, LE + 255 payload bytes = 261 bytes
+         * such a frame is supported. Extended length frames are
+         * supported if the device supports more than 261 bytes
+         */
+        return mMaxFrameLengthIsoDep > 261;
     }
 
     @Override
