@@ -100,7 +100,7 @@ import java.util.NoSuchElementException;
 
 
 public class NfcService implements DeviceHostListener {
-    static final boolean DBG = false;
+    static final boolean DBG = true;
     static final String TAG = "NfcService";
 
     public static final String SERVICE_NAME = "nfc";
