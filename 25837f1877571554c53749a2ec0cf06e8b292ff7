@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f35fecc3_e59f341a",
+        "filename": "nxp/jni/com_android_nfc_NativeNfcManager.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 2359,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2018-02-09T14:33:34Z",
+      "side": 1,
+      "message": "Remove?",
+      "range": {
+        "startLine": 2359,
+        "startChar": 64,
+        "endLine": 2359,
+        "endChar": 65
+      },
+      "revId": "25837f1877571554c53749a2ec0cf06e8b292ff7",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4b46c8e2_6c78d489",
+        "filename": "nxp/jni/com_android_nfc_NativeNfcManager.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 2364,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2018-02-09T14:33:34Z",
+      "side": 1,
+      "message": "Same",
+      "range": {
+        "startLine": 2364,
+        "startChar": 74,
+        "endLine": 2364,
+        "endChar": 79
+      },
+      "revId": "25837f1877571554c53749a2ec0cf06e8b292ff7",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c88886e2_520e8fe4",
+        "filename": "nxp/jni/com_android_nfc_NativeNfcManager.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 2364,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2018-02-09T14:33:34Z",
+      "side": 1,
+      "message": "Same",
+      "range": {
+        "startLine": 2364,
+        "startChar": 54,
+        "endLine": 2364,
+        "endChar": 55
+      },
+      "revId": "25837f1877571554c53749a2ec0cf06e8b292ff7",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
+    }
+  ]
+}
