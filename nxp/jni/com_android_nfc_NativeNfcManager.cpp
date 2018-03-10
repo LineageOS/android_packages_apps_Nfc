@@ -131,8 +131,6 @@ static void nfc_jni_deinit_download_callback(void *pContext, NFCSTATUS status)
 
 static int nfc_jni_download_locked(struct nfc_jni_native_data *nat, uint8_t update)
 {
-    uint8_t OutputBuffer[1];
-    uint8_t InputBuffer[1];
     struct timespec ts;
     NFCSTATUS status = NFCSTATUS_FAILED;
     phLibNfc_StackCapabilities_t caps;
@@ -236,7 +234,6 @@ clean_and_return:
 
 static int nfc_jni_configure_driver(struct nfc_jni_native_data *nat)
 {
-    char value[PROPERTY_VALUE_MAX];
     int result = FALSE;
     NFCSTATUS status;
 
@@ -297,15 +294,13 @@ static int nfc_jni_unconfigure_driver(struct nfc_jni_native_data* /*nat*/)
 
 /* Initialization function */
 static int nfc_jni_initialize(struct nfc_jni_native_data *nat) {
-   struct timespec ts;
    uint8_t resp[16];
    NFCSTATUS status;
    phLibNfc_StackCapabilities_t caps;
    phLibNfc_SE_List_t SE_List[PHLIBNFC_MAXNO_OF_SE];
-   uint8_t i, No_SE = PHLIBNFC_MAXNO_OF_SE, SmartMX_index = 0, SmartMX_detected = 0;
+   uint8_t i, No_SE = PHLIBNFC_MAXNO_OF_SE;
    phLibNfc_Llcp_sLinkParameters_t LlcpConfigInfo;
    struct nfc_jni_callback_data cb_data;
-   uint8_t firmware_status;
    uint8_t update = TRUE;
    int result = JNI_FALSE;
    const hw_module_t* hw_module;
@@ -734,12 +729,6 @@ extern uint8_t nfc_jni_is_ndef;
 extern uint8_t *nfc_jni_ndef_buf;
 extern uint32_t nfc_jni_ndef_buf_len;
 
-static phLibNfc_sNfcIPCfg_t nfc_jni_nfcip1_cfg =
-{
-   3,
-   { 0x46, 0x66, 0x6D }
-};
-
 /*
  * Callbacks
  */
@@ -906,9 +895,6 @@ static void nfc_jni_Discovery_notification_callback(void *pContext,
    phLibNfc_RemoteDevList_t *psRemoteDevList,
    uint8_t uNofRemoteDev, NFCSTATUS status)
 {
-   NFCSTATUS ret;
-   const char * typeName;
-   struct timespec ts;
    phNfc_sData_t data;
    int i;
    int target_index = 0; // Target that will be reported (if multiple can be >0)
@@ -1111,32 +1097,14 @@ static void nfc_jni_deinit_callback(void *pContext, NFCSTATUS status)
    sem_post(&pContextData->sem);
 }
 
-/* Set Secure Element mode callback*/
-static void nfc_jni_smartMX_setModeCb (void*            pContext,
-                                       phLibNfc_Handle  /*hSecureElement*/,
-                                       NFCSTATUS        status)
-{
-   struct nfc_jni_callback_data * pContextData =  (struct nfc_jni_callback_data*)pContext;
-
-   LOG_CALLBACK("nfc_jni_smartMX_setModeCb", status);
-
-   pContextData->status = status;
-   sem_post(&pContextData->sem);
-}
-
 /* Card Emulation callback */
 static void nfc_jni_transaction_callback(void *context,
    phLibNfc_eSE_EvtType_t evt_type, phLibNfc_Handle /*handle*/,
-   phLibNfc_uSeEvtInfo_t *evt_info, NFCSTATUS status)
+   phLibNfc_uSeEvtInfo_t *evt_info __unused, NFCSTATUS status)
 {
     JNIEnv *e;
     jobject tmp_array = NULL;
-    jobject mifare_block = NULL;
     struct nfc_jni_native_data *nat;
-    phNfc_sData_t *aid;
-    phNfc_sData_t *mifare_command;
-    struct nfc_jni_callback_data *pCallbackData;
-    int i=0;
 
     LOG_CALLBACK("nfc_jni_transaction_callback", status);
 
@@ -1360,7 +1328,8 @@ static void com_android_nfc_NfcManager_disableDiscovery(JNIEnv *e, jobject o)
 
 // TODO: use enable_lptd
 static void com_android_nfc_NfcManager_enableDiscovery(JNIEnv *e, jobject o, jint modes,
-        jboolean, jboolean reader_mode, jboolean enable_p2p, jboolean restart)
+        jboolean, jboolean reader_mode, jboolean enable_p2p,
+        jboolean restart __unused)
 {
     NFCSTATUS ret;
     struct nfc_jni_native_data *nat;
@@ -1586,10 +1555,8 @@ static jint com_android_nfc_NfcManager_doGetTimeout(JNIEnv*, jobject,
 
 static jboolean com_android_nfc_NfcManager_init_native_struc(JNIEnv *e, jobject o)
 {
-   NFCSTATUS status;
    struct nfc_jni_native_data *nat = NULL;
    jclass cls;
-   jobject obj;
    jfieldID f;
 
    TRACE("******  Init Native Structure ******");
@@ -1650,7 +1617,6 @@ static jboolean com_android_nfc_NfcManager_initialize(JNIEnv *e, jobject o)
 #ifdef TNFC_EMULATOR_ONLY
    char value[PROPERTY_VALUE_MAX];
 #endif
-   jboolean result;
 
    CONCURRENCY_LOCK();
 
@@ -1697,7 +1663,9 @@ static jboolean com_android_nfc_NfcManager_initialize(JNIEnv *e, jobject o)
    /* Perform the initialization */
    init_result = nfc_jni_initialize(nat);
 
+#ifdef TNFC_EMULATOR_ONLY
 clean_and_return:
+#endif
    CONCURRENCY_UNLOCK();
 
    /* Convert the result and return */

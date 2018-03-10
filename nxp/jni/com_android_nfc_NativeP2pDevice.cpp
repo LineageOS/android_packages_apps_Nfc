@@ -27,19 +27,6 @@ extern uint8_t device_connected_flag;
 namespace android {
 
 extern void nfc_jni_restart_discovery_locked(struct nfc_jni_native_data *nat);
-
-/*
- * Callbacks
- */
-static void nfc_jni_presence_check_callback(void* pContext, NFCSTATUS status)
-{   
-   struct nfc_jni_callback_data * pCallbackData = (struct nfc_jni_callback_data *) pContext;
-   LOG_CALLBACK("nfc_jni_presence_check_callback", status);
-
-   /* Report the callback status and wake up the caller */
-   pCallbackData->status = status;
-   sem_post(&pCallbackData->sem);
-}
  
 static void nfc_jni_connect_callback(void *pContext,
                                      phLibNfc_Handle /*hRemoteDev*/,
@@ -125,8 +112,6 @@ static jboolean com_android_nfc_NativeP2pDevice_doConnect(JNIEnv *e, jobject o)
     struct nfc_jni_callback_data cb_data;
 
     ScopedLocalRef<jclass> target_cls(e, NULL);
-    jobject tag;
-    jmethodID ctor;
     jfieldID f;
     jbyteArray generalBytes = NULL;
     phNfc_sData_t sGeneralBytes;
@@ -271,7 +256,6 @@ static jbyteArray com_android_nfc_NativeP2pDevice_doTransceive(JNIEnv *e,
    jobject o, jbyteArray data)
 {
    NFCSTATUS status;
-   uint8_t offset = 2;
    uint8_t *buf;
    uint32_t buflen;
    phLibNfc_sTransceiveInfo_t transceive_info;
@@ -357,7 +341,6 @@ static jbyteArray com_android_nfc_NativeP2pDevice_doReceive(
    JNIEnv *e, jobject o)
 {
    NFCSTATUS status;
-   struct timespec ts;
    phLibNfc_Handle handle;
    jbyteArray buf = NULL;
    static phNfc_sData_t *data;

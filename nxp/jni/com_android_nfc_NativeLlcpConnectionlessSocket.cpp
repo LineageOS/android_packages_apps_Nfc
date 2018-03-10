@@ -58,7 +58,6 @@ static void nfc_jni_send_callback(void *pContext, NFCSTATUS status)
 static jboolean com_android_nfc_NativeLlcpConnectionlessSocket_doSendTo(JNIEnv *e, jobject o, jint nsap, jbyteArray data)
 {
    NFCSTATUS ret;
-   struct timespec ts;
    phLibNfc_Handle hRemoteDevice;
    phLibNfc_Handle hLlcpSocket;
    phNfc_sData_t sSendBuffer = {NULL, 0};
@@ -120,7 +119,6 @@ clean_and_return:
 static jobject com_android_nfc_NativeLlcpConnectionlessSocket_doReceiveFrom(JNIEnv *e, jobject o, jint linkMiu)
 {
    NFCSTATUS ret;
-   struct timespec ts;
    uint8_t ssap;
    jobject llcpPacket = NULL;
    phLibNfc_Handle hRemoteDevice;

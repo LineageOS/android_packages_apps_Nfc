@@ -24,7 +24,6 @@
 #include "phNfcHalTypes.h"
 
 static phLibNfc_Data_t nfc_jni_ndef_rw;
-static phLibNfc_Handle handle;
 uint8_t *nfc_jni_ndef_buf = NULL;
 uint32_t nfc_jni_ndef_buf_len = 0;
 
@@ -99,7 +98,7 @@ static void nfc_jni_checkndef_callback(void *pContext,
 }
 
 static void nfc_jni_disconnect_callback(void *pContext,
-   phLibNfc_Handle /*hRemoteDev*/, NFCSTATUS status)
+   phLibNfc_Handle /*hRemoteDev*/, NFCSTATUS status __unused)
 {
    struct nfc_jni_callback_data * pCallbackData = (struct nfc_jni_callback_data *) pContext;
    LOG_CALLBACK("nfc_jni_disconnect_callback", status);
@@ -114,19 +113,6 @@ static void nfc_jni_disconnect_callback(void *pContext,
    /* Report the callback status and wake up the caller */
    pCallbackData->status = status;
    sem_post(&pCallbackData->sem);
-}
-
-static void nfc_jni_async_disconnect_callback(void * /*pContext*/,
-   phLibNfc_Handle /*hRemoteDev*/, NFCSTATUS status)
-{
-   LOG_CALLBACK("nfc_jni_async_disconnect_callback", status);
-
-   if(nfc_jni_ndef_buf)
-   {
-      free(nfc_jni_ndef_buf);
-   }
-   nfc_jni_ndef_buf = NULL;
-   nfc_jni_ndef_buf_len = 0;
 }
 
 static phNfc_sData_t *nfc_jni_transceive_buffer;
@@ -707,13 +693,11 @@ static jbyteArray com_android_nfc_NativeNfcTag_doTransceive(JNIEnv *e,
     uint32_t outlen;
     phLibNfc_sTransceiveInfo_t transceive_info;
     jbyteArray result = NULL;
-    int res;
     phLibNfc_Handle handle = nfc_jni_get_connected_handle(e, o);
     NFCSTATUS status;
     struct nfc_jni_callback_data cb_data;
     int selectedTech = 0;
     int selectedLibNfcType = 0;
-    jint* technologies = NULL;
     bool checkResponseCrc = false;
 
     jint *targetLost;
