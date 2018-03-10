@@ -21,22 +21,6 @@
 
 namespace android {
 
-/*
- * Callbacks
- */
- 
-static void nfc_jni_disconnect_callback(void*        pContext,
-                                               NFCSTATUS    status)
-{
-   struct nfc_jni_callback_data * pCallbackData = (struct nfc_jni_callback_data *) pContext;
-   LOG_CALLBACK("nfc_jni_disconnect_callback", status);
-
-   /* Report the callback status and wake up the caller */
-   pCallbackData->status = status;
-   sem_post(&pCallbackData->sem);
-}
-
- 
 static void nfc_jni_connect_callback(void* pContext, uint8_t nErrCode, NFCSTATUS status)
 {
    struct nfc_jni_callback_data * pCallbackData = (struct nfc_jni_callback_data *) pContext;
@@ -112,7 +96,6 @@ static void nfc_jni_send_callback(void *pContext, NFCSTATUS status)
 static jboolean com_android_nfc_NativeLlcpSocket_doConnect(JNIEnv *e, jobject o, jint nSap)
 {
    NFCSTATUS ret;
-   struct timespec ts;
    phLibNfc_Handle hRemoteDevice;
    phLibNfc_Handle hLlcpSocket;
    struct nfc_jni_callback_data cb_data;
@@ -166,7 +149,6 @@ clean_and_return:
 static jboolean com_android_nfc_NativeLlcpSocket_doConnectBy(JNIEnv *e, jobject o, jstring sn)
 {
    NFCSTATUS ret;
-   struct timespec ts;
    phNfc_sData_t serviceName = {NULL, 0};
    phLibNfc_Handle hRemoteDevice;
    phLibNfc_Handle hLlcpSocket;
@@ -248,7 +230,6 @@ static jboolean com_android_nfc_NativeLlcpSocket_doClose(JNIEnv *e, jobject o)
 static jboolean com_android_nfc_NativeLlcpSocket_doSend(JNIEnv *e, jobject o, jbyteArray  data)
 {
    NFCSTATUS ret;
-   struct timespec ts;
    phLibNfc_Handle hRemoteDevice;
    phLibNfc_Handle hLlcpSocket;
    phNfc_sData_t sSendBuffer = {NULL, 0};
@@ -309,7 +290,6 @@ clean_and_return:
 static jint com_android_nfc_NativeLlcpSocket_doReceive(JNIEnv *e, jobject o, jbyteArray  buffer)
 {
    NFCSTATUS ret;
-   struct timespec ts;
    phLibNfc_Handle hRemoteDevice;
    phLibNfc_Handle hLlcpSocket;
    phNfc_sData_t sReceiveBuffer = {NULL, 0};
