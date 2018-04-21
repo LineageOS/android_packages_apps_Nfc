@@ -19,7 +19,8 @@ LOCAL_CERTIFICATE := platform
 
 LOCAL_JNI_SHARED_LIBRARIES := libnfc_nci_jni
 
-LOCAL_STATIC_JAVA_LIBRARIES := android-support-v4
+LOCAL_USE_AAPT2 := true
+LOCAL_STATIC_ANDROID_LIBRARIES := androidx.legacy_legacy-support-v4
 
 LOCAL_PROGUARD_ENABLED := disabled
 
