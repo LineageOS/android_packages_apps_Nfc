@@ -2346,6 +2346,14 @@ static void com_android_nfc_NfcManager_doDisableDtaMode(JNIEnv*, jobject)
 {
 }
 
+static void com_android_nfc_NfcManager_doFactoryReset(JNIEnv*, jobject)
+{
+}
+
+static void com_android_nfc_NfcManager_doShutdown(JNIEnv*, jobject)
+{
+}
+
 /*
  * JNI registration.
  */
@@ -2416,7 +2424,11 @@ static JNINativeMethod gMethods[] =
    {"doEnableDtaMode", "()V",
       (void *)com_android_nfc_NfcManager_doEnableDtaMode},
    {"doDisableDtaMode", "()V",
-      (void *)com_android_nfc_NfcManager_doDisableDtaMode}
+      (void *)com_android_nfc_NfcManager_doDisableDtaMode},
+   {"doFactoryReset", "()V",
+      (void *)com_android_nfc_NfcManager_doFactoryReset},
+   {"doShutdown", "()V",
+      (void *)com_android_nfc_NfcManager_doShutdown}
 };
 
 
