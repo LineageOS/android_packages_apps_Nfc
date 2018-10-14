@@ -3,8 +3,10 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <!-- Content description of the NFC enabled notification icon for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
   <string name="tap_to_beam">Tara i belydru</string>
+  <string name="cancel">Diddymu</string>
   <string name="beam_tap_to_view">Tara i weld</string>
   <!-- String referring to the device being connected when there is no name for the device -->
+  <string name="device">dyfais</string>
   <!-- Toast string informing the user that the device is connecting [CHAR_LIMIT=35] -->
   <!-- Toast string informing the user that the device is connected [CHAR_LIMIT=35] -->
   <!-- Toast string informing the user that the device failed to connect [CHAR_LIMIT=35] -->

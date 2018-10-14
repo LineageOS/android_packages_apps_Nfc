@@ -42,4 +42,5 @@
   <!-- Message shown in a dialog when user wants to use Android Beam, but NFC is not enabled -->
   <string name="beam_requires_nfc_enabled">Android Beam rique que\'l NFC tea habilitáu. ¿Quies habilitalu?</string>
   <!-- Used to refer to in the Share Menu Android Beam . This phrase is a trademark. [CHAR LIMIT=32] -->
+  <string name="android_beam">Android Beam</string>
 </resources>
