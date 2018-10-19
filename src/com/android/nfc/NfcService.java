@@ -517,6 +517,14 @@ public class NfcService implements DeviceHostListener {
                 Context.SECURE_ELEMENT_SERVICE));
     }
 
+    private boolean isSEServiceAvailable() {
+        if (mSEService == null) {
+            mSEService = ISecureElementService.Stub.asInterface(ServiceManager.getService(
+                    Context.SECURE_ELEMENT_SERVICE));
+        }
+        return (mSEService != null);
+    }
+
     void initSoundPool() {
         synchronized (this) {
             if (mSoundPool == null) {
@@ -2251,7 +2259,7 @@ public class NfcService implements DeviceHostListener {
         }
 
         private void sendOffHostTransactionEvent(byte[] aid, byte[] data, byte[] readerByteArray) {
-            if (mSEService == null || mNfcEventInstalledPackages.isEmpty()) {
+            if (!isSEServiceAvailable() || mNfcEventInstalledPackages.isEmpty()) {
                 return;
             }
 
@@ -2291,7 +2299,7 @@ public class NfcService implements DeviceHostListener {
 
         /* Returns the list of packages that have access to NFC Events on any SE */
         private ArrayList<String> getSEAccessAllowedPackages() {
-            if (mSEService == null || mNfcEventInstalledPackages.isEmpty()) {
+            if (!isSEServiceAvailable() || mNfcEventInstalledPackages.isEmpty()) {
                 return null;
             }
             String[] readers = null;
