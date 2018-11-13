@@ -517,6 +517,14 @@ public class NfcService implements DeviceHostListener {
                 Context.SECURE_ELEMENT_SERVICE));
     }
 
+    private boolean isSEServiceAvailable() {
+        if (mSEService == null) {
+            mSEService = ISecureElementService.Stub.asInterface(ServiceManager.getService(
+                    Context.SECURE_ELEMENT_SERVICE));
+        }
+        return (mSEService != null);
+    }
+
     void initSoundPool() {
         synchronized (this) {
             if (mSoundPool == null) {
@@ -1769,10 +1777,9 @@ public class NfcService implements DeviceHostListener {
             paramsBuilder.setTechMask(techMask);
             paramsBuilder.setEnableLowPowerDiscovery(false);
             paramsBuilder.setEnableP2p(false);
-        } else {
         }
 
-        if (mIsHceCapable && mReaderModeParams == null) {
+        if (mIsHceCapable && mScreenState >= ScreenStateHelper.SCREEN_STATE_ON_LOCKED && mReaderModeParams == null) {
             // Host routing is always enabled at lock screen or later, provided we aren't in reader mode
             paramsBuilder.setEnableHostRouting(true);
         }
@@ -2251,7 +2258,7 @@ public class NfcService implements DeviceHostListener {
         }
 
         private void sendOffHostTransactionEvent(byte[] aid, byte[] data, byte[] readerByteArray) {
-            if (mSEService == null || mNfcEventInstalledPackages.isEmpty()) {
+            if (!isSEServiceAvailable() || mNfcEventInstalledPackages.isEmpty()) {
                 return;
             }
 
@@ -2291,7 +2298,7 @@ public class NfcService implements DeviceHostListener {
 
         /* Returns the list of packages that have access to NFC Events on any SE */
         private ArrayList<String> getSEAccessAllowedPackages() {
-            if (mSEService == null || mNfcEventInstalledPackages.isEmpty()) {
+            if (!isSEServiceAvailable() || mNfcEventInstalledPackages.isEmpty()) {
                 return null;
             }
             String[] readers = null;
