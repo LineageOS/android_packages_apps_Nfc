@@ -16,6 +16,8 @@
     <!-- Toast string informing the user that the device failed to pair [CHAR_LIMIT=35] -->
     <!-- Toast string informing the user that BT could not be enabled [CHAR_LIMIT=35] -->
     <!-- Dialog string informing the user that BT could not be enabled [CHAR_LIMIT=75] -->
+    <string name="confirm_pairing">Wyt ti\'n siŵr dy fod eisiau paru gyda\'r ddyfais Bluetooth <xliff:g id="device_name">%1$s</xliff:g>?</string>
+    <string name="pair_no">Na</string>
     <!-- String that is prompting the user to tap his NFC phone against a payment reader again, to
          pay with the specified app -->
     <!-- String that is prompting the user to tap his NFC phone against a generic NFC reader again, to
@@ -28,12 +30,16 @@
     <!-- Label for a dialog showing a list of applications that can be used to complete the NFC action -->
     <!-- String that is telling the user that his default app for tap and pay has been removed,
          and asks him to pick another app as default.-->
+    <string name="default_pay_app_removed">Tynnwyd dy ddewis gwasanaeth ar gyfer cyffwrdd a thalu. Dewis un arall?\"</string>
     <!-- Label that is shown when the user must tap another NFC enabled device to send data -->
     <!-- Strings for connecting to a network from WiFi NFC tags -->
     <!-- Dialog button text for confirming the user wants to connect to the network on the tag-->
+    <string name="wifi_connect">Cysylltu</string>
     <!-- Text informing the user that an error ocurred during the process of connecting to the network-->
     <!-- Text informing the user that the network was connected to successfully -->
+    <string name="status_wifi_connected">Wedi cysyllltu</string>
     <!-- Title for dialog where user confirms that they want to connect to the network on the tag they tapped-->
+    <string name="title_connect_to_network">Cysylltu â\'r rhwydwaith</string>
     <!-- Message prompt asking the user if they wish to connect to the given network. Contains the network name (ssid).-->
     <!-- Message shown in a dialog when user wants to use Android Beam, but NFC is not enabled -->
     <!-- Used to refer to in the Share Menu Android Beam . This phrase is a trademark. [CHAR LIMIT=32] -->
