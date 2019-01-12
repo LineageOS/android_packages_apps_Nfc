@@ -602,7 +602,7 @@ static jboolean com_android_nfc_NativeNfcTag_doDisconnect(JNIEnv *e, jobject o)
         nfc_jni_restart_discovery_locked(nfc_jni_get_nat_ext(e));
         goto clean_and_return;
     }
-    TRACE("phLibNfc_RemoteDev_Disconnect(%x) returned 0x%04x[%s]", handle, status, nfc_jni_get_status_name(status));
+    TRACE("phLibNfc_RemoteDev_Disconnect(%lx) returned 0x%04x[%s]", handle, status, nfc_jni_get_status_name(status));
 
     /* Wait for callback response */
     if(sem_wait(&cb_data.sem))
