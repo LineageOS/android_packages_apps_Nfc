@@ -49,6 +49,8 @@ public interface DeviceHost {
         public void onRemoteFieldDeactivated();
 
         public void onNfcTransactionEvent(byte[] aid, byte[] data, String seName);
+
+        public void onEeUpdated();
     }
 
     public interface TagEndpoint {
@@ -254,4 +256,6 @@ public interface DeviceHost {
     public void factoryReset();
 
     public void shutdown();
+
+    public boolean setNfcSecure(boolean enable);
 }
