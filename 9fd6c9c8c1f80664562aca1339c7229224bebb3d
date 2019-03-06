@@ -16,6 +16,24 @@
       "revId": "9fd6c9c8c1f80664562aca1339c7229224bebb3d",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a0a147fb_93e84ff6",
+        "filename": "nci/jni/RoutingManager.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 6753
+      },
+      "writtenOn": "2019-03-06T04:54:26Z",
+      "side": 1,
+      "message": "system/nfc/src/include/nfc_config.h",
+      "parentUuid": "0d146916_e9c1ed96",
+      "revId": "9fd6c9c8c1f80664562aca1339c7229224bebb3d",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
     }
   ]
 }
