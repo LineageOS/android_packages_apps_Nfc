@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0d146916_e9c1ed96",
+        "filename": "nci/jni/RoutingManager.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 6753
+      },
+      "writtenOn": "2019-03-06T04:50:42Z",
+      "side": 1,
+      "message": "This really belongs in system/nfc/src/include but that requires forking system_nfc. Doing this here for now for testing.",
+      "revId": "9fd6c9c8c1f80664562aca1339c7229224bebb3d",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
