@@ -943,6 +943,11 @@ public class NfcService implements DeviceHostListener {
         @Override
         public boolean setNfcSecure(boolean enable) {
             NfcPermissions.enforceAdminPermissions(mContext);
+            if(mKeyguard.isKeyguardLocked() && !enable) {
+                Log.i(TAG, "KeyGuard need to be unlocked before setting Secure NFC OFF");
+                return false;
+            }
+
             synchronized (NfcService.this) {
                 Log.i(TAG, "setting Secure NFC " + enable);
                 mPrefsEditor.putBoolean(PREF_SECURE_NFC_ON, enable);
@@ -954,6 +959,10 @@ public class NfcService implements DeviceHostListener {
             if (mIsHceCapable) {
                 mCardEmulationManager.onSecureNfcToggled();
             }
+            if (enable)
+                StatsLog.write(StatsLog.NFC_STATE_CHANGED, StatsLog.NFC_STATE_CHANGED__STATE__ON_LOCKED);
+            else
+                StatsLog.write(StatsLog.NFC_STATE_CHANGED, StatsLog.NFC_STATE_CHANGED__STATE__ON);
             return true;
         }
 
