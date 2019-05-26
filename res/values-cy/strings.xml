@@ -37,7 +37,7 @@
     <string name="ask_nfc_tap">Tapia ddyfais arall i gwblhau</string>
     <string name="wifi_connect">Cysylltu</string>
     <string name="status_unable_to_connect">Methu â chysylltu â\'r rhwydwaith</string>
-    <string name="status_wifi_connected">Wedi cysyllltu</string>
+    <string name="status_wifi_connected">Wedi cysylltu</string>
     <string name="title_connect_to_network">Cysylltu â\'r rhwydwaith</string>
     <string name="prompt_connect_to_network">Methu â chysylltu â\'r rhwydwaith <xliff:g id="network_ssid">%1$s</xliff:g>?</string>
     <string name="beam_requires_nfc_enabled">Mae ar Android Beam angen fod NFC wedi\'i alluogi. Wyt ti am ei alluogi?</string>
