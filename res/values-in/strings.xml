@@ -33,7 +33,7 @@
     <string name="could_not_use_app" msgid="8137587876138569083">"Tidak dapat menggunakan <xliff:g id="APP">%1$s</xliff:g>."</string>
     <string name="pay_with" msgid="5531545488795798945">"Bayar dengan"</string>
     <string name="complete_with" msgid="6797459104103012992">"Selesaikan dengan"</string>
-    <string name="default_pay_app_removed" msgid="4108250545457437360">"Layanan pilihan Anda untuk tap &amp; bayar telah dihapus. Pilih yang lain?"</string>
+    <string name="default_pay_app_removed" msgid="4108250545457437360">"Layanan pilihan Anda untuk tempel &amp; bayar telah dihapus. Pilih yang lain?"</string>
     <string name="ask_nfc_tap" msgid="2925239870458286340">"Tap perangkat lain untuk menyelesaikan"</string>
     <string name="wifi_connect" msgid="6250727951843550671">"Sambungkan"</string>
     <string name="status_unable_to_connect" msgid="9183908200295307657">"Tidak dapat menyambung ke jaringan"</string>
