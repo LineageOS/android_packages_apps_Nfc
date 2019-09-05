@@ -45,7 +45,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 
-import android.support.v4.content.FileProvider;
+import androidx.core.content.FileProvider;
 
 /**
  * A BeamTransferManager object represents a set of files

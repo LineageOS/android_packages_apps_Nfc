@@ -22,6 +22,7 @@ import android.app.backup.BackupManager;
 import android.app.KeyguardManager;
 import android.app.PendingIntent;
 import android.app.admin.DevicePolicyManager;
+import android.app.BroadcastOptions;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentResolver;
@@ -35,6 +36,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.UserInfo;
 import android.content.res.Resources.NotFoundException;
+import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.net.Uri;
@@ -535,7 +537,14 @@ public class NfcService implements DeviceHostListener {
     void initSoundPool() {
         synchronized (this) {
             if (mSoundPool == null) {
-                mSoundPool = new SoundPool(1, AudioManager.STREAM_NOTIFICATION, 0);
+                mSoundPool = new SoundPool.Builder()
+                        .setMaxStreams(1)
+                        .setAudioAttributes(
+                                new AudioAttributes.Builder()
+                                        .setUsage(AudioAttributes.USAGE_ASSISTANCE_SONIFICATION)
+                                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                                        .build())
+                        .build();
                 mStartSound = mSoundPool.load(mContext, R.raw.start, 1);
                 mEndSound = mSoundPool.load(mContext, R.raw.end, 1);
                 mErrorSound = mSoundPool.load(mContext, R.raw.error, 1);
@@ -2367,10 +2376,13 @@ public class NfcService implements DeviceHostListener {
                 }
                 String url = new String ("nfc://secure:0/" + reader + "/" + aidString.toString());
                 intent.setData(Uri.parse(url));
+
+                final BroadcastOptions options = BroadcastOptions.makeBasic();
+                options.setBackgroundActivityStartsAllowed(true);
                 for (int i = 0; i < nfcAccess.length; i++) {
                     if (nfcAccess[i]) {
                         intent.setPackage(mNfcEventInstalledPackages.get(i));
-                        mContext.sendBroadcast(intent);
+                        mContext.sendBroadcast(intent, null, options.toBundle());
                     }
                 }
             } catch (RemoteException e) {
