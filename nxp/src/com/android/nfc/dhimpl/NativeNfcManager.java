@@ -73,7 +73,7 @@ public class NativeNfcManager implements DeviceHost {
     public native int doGetLastError();
 
     @Override
-    public void checkFirmware() {
+    public boolean checkFirmware() {
         // Check that the NFC controller firmware is up to date.  This
         // ensures that firmware updates are applied in a timely fashion,
         // and makes it much less likely that the user will have to wait
@@ -88,7 +88,7 @@ public class NativeNfcManager implements DeviceHost {
             firmwareFile = new File(NFC_CONTROLLER_FIRMWARE_FILE_NAME);
         } catch(NullPointerException npe) {
             Log.e(TAG,"path to firmware file was null");
-            return;
+            return false;
         }
 
         long modtime = firmwareFile.lastModified();
@@ -98,7 +98,7 @@ public class NativeNfcManager implements DeviceHost {
         Log.d(TAG,"prev modtime: " + prev_fw_modtime);
         Log.d(TAG,"new modtime: " + modtime);
         if (prev_fw_modtime == modtime) {
-            return;
+            return true;
         }
 
         // FW download.
@@ -108,12 +108,14 @@ public class NativeNfcManager implements DeviceHost {
                 Log.d(TAG,"Download Success");
                 // Now that we've finished updating the firmware, save the new modtime.
                 prefs.edit().putLong(PREF_FIRMWARE_MODTIME, modtime).apply();
-                break;
+                return true;
             } else {
                 Log.d(TAG,"Download Failed");
                 nbRetry++;
             }
         }
+
+        return false;
     }
 
     private native boolean doInitialize();
@@ -358,6 +360,10 @@ public class NativeNfcManager implements DeviceHost {
 
     }
 
+    public int getAidTableSize() {
+        return 0;
+    }
+
     private native void doSetP2pInitiatorModes(int modes);
     @Override
     public void setP2pInitiatorModes(int modes) {
@@ -404,6 +410,11 @@ public class NativeNfcManager implements DeviceHost {
     @Override
     public void dump(FileDescriptor fd) {
         doDump(fd);
+    }
+
+    @Override
+    public boolean setNfcSecure(boolean enable) {
+        return true;
     }
 
     /**
