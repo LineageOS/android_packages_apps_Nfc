@@ -201,7 +201,10 @@ public class AidRoutingManager {
         boolean aidRouteResolved = false;
         HashMap<String, AidEntry> aidRoutingTableCache = new HashMap<String, AidEntry>(aidMap.size());
         ArrayList<Integer> seList = new ArrayList<Integer>();
-        seList.add(ROUTE_HOST);
+        seList.add(mDefaultRoute);
+        if (mDefaultRoute != ROUTE_HOST) {
+            seList.add(ROUTE_HOST);
+        }
 
         SparseArray<Set<String>> aidRoutingTable = new SparseArray<Set<String>>(aidMap.size());
         HashMap<String, Integer> routeForAid = new HashMap<String, Integer>(aidMap.size());
