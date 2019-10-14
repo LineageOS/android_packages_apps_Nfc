@@ -50,7 +50,7 @@ public class ConfirmConnectActivity extends Activity {
                    public void onClick(DialogInterface dialog, int id) {
                         Intent allowIntent = new Intent(BluetoothPeripheralHandover.ACTION_ALLOW_CONNECT);
                         allowIntent.putExtra(BluetoothDevice.EXTRA_DEVICE, mDevice);
-                        allowIntent.setPackage("com.android.nfc.handover");
+                        allowIntent.setPackage("com.android.nfc");
                         sendBroadcast(allowIntent);
                         ConfirmConnectActivity.this.mAlert = null;
                         ConfirmConnectActivity.this.finish();
@@ -61,7 +61,7 @@ public class ConfirmConnectActivity extends Activity {
                    public void onClick(DialogInterface dialog, int id) {
                        Intent denyIntent = new Intent(BluetoothPeripheralHandover.ACTION_DENY_CONNECT);
                        denyIntent.putExtra(BluetoothDevice.EXTRA_DEVICE, mDevice);
-                       denyIntent.setPackage("com.android.nfc.handover");
+                       denyIntent.setPackage("com.android.nfc");
                        sendBroadcast(denyIntent);
                        ConfirmConnectActivity.this.mAlert = null;
                        ConfirmConnectActivity.this.finish();
@@ -81,7 +81,7 @@ public class ConfirmConnectActivity extends Activity {
             mAlert.dismiss();
             Intent denyIntent = new Intent(BluetoothPeripheralHandover.ACTION_DENY_CONNECT);
             denyIntent.putExtra(BluetoothDevice.EXTRA_DEVICE, mDevice);
-            denyIntent.setPackage("com.android.nfc.handover");
+            denyIntent.setPackage("com.android.nfc");
             sendBroadcast(denyIntent);
             mAlert = null;
         }
