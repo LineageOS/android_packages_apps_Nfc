@@ -25,6 +25,9 @@
 
 #include "nfa_rw_api.h"
 
+#define MIN_FWI (11)
+#define MAX_FWI (14)
+
 class NfcTag {
  public:
   enum ActivationState { Idle, Sleep, Active };
