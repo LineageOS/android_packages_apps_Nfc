@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f7d5e378_f8841b28",
+        "filename": "src/com/android/nfc/NfcService.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 650,
+      "author": {
+        "id": 11883
+      },
+      "writtenOn": "2020-01-04T16:52:55Z",
+      "side": 1,
+      "message": "nit: missing space",
+      "revId": "f21c11a93e1eae95106266cc635f8beb2d631168",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": true
+    }
+  ]
+}
