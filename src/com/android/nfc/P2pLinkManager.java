@@ -61,7 +61,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.io.UnsupportedEncodingException;
 
-import android.util.StatsLog;
 /**
  * Interface to listen for P2P events.
  * All callbacks are made from the UI thread.
@@ -1108,7 +1107,8 @@ class P2pLinkManager implements Handler.Callback, P2pEventListener.Callback {
                     mSendState = SEND_STATE_NOTHING_TO_SEND;
                     if (DBG) Log.d(TAG, "onP2pReceiveComplete()");
                     mEventListener.onP2pReceiveComplete(false);
-                    StatsLog.write(StatsLog.NFC_BEAM_OCCURRED, StatsLog.NFC_BEAM_OCCURRED__OPERATION__RECEIVE);
+                    NfcStatsLog.write(NfcStatsLog.NFC_BEAM_OCCURRED,
+                            NfcStatsLog.NFC_BEAM_OCCURRED__OPERATION__RECEIVE);
                 }
                 break;
             case MSG_RECEIVE_COMPLETE:
@@ -1124,7 +1124,8 @@ class P2pLinkManager implements Handler.Callback, P2pEventListener.Callback {
                     if (DBG) Log.d(TAG, "onP2pReceiveComplete()");
                     mEventListener.onP2pReceiveComplete(true);
                     NfcService.getInstance().sendMockNdefTag(m);
-                    StatsLog.write(StatsLog.NFC_BEAM_OCCURRED, StatsLog.NFC_BEAM_OCCURRED__OPERATION__RECEIVE);
+                    NfcStatsLog.write(NfcStatsLog.NFC_BEAM_OCCURRED,
+                            NfcStatsLog.NFC_BEAM_OCCURRED__OPERATION__RECEIVE);
                 }
                 break;
             case MSG_HANDOVER_NOT_SUPPORTED:
@@ -1157,7 +1158,8 @@ class P2pLinkManager implements Handler.Callback, P2pEventListener.Callback {
                             Log.e(TAG, "Failed NDEF completed callback: " + e.getMessage());
                         }
                     }
-                    StatsLog.write(StatsLog.NFC_BEAM_OCCURRED, StatsLog.NFC_BEAM_OCCURRED__OPERATION__SEND);
+                    NfcStatsLog.write(NfcStatsLog.NFC_BEAM_OCCURRED,
+                            NfcStatsLog.NFC_BEAM_OCCURRED__OPERATION__SEND);
                 }
                 break;
             case MSG_HANDOVER_BUSY:
