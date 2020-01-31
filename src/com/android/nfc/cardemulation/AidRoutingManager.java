@@ -17,19 +17,16 @@ package com.android.nfc.cardemulation;
 
 import android.util.Log;
 import android.util.SparseArray;
-
 import com.android.nfc.NfcService;
-
+import com.android.nfc.NfcStatsLog;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import android.util.StatsLog;
 
 public class AidRoutingManager {
 
@@ -360,7 +357,8 @@ public class AidRoutingManager {
           if(aidRouteResolved == true) {
               commit(aidRoutingTableCache);
           } else {
-              StatsLog.write(StatsLog.NFC_ERROR_OCCURRED, StatsLog.NFC_ERROR_OCCURRED__TYPE__AID_OVERFLOW, 0, 0);
+              NfcStatsLog.write(NfcStatsLog.NFC_ERROR_OCCURRED,
+                      NfcStatsLog.NFC_ERROR_OCCURRED__TYPE__AID_OVERFLOW, 0, 0);
               Log.e(TAG, "RoutingTable unchanged because it's full, not updating");
           }
         }
