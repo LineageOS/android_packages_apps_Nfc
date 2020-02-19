@@ -38,6 +38,7 @@ import android.os.PowerManager;
 import android.os.SystemClock;
 import android.provider.Settings;
 import android.util.Log;
+import android.util.proto.ProtoOutputStream;
 
 import com.android.nfc.NfcPermissions;
 import com.android.nfc.NfcService;
@@ -191,6 +192,49 @@ public class CardEmulationManager implements RegisteredServicesCache.Callback,
         mT3tIdentifiersCache.dump(fd, pw, args);
         mHostEmulationManager.dump(fd, pw, args);
         mHostNfcFEmulationManager.dump(fd, pw, args);
+    }
+
+    /**
+     * Dump debugging information as a CardEmulationManagerProto
+     *
+     * Note:
+     * See proto definition in frameworks/base/core/proto/android/nfc/card_emulation.proto
+     * When writing a nested message, must call {@link ProtoOutputStream#start(long)} before and
+     * {@link ProtoOutputStream#end(long)} after.
+     * Never reuse a proto field number. When removing a field, mark it as reserved.
+     */
+    public void dumpDebug(ProtoOutputStream proto) {
+        long token = proto.start(CardEmulationManagerProto.REGISTERED_SERVICES_CACHE);
+        mServiceCache.dumpDebug(proto);
+        proto.end(token);
+
+        token = proto.start(CardEmulationManagerProto.REGISTERED_NFC_F_SERVICES_CACHE);
+        mNfcFServicesCache.dumpDebug(proto);
+        proto.end(token);
+
+        token = proto.start(CardEmulationManagerProto.PREFERRED_SERVICES);
+        mPreferredServices.dumpDebug(proto);
+        proto.end(token);
+
+        token = proto.start(CardEmulationManagerProto.ENABLED_NFC_F_SERVICES);
+        mEnabledNfcFServices.dumpDebug(proto);
+        proto.end(token);
+
+        token = proto.start(CardEmulationManagerProto.AID_CACHE);
+        mAidCache.dumpDebug(proto);
+        proto.end(token);
+
+        token = proto.start(CardEmulationManagerProto.T3T_IDENTIFIERS_CACHE);
+        mT3tIdentifiersCache.dumpDebug(proto);
+        proto.end(token);
+
+        token = proto.start(CardEmulationManagerProto.HOST_EMULATION_MANAGER);
+        mHostEmulationManager.dumpDebug(proto);
+        proto.end(token);
+
+        token = proto.start(CardEmulationManagerProto.HOST_NFC_F_EMULATION_MANAGER);
+        mHostNfcFEmulationManager.dumpDebug(proto);
+        proto.end(token);
     }
 
     @Override
