@@ -2568,6 +2568,7 @@ public class NfcService implements DeviceHostListener {
                 if (SEPackages!= null && !SEPackages.isEmpty()) {
                     for (String packageName : SEPackages) {
                         intent.setPackage(packageName);
+                        intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
                         mContext.sendBroadcast(intent);
                     }
                 }
@@ -2583,6 +2584,7 @@ public class NfcService implements DeviceHostListener {
                                 (info.applicationInfo.privateFlags &
                                 ApplicationInfo.PRIVATE_FLAG_PRIVILEGED) != 0)) {
                             intent.setPackage(packageName);
+                            intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
                             mContext.sendBroadcast(intent);
                         }
                     } catch (Exception e) {
