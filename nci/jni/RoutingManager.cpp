@@ -735,8 +735,11 @@ void RoutingManager::nfaEeCallback(tNFA_EE_EVT event,
   static const char fn[] = "RoutingManager::nfaEeCallback";
 
   RoutingManager& routingManager = RoutingManager::getInstance();
-  if (eventData) routingManager.mCbEventData = *eventData;
-
+  if (!eventData) {
+    LOG(ERROR) << "eventData is null";
+    return;
+  }
+  routingManager.mCbEventData = *eventData;
   switch (event) {
     case NFA_EE_REGISTER_EVT: {
       SyncEventGuard guard(routingManager.mEeRegisterEvent);
