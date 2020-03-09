@@ -157,10 +157,13 @@ public class NfcService implements DeviceHostListener {
     static final int MSG_APPLY_SCREEN_STATE = 16;
     static final int MSG_TRANSACTION_EVENT = 17;
     static final int MSG_PREFERRED_PAYMENT_CHANGED = 18;
+    static final int MSG_TOAST_DEBOUNCE_EVENT = 19;
 
     // Update stats every 4 hours
     static final long STATS_UPDATE_INTERVAL_MS = 4 * 60 * 60 * 1000;
     static final long MAX_POLLING_PAUSE_TIMEOUT = 40000;
+
+    static final int MAX_TOAST_DEBOUNCE_TIME = 10000;
 
     static final int TASK_ENABLE = 1;
     static final int TASK_DISABLE = 2;
@@ -304,7 +307,8 @@ public class NfcService implements DeviceHostListener {
     private ForegroundUtils mForegroundUtils;
 
     private static NfcService sService;
-    private static Toast mToast;
+    private static boolean sToast_debounce = false;
+    private static int sToast_debounce_time_ms = 3000;
     public  static boolean sIsDtaMode = false;
 
     private IVrManager vrManager;
@@ -510,6 +514,12 @@ public class NfcService implements DeviceHostListener {
             mPrefs.getBoolean(PREF_SECURE_NFC_ON, SECURE_NFC_ON_DEFAULT) &&
             mIsSecureNfcCapable;
         mDeviceHost.setNfcSecure(mIsSecureNfcEnabled);
+
+        sToast_debounce_time_ms =
+                mContext.getResources().getInteger(R.integer.toast_debounce_time_ms);
+        if(sToast_debounce_time_ms > MAX_TOAST_DEBOUNCE_TIME) {
+            sToast_debounce_time_ms = MAX_TOAST_DEBOUNCE_TIME;
+        }
 
         // Make sure this is only called when object construction is complete.
         ServiceManager.addService(SERVICE_NAME, mNfcAdapter);
@@ -727,6 +737,8 @@ public class NfcService implements DeviceHostListener {
                 applyRouting(false);
 
             mDeviceHost.doSetScreenState(screen_state_mask);
+
+            sToast_debounce = false;
 
             /* Start polling loop */
 
@@ -2212,12 +2224,13 @@ public class NfcService implements DeviceHostListener {
                         if (!tag.reconnect()) {
                             tag.disconnect();
                             if (mScreenState == ScreenStateHelper.SCREEN_STATE_ON_UNLOCKED) {
-                                if (mToast != null) {
-                                    if (mToast.getView().isShown()) mToast.cancel();
+                                if (!sToast_debounce) {
+                                    Toast.makeText(mContext, R.string.tag_read_error,
+                                                   Toast.LENGTH_SHORT).show();
+                                    sToast_debounce = true;
+                                    mHandler.sendEmptyMessageDelayed(MSG_TOAST_DEBOUNCE_EVENT,
+                                                                     sToast_debounce_time_ms);
                                 }
-                                mToast = Toast.makeText(mContext, R.string.tag_read_error,
-                                                        Toast.LENGTH_SHORT);
-                                mToast.show();
                             }
                             break;
                         }
@@ -2375,6 +2388,10 @@ public class NfcService implements DeviceHostListener {
                     preferredPaymentChangedIntent.putExtra(
                             NfcAdapter.EXTRA_PREFERRED_PAYMENT_CHANGED_REASON, (int)msg.obj);
                     sendPreferredPaymentChangedEvent(preferredPaymentChangedIntent);
+                    break;
+
+                case MSG_TOAST_DEBOUNCE_EVENT:
+                    sToast_debounce = false;
                     break;
 
                 default:
@@ -2680,12 +2697,13 @@ public class NfcService implements DeviceHostListener {
                     unregisterObject(tagEndpoint.getHandle());
                     if (mScreenState == ScreenStateHelper.SCREEN_STATE_ON_UNLOCKED &&
                         mContext.getResources().getBoolean(R.bool.enable_notify_dispatch_failed)) {
-                        if (mToast != null) {
-                            if (mToast.getView().isShown()) mToast.cancel();
+                        if (!sToast_debounce) {
+                            Toast.makeText(mContext, R.string.tag_dispatch_failed,
+                                           Toast.LENGTH_SHORT).show();
+                            sToast_debounce = true;
+                            mHandler.sendEmptyMessageDelayed(MSG_TOAST_DEBOUNCE_EVENT,
+                                                             sToast_debounce_time_ms);
                         }
-                        mToast = Toast.makeText(mContext, R.string.tag_dispatch_failed,
-                                                Toast.LENGTH_SHORT);
-                        mToast.show();
                     }
                     playSound(SOUND_ERROR);
                 } else if (dispatchResult == NfcDispatcher.DISPATCH_SUCCESS) {
