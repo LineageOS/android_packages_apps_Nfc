@@ -61,7 +61,10 @@ static const uint16_t DEFAULT_SYS_CODE = 0xFEFE;
 
 static const uint8_t AID_ROUTE_QUAL_PREFIX = 0x10;
 
-RoutingManager::RoutingManager() : mAidRoutingConfigured(false) {
+RoutingManager::RoutingManager()
+    : mSecureNfcEnabled(false),
+      mNativeData(NULL),
+      mAidRoutingConfigured(false) {
   static const char fn[] = "RoutingManager::RoutingManager()";
 
   mDefaultOffHostRoute =
