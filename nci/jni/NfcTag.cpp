@@ -63,6 +63,7 @@ NfcTag::NfcTag()
   memset(mTechLibNfcTypes, 0, sizeof(mTechLibNfcTypes));
   memset(mTechParams, 0, sizeof(mTechParams));
   memset(mLastKovioUid, 0, NFC_KOVIO_MAX_LEN);
+  memset(&mLastKovioTime, 0, sizeof(timespec));
 }
 
 /*******************************************************************************
