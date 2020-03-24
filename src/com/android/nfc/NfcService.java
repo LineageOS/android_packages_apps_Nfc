@@ -132,6 +132,9 @@ public class NfcService implements DeviceHostListener {
     static final String PREF_FIRST_BEAM = "first_beam";
     static final String PREF_FIRST_BOOT = "first_boot";
 
+    static final String PREF_NFC_MESSAGE = "nfc_message";
+    static final boolean NFC_MESSAGE_DEFAULT = true;
+
     static final String TRON_NFC_CE = "nfc_ce";
     static final String TRON_NFC_P2P = "nfc_p2p";
     static final String TRON_NFC_TAG = "nfc_tag";
@@ -253,6 +256,11 @@ public class NfcService implements DeviceHostListener {
 
     private int mUserId;
     boolean mPollingPaused;
+
+    // Nfc notification message
+    boolean mNfcMessageEnabled;
+    private static int mDispatchFailedCounts;
+    private static int mDispatchFailedMax;
 
     static final int INVALID_NATIVE_HANDLE = -1;
     byte mDebounceTagUid[];
@@ -669,6 +677,21 @@ public class NfcService implements DeviceHostListener {
                         Log.d(TAG, "NFC is off.  Checking firmware version");
                         initialized = mDeviceHost.checkFirmware();
                     }
+
+                    mDispatchFailedCounts = 0;
+                    try {
+                        if (mContext.getResources().getBoolean(R.bool.enable_nfc_blocking_alert) &&
+                            mPrefs.getBoolean(PREF_NFC_MESSAGE, NFC_MESSAGE_DEFAULT)) {
+                            mNfcMessageEnabled = true;
+                            mDispatchFailedMax =
+                                mContext.getResources().getInteger(R.integer.nfc_blocking_count);
+                        } else  {
+                            mNfcMessageEnabled = false;
+                        }
+                    } catch (NotFoundException e) {
+                        mNfcMessageEnabled = false;
+                    }
+
                     if (initialized) {
                         SystemProperties.set("nfc.initialized", "true");
                     }
@@ -2718,7 +2741,20 @@ public class NfcService implements DeviceHostListener {
                         }
                         playSound(SOUND_ERROR);
                     }
+                    if (mNfcMessageEnabled && mDispatchFailedCounts++ > mDispatchFailedMax) {
+                        Intent dialogIntent = new Intent(mContext, NfcBlockedNotification.class);
+                        dialogIntent.setFlags(
+                            Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        mContext.startActivity(dialogIntent);
+                        mPrefsEditor.putBoolean(PREF_NFC_MESSAGE, false);
+                        mPrefsEditor.apply();
+                        mBackupManager.dataChanged();
+                        mNfcMessageEnabled = false;
+                        mDispatchFailedCounts = 0;
+                        if (DBG) Log.d(TAG, "Tag dispatch failed notification");
+                    }
                 } else if (dispatchResult == NfcDispatcher.DISPATCH_SUCCESS) {
+                    mDispatchFailedCounts = 0;
                     mVibrator.vibrate(mVibrationEffect);
                     playSound(SOUND_END);
                 }
