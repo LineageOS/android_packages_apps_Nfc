@@ -49,4 +49,8 @@
     <string name="action_confirm_url_open" msgid="3458322738812921189">"ଲିଙ୍କ ଖୋଲନ୍ତୁ"</string>
     <string name="tag_read_error" msgid="2485274498885877547">"NFC ରିଡ୍‌ କରିବା ବେଳେ ତ୍ରୁଟି। ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।"</string>
     <string name="tag_dispatch_failed" msgid="3562984995049738400">"ଏହି NFC ଟ୍ୟାଗ୍‌ ପାଇଁ କୌଣସି ସାମର୍ଥିତ ଆପ୍ଲିକେସନ୍‌ ନାହିଁ"</string>
+    <!-- no translation found for nfc_blocking_alert_title (1086172436984457085) -->
+    <skip />
+    <!-- no translation found for nfc_blocking_alert_message (7003156052570107490) -->
+    <skip />
 </resources>

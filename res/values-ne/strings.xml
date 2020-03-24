@@ -49,4 +49,8 @@
     <string name="action_confirm_url_open" msgid="3458322738812921189">"लिंक खोल्नुहोस्"</string>
     <string name="tag_read_error" msgid="2485274498885877547">"NFC पढ्ने क्रममा त्रुटि भयो। फेरि प्रयास गर्नुहोस्‌।"</string>
     <string name="tag_dispatch_failed" msgid="3562984995049738400">"यो NFC ट्यागको कुनै पनि समर्थित अनुप्रयोग छैन"</string>
+    <!-- no translation found for nfc_blocking_alert_title (1086172436984457085) -->
+    <skip />
+    <!-- no translation found for nfc_blocking_alert_message (7003156052570107490) -->
+    <skip />
 </resources>

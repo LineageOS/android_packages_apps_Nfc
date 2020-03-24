@@ -49,4 +49,8 @@
     <string name="action_confirm_url_open" msgid="3458322738812921189">"লিঙ্ক খুলুন"</string>
     <string name="tag_read_error" msgid="2485274498885877547">"NFC পড়তে সমস্যা হয়েছে। আবার চেষ্টা করুন।"</string>
     <string name="tag_dispatch_failed" msgid="3562984995049738400">"এই NFC ট্যাগ ব্যবহার করার মতো কোনও অ্যাপ্লিকেশন নেই"</string>
+    <!-- no translation found for nfc_blocking_alert_title (1086172436984457085) -->
+    <skip />
+    <!-- no translation found for nfc_blocking_alert_message (7003156052570107490) -->
+    <skip />
 </resources>

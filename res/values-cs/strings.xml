@@ -49,4 +49,8 @@
     <string name="action_confirm_url_open" msgid="3458322738812921189">"Otevřít odkaz"</string>
     <string name="tag_read_error" msgid="2485274498885877547">"Při čtení NFC došlo k chybě. Zkuste to znovu."</string>
     <string name="tag_dispatch_failed" msgid="3562984995049738400">"Pro tuto značku NFC není k dispozici žádná podporovaná aplikace"</string>
+    <!-- no translation found for nfc_blocking_alert_title (1086172436984457085) -->
+    <skip />
+    <!-- no translation found for nfc_blocking_alert_message (7003156052570107490) -->
+    <skip />
 </resources>

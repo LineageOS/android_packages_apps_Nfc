@@ -49,4 +49,8 @@
     <string name="action_confirm_url_open" msgid="3458322738812921189">"Obre l\'enllaç"</string>
     <string name="tag_read_error" msgid="2485274498885877547">"Hi ha hagut un error en llegir l\'etiqueta NFC. Torna-ho a provar."</string>
     <string name="tag_dispatch_failed" msgid="3562984995049738400">"No hi ha cap aplicació compatible amb aquesta etiqueta NFC"</string>
+    <!-- no translation found for nfc_blocking_alert_title (1086172436984457085) -->
+    <skip />
+    <!-- no translation found for nfc_blocking_alert_message (7003156052570107490) -->
+    <skip />
 </resources>
