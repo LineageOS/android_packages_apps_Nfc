@@ -49,8 +49,6 @@
     <string name="action_confirm_url_open" msgid="3458322738812921189">"लिंक को खोलें"</string>
     <string name="tag_read_error" msgid="2485274498885877547">"एनएफ़सी की जानकारी नहीं पता की जा सकी. कृपया फिर से कोशिश करें."</string>
     <string name="tag_dispatch_failed" msgid="3562984995049738400">"ऐसा कोई ऐप्लिकेशन मौजूद नहीं है, जिससे यह एनएफ़सी टैग इस्तेमाल किया जा सके"</string>
-    <!-- no translation found for nfc_blocking_alert_title (1086172436984457085) -->
-    <skip />
-    <!-- no translation found for nfc_blocking_alert_message (7003156052570107490) -->
-    <skip />
+    <string name="nfc_blocking_alert_title" msgid="1086172436984457085">"NFC को शायद ब्लॉक कर दिया गया है"</string>
+    <string name="nfc_blocking_alert_message" msgid="7003156052570107490">"इस समस्या को ठीक करने का तरीका जानने के लिए टैप करें."</string>
 </resources>
