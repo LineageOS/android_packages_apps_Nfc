@@ -49,8 +49,6 @@
     <string name="action_confirm_url_open" msgid="3458322738812921189">"लिंक उघडा"</string>
     <string name="tag_read_error" msgid="2485274498885877547">"NFC वाचण्यात एरर आली. पुन्हा प्रयत्न करा."</string>
     <string name="tag_dispatch_failed" msgid="3562984995049738400">"या NFC टॅग साठी कोणतेही सपोर्ट करणारे ॲप्लिकेशन नाही"</string>
-    <!-- no translation found for nfc_blocking_alert_title (1086172436984457085) -->
-    <skip />
-    <!-- no translation found for nfc_blocking_alert_message (7003156052570107490) -->
-    <skip />
+    <string name="nfc_blocking_alert_title" msgid="1086172436984457085">"NFC ला कदाचित ब्लॉक केले आहे"</string>
+    <string name="nfc_blocking_alert_message" msgid="7003156052570107490">"निराकरण कसे करायचे ते जाणून घेण्यासाठी टॅप करा."</string>
 </resources>
