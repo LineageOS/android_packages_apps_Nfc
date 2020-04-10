@@ -49,4 +49,6 @@
     <string name="action_confirm_url_open" msgid="3458322738812921189">"Buksan ang link"</string>
     <string name="tag_read_error" msgid="2485274498885877547">"Error sa pagbasa ng NFC. Subukang muli."</string>
     <string name="tag_dispatch_failed" msgid="3562984995049738400">"Walang sinusuportahang application para sa Tag ng NFC na ito"</string>
+    <string name="nfc_blocking_alert_title" msgid="1086172436984457085">"Posibleng naka-block ang NFC"</string>
+    <string name="nfc_blocking_alert_message" msgid="7003156052570107490">"I-tap para malaman kung paano ayusin."</string>
 </resources>

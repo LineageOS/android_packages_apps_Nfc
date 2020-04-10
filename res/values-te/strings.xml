@@ -49,4 +49,6 @@
     <string name="action_confirm_url_open" msgid="3458322738812921189">"లింక్‌ని తెరవండి"</string>
     <string name="tag_read_error" msgid="2485274498885877547">"NFC చదవడంలో ఎర్రర్. మళ్లీ ప్రయత్నించండి."</string>
     <string name="tag_dispatch_failed" msgid="3562984995049738400">"NFC ట్యాగ్‌కి మద్దతు ఇచ్చే అప్లికేషన్ ఏదీ లేదు"</string>
+    <string name="nfc_blocking_alert_title" msgid="1086172436984457085">"NFC బ్లాక్ చేయబడవచ్చు"</string>
+    <string name="nfc_blocking_alert_message" msgid="7003156052570107490">"ఎలా పరిష్కరించాలో తెలుసుకోవడానికి ట్యాప్ చేయండి."</string>
 </resources>

@@ -49,4 +49,6 @@
     <string name="action_confirm_url_open" msgid="3458322738812921189">"Havolani ochish"</string>
     <string name="tag_read_error" msgid="2485274498885877547">"NFC yorliqni o‘qishda xato. Qaytadan urining."</string>
     <string name="tag_dispatch_failed" msgid="3562984995049738400">"Mazkur NFC yorliq bilan ishlaydigan hech qanday ilova topilmadi"</string>
+    <string name="nfc_blocking_alert_title" msgid="1086172436984457085">"NFC bloklangan boʻlishi mumkin"</string>
+    <string name="nfc_blocking_alert_message" msgid="7003156052570107490">"Yechim tafsilotlari uchun bosing."</string>
 </resources>
