@@ -12,7 +12,7 @@
     <string name="beam_canceled" msgid="5425192751826544741">"बिम रद्द भयो"</string>
     <string name="cancel" msgid="61873902552555096">"रद्द गर्नुहोस्"</string>
     <string name="beam_tap_to_view" msgid="7430394753262448349">"हेर्नका लागि ट्याप गर्नुहोस्"</string>
-    <string name="beam_handover_not_supported" msgid="4083165921751489015">"प्राप्तकर्ताको उपकरणले बिम मार्फत ठूलो फाइल ट्रान्सफर गर्न समर्थन गर्दैन।"</string>
+    <string name="beam_handover_not_supported" msgid="4083165921751489015">"प्राप्तकर्ताको उपकरणले बिम मार्फत ठुलो फाइल ट्रान्सफर गर्न समर्थन गर्दैन।"</string>
     <string name="beam_try_again" msgid="3364677301009783455">"फेरि उपकरणहरू एकै साथ ल्याउनुहोस्"</string>
     <string name="beam_busy" msgid="5253335587620612576">"बीम अहिले व्यस्त छ। अघिल्लो स्थानान्तरण पूरा भएपछि फेरि प्रयास गर्नुहोस्।"</string>
     <string name="device" msgid="4459621591392478151">"यन्त्र"</string>
@@ -48,5 +48,7 @@
     <string name="summary_confirm_url_open" product="default" msgid="1246398412196449226">"तपाईंको फोनमा NFC मार्फत एउटा लिंक आयो:"</string>
     <string name="action_confirm_url_open" msgid="3458322738812921189">"लिंक खोल्नुहोस्"</string>
     <string name="tag_read_error" msgid="2485274498885877547">"NFC पढ्ने क्रममा त्रुटि भयो। फेरि प्रयास गर्नुहोस्‌।"</string>
-    <string name="tag_dispatch_failed" msgid="3562984995049738400">"यो NFC ट्यागको कुनै पनि समर्थित अनुप्रयोग छैन"</string>
+    <string name="tag_dispatch_failed" msgid="3562984995049738400">"यो NFC ट्यागको कुनै पनि समर्थित एप छैन"</string>
+    <string name="nfc_blocking_alert_title" msgid="1086172436984457085">"NFC माथि रोक लगाइएको हुन सक्छ"</string>
+    <string name="nfc_blocking_alert_message" msgid="7003156052570107490">"NFC माथि लगाइएको रोक हटाउने तरिका जान्न ट्याप गर्नुहोस्।"</string>
 </resources>
