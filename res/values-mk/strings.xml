@@ -49,4 +49,6 @@
     <string name="action_confirm_url_open" msgid="3458322738812921189">"Отвори ја врската"</string>
     <string name="tag_read_error" msgid="2485274498885877547">"Грешка при читањето на NFC. Обидете се повторно."</string>
     <string name="tag_dispatch_failed" msgid="3562984995049738400">"Нема поддржана апликација за оваа ознака за NFC"</string>
+    <string name="nfc_blocking_alert_title" msgid="1086172436984457085">"NFC можеби е блокирана"</string>
+    <string name="nfc_blocking_alert_message" msgid="7003156052570107490">"Допрете за да дознаете како да ја поправите."</string>
 </resources>
