@@ -2333,6 +2333,18 @@ static void com_android_nfc_NfcManager_doDump(JNIEnv*, jobject, jobject)
 {
 }
 
+static jint com_android_nfc_NfcManager_getIsoDepMaxTransceiveLength(JNIEnv*, jobject) {
+    unsigned long maxLength;
+
+    /* Check if extended APDU is supported by the chip.
+     * If not, default value is returned.
+     * The maximum length of a default IsoDep frame consists of:
+     * CLA, INS, P1, P2, LC, LE + 255 payload bytes = 261 bytes
+     */
+    maxLength = property_get_bool("nfc.isodep_extended_length_supported", false) ? 65279 : 261;
+    return maxLength;
+}
+
 static jint com_android_nfc_NfcManager_doGetNciVersion(JNIEnv*, jobject)
 {
     return 0x10; /* NCI_VERSION_1_0 */
@@ -2418,6 +2430,9 @@ static JNINativeMethod gMethods[] =
 
    {"doDump", "(Ljava/io/FileDescriptor;)V",
       (void *)com_android_nfc_NfcManager_doDump},
+
+   {"getIsoDepMaxTransceiveLength", "()I",
+      (void*)com_android_nfc_NfcManager_getIsoDepMaxTransceiveLength},
 
    {"getNciVersion","()I",
       (void *)com_android_nfc_NfcManager_doGetNciVersion},
