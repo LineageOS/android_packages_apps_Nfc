@@ -49,4 +49,6 @@
     <string name="action_confirm_url_open" msgid="3458322738812921189">"ਲਿੰਕ ਖੋਲ੍ਹੋ"</string>
     <string name="tag_read_error" msgid="2485274498885877547">"NFC ਪੜ੍ਹਨ ਵਿੱਚ ਗੜਬੜ ਹੋਈ। ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।"</string>
     <string name="tag_dispatch_failed" msgid="3562984995049738400">"ਇਸ NFC ਟੈਗ ਲਈ ਕੋਈ ਸਮਰਥਿਤ ਐਪਲੀਕੇਸ਼ਨ ਨਹੀਂ ਹੈ"</string>
+    <string name="nfc_blocking_alert_title" msgid="1086172436984457085">"NFC ਨੂੰ ਸ਼ਾਇਦ ਬਲਾਕ ਕੀਤਾ ਗਿਆ ਹੈ"</string>
+    <string name="nfc_blocking_alert_message" msgid="7003156052570107490">"ਇਸ ਨੂੰ ਠੀਕ ਕਰਨ ਦਾ ਤਰੀਕਾ ਜਾਣਨ ਲਈ ਟੈਪ ਕਰੋ।"</string>
 </resources>

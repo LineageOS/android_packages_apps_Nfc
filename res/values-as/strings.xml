@@ -49,4 +49,6 @@
     <string name="action_confirm_url_open" msgid="3458322738812921189">"লিংক খোলক"</string>
     <string name="tag_read_error" msgid="2485274498885877547">"NFC পঢ়া আসোঁৱাহ। আকৌ চেষ্টা কৰক।"</string>
     <string name="tag_dispatch_failed" msgid="3562984995049738400">"এই NFC টেগৰ বাবে কোনো সমৰ্থিত এপ্লিকেশ্বন নাই"</string>
+    <string name="nfc_blocking_alert_title" msgid="1086172436984457085">"NFC অৱৰোধ কৰি ৰখা হ\'ব পাৰে"</string>
+    <string name="nfc_blocking_alert_message" msgid="7003156052570107490">"কেনেকৈ সমাধান কৰিব লাগে সেয়া জানিবলৈ টিপক।"</string>
 </resources>

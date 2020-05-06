@@ -49,4 +49,6 @@
     <string name="action_confirm_url_open" msgid="3458322738812921189">"လင့်ခ်ဖွင့်ရန်"</string>
     <string name="tag_read_error" msgid="2485274498885877547">"NFC ဖတ်ရှုမှု အမှားရှိနေသည်။ ထပ်စမ်းကြည့်ပါ။"</string>
     <string name="tag_dispatch_failed" msgid="3562984995049738400">"ဤ \'NFC တဂ်\' အတွက် ပံ့ပိုးထားသော အပလီကေးရှင်း မရှိပါ"</string>
+    <string name="nfc_blocking_alert_title" msgid="1086172436984457085">"NFC ကို ပိတ်ထားနိုင်သည်"</string>
+    <string name="nfc_blocking_alert_message" msgid="7003156052570107490">"ပြုပြင်နည်းကို လေ့လာရန် တို့ပါ။"</string>
 </resources>

@@ -49,4 +49,6 @@
     <string name="action_confirm_url_open" msgid="3458322738812921189">"Ava link"</string>
     <string name="tag_read_error" msgid="2485274498885877547">"NFC-kiibi lugemise viga. Proovige uuesti."</string>
     <string name="tag_dispatch_failed" msgid="3562984995049738400">"Selle NFC-kiibi puhul toetatud rakendus puudub"</string>
+    <string name="nfc_blocking_alert_title" msgid="1086172436984457085">"NFC võib olla blokeeritud"</string>
+    <string name="nfc_blocking_alert_message" msgid="7003156052570107490">"Puudutage, et hankida parandamise kohta lisateavet."</string>
 </resources>
