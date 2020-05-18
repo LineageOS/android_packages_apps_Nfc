@@ -3063,7 +3063,7 @@ public class NfcService implements DeviceHostListener {
         proto.end(token);
 
         // Dump native crash logs if any
-        File file = new File(mContext.getFilesDir(), NATIVE_LOG_FILE_NAME);
+        File file = new File(getNfaStorageDir(), NATIVE_LOG_FILE_NAME);
         if (!file.exists()) {
             return;
         }
