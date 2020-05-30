@@ -35,7 +35,7 @@
     <string name="complete_with" msgid="6797459104103012992">"ಇದರ ಮೂಲಕ ಪೂರ್ಣಗೊಳಿಸಿ"</string>
     <string name="default_pay_app_removed" msgid="4108250545457437360">"ನಿಮ್ಮ ಮೆಚ್ಚಿನ ಟ್ಯಾಪ್ &amp; ಪಾವತಿ ಸೇವೆಯನ್ನು ತೆಗೆದುಹಾಕಲಾಗಿದೆ. ಬೇರೊಂದು ಸೇವೆಯನ್ನು ಆರಿಸುವುದೇ?"</string>
     <string name="ask_nfc_tap" msgid="2925239870458286340">"ಪೂರ್ಣಗೊಳಿಸಲು ಇನ್ನೊಂದು ಸಾಧನವನ್ನು ಟ್ಯಾಪ್ ಮಾಡಿ"</string>
-    <string name="wifi_connect" msgid="6250727951843550671">"ಸಂಪರ್ಕಪಡಿಸು"</string>
+    <string name="wifi_connect" msgid="6250727951843550671">"ಕನೆಕ್ಟ್ ಮಾಡಿ"</string>
     <string name="status_unable_to_connect" msgid="9183908200295307657">"ನೆಟ್‌ವರ್ಕ್‌ಗೆ ಸಂಪರ್ಕಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ"</string>
     <string name="status_wifi_connected" msgid="5893022897732105739">"ಸಂಪರ್ಕಗೊಂಡಿದೆ"</string>
     <string name="title_connect_to_network" msgid="2474034615817280146">"ನೆಟ್‌ವರ್ಕ್‌ಗೆ ಸಂಪರ್ಕಿಸಿ"</string>
