@@ -49,6 +49,6 @@
     <string name="action_confirm_url_open" msgid="3458322738812921189">"ಲಿಂಕ್ ತೆರೆಯಿರಿ"</string>
     <string name="tag_read_error" msgid="2485274498885877547">"NFC ಓದುವಾಗ ದೋಷ ಕಂಡು ಬಂದಿದೆ. ಪುನಃ ಪ್ರಯತ್ನಿಸಿ."</string>
     <string name="tag_dispatch_failed" msgid="3562984995049738400">"ಈ NFC ಟ್ಯಾಗ್‌ಗೆ ಯಾವುದೇ ಆ್ಯಪ್‌ ಬೆಂಬಲಿಸುವುದಿಲ್ಲ"</string>
-    <string name="nfc_blocking_alert_title" msgid="1086172436984457085">"NFC ಅನ್ನು ನಿರ್ಬಂಧಿಸಬಹುದು"</string>
+    <string name="nfc_blocking_alert_title" msgid="1086172436984457085">"NFC ಅನ್ನು ನಿರ್ಬಂಧಿಸಿರಬಹುದು"</string>
     <string name="nfc_blocking_alert_message" msgid="7003156052570107490">"ಹೇಗೆ ಸರಿಪಡಿಸುವುದು ಎಂಬುದನ್ನು ತಿಳಿಯಲು ಟ್ಯಾಪ್ ಮಾಡಿ."</string>
 </resources>
