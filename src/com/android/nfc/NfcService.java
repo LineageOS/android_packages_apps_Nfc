@@ -139,6 +139,7 @@ public class NfcService implements DeviceHostListener {
     static final String TRON_NFC_TAG = "nfc_tag";
 
     static final String NATIVE_LOG_FILE_NAME = "native_crash_logs";
+    static final String NATIVE_LOG_FILE_PATH = "/data/misc/nfc/logs";
     static final int NATIVE_CRASH_FILE_SIZE = 1024 * 1024;
 
     static final int MSG_NDEF_TAG = 0;
@@ -3031,7 +3032,7 @@ public class NfcService implements DeviceHostListener {
 
     private void copyNativeCrashLogsIfAny(PrintWriter pw) {
       try {
-          File file = new File(getNfaStorageDir(), NATIVE_LOG_FILE_NAME);
+          File file = new File(NATIVE_LOG_FILE_PATH, NATIVE_LOG_FILE_NAME);
           if (!file.exists()) {
             return;
           }
@@ -3050,7 +3051,7 @@ public class NfcService implements DeviceHostListener {
 
     private void storeNativeCrashLogs() {
       try {
-          File file = new File(getNfaStorageDir(), NATIVE_LOG_FILE_NAME);
+          File file = new File(NATIVE_LOG_FILE_PATH, NATIVE_LOG_FILE_NAME);
           if (file.length() >= NATIVE_CRASH_FILE_SIZE) {
               file.createNewFile();
           }
@@ -3150,7 +3151,7 @@ public class NfcService implements DeviceHostListener {
         proto.end(token);
 
         // Dump native crash logs if any
-        File file = new File(getNfaStorageDir(), NATIVE_LOG_FILE_NAME);
+        File file = new File(NATIVE_LOG_FILE_PATH, NATIVE_LOG_FILE_NAME);
         if (!file.exists()) {
             return;
         }
