@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="tap_to_beam">Thoir gnogag gus a thilgeil</string>
     <string name="beam_tap_to_view">Thoir gnogag gus a shealltainn</string>
     <string name="device">uidheam</string>
 </resources>
