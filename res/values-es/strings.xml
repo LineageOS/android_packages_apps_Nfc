@@ -47,8 +47,8 @@
     <string name="summary_confirm_url_open" product="tablet" msgid="3353502750736192055">"Has recibido un enlace en tu tablet por NFC:"</string>
     <string name="summary_confirm_url_open" product="default" msgid="1246398412196449226">"Has recibido un enlace en tu teléfono por NFC:"</string>
     <string name="action_confirm_url_open" msgid="3458322738812921189">"Abrir enlace"</string>
-    <string name="tag_read_error" msgid="2485274498885877547">"Se ha producido un error de lectura de NFC. Inténtalo de nuevo."</string>
+    <string name="tag_read_error" msgid="2485274498885877547">"Error de lectura de NFC. Inténtalo de nuevo."</string>
     <string name="tag_dispatch_failed" msgid="3562984995049738400">"No hay ninguna aplicación compatible con esta etiqueta NFC"</string>
     <string name="nfc_blocking_alert_title" msgid="1086172436984457085">"Es posible que el NFC esté bloqueado"</string>
-    <string name="nfc_blocking_alert_message" msgid="7003156052570107490">"Toca para obtener más información sobre cómo solucionarlo."</string>
+    <string name="nfc_blocking_alert_message" msgid="7003156052570107490">"Toca para saber cómo solucionarlo."</string>
 </resources>
