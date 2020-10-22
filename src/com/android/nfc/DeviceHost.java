@@ -260,4 +260,9 @@ public interface DeviceHost {
     public boolean setNfcSecure(boolean enable);
 
     public String getNfaStorageDir();
+
+    /**
+    * Start or stop RF polling
+    */
+    void startStopPolling(boolean enable);
 }
