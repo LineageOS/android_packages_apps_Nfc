@@ -421,6 +421,12 @@ public class NfcService implements DeviceHostListener {
         new ApplyRoutingTask().execute();
     }
 
+    @Override
+    public void onHwErrorReported() {
+        new EnableDisableTask().execute(TASK_DISABLE);
+        new EnableDisableTask().execute(TASK_ENABLE);
+    }
+
     final class ReaderModeParams {
         public int flags;
         public IAppCallback callback;
