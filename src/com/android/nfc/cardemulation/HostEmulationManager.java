@@ -479,6 +479,7 @@ public class HostEmulationManager {
             synchronized (mLock) {
                 Log.d(TAG, "Service unbound");
                 mService = null;
+                mServiceName = null;
                 mServiceBound = false;
             }
         }
