@@ -4,6 +4,7 @@ android_app {
     srcs: [
         "src/**/*.java",
         "nxp/**/*.java",
+        ":statslog-Nfc-java-gen",
     ],
     platform_apis: true,
     certificate: "platform",

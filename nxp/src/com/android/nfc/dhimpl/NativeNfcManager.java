@@ -365,6 +365,11 @@ public class NativeNfcManager implements DeviceHost {
         return 0;
     }
 
+    @Override
+    public String getNfaStorageDir() {
+        return mContext.getFilesDir().getAbsolutePath();
+    }
+
     private native void doSetP2pInitiatorModes(int modes);
     @Override
     public void setP2pInitiatorModes(int modes) {
