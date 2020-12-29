@@ -22,6 +22,30 @@
       "revId": "c5998399bd3e834088e980bf80b3341cbfe942be",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "67ebf683_d35de9fe",
+        "filename": "nxp/src/com/android/nfc/dhimpl/NativeNfcManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 366,
+      "author": {
+        "id": 13589
+      },
+      "writtenOn": "2020-12-29T11:33:49Z",
+      "side": 1,
+      "message": "Will do.",
+      "parentUuid": "3d1c3ea9_731011bd",
+      "range": {
+        "startLine": 362,
+        "startChar": 0,
+        "endLine": 366,
+        "endChar": 0
+      },
+      "revId": "c5998399bd3e834088e980bf80b3341cbfe942be",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71",
+      "unresolved": false
     }
   ]
 }
