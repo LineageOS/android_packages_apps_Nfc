@@ -453,4 +453,8 @@ public class NativeNfcManager implements DeviceHost {
     private void notifyEeUpdated() {
         mListener.onEeUpdated();
     }
+
+    private void notifyHwErrorReported() {
+        mListener.onHwErrorReported();
+    }
 }
