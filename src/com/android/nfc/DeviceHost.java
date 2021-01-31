@@ -51,6 +51,8 @@ public interface DeviceHost {
         public void onNfcTransactionEvent(byte[] aid, byte[] data, String seName);
 
         public void onEeUpdated();
+
+        public void onHwErrorReported();
     }
 
     public interface TagEndpoint {
