@@ -299,12 +299,17 @@ void RoutingManager::disableRoutingToHost() {
 }
 
 bool RoutingManager::addAidRouting(const uint8_t* aid, uint8_t aidLen,
-                                   int route, int aidInfo) {
+                                   int route, int aidInfo, int power) {
   static const char fn[] = "RoutingManager::addAidRouting";
   DLOG_IF(INFO, nfc_debug_enabled) << fn << ": enter";
   uint8_t powerState = 0x01;
   if (!mSecureNfcEnabled) {
-    powerState = (route != 0x00) ? mOffHostAidRoutingPowerState : 0x11;
+    if (power == 0x00) {
+      powerState = (route != 0x00) ? mOffHostAidRoutingPowerState : 0x11;
+    } else {
+      powerState =
+          (route != 0x00) ? mOffHostAidRoutingPowerState & power : power;
+    }
   }
   SyncEventGuard guard(mRoutingEvent);
   mAidRoutingConfigured = false;
