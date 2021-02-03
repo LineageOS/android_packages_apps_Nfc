@@ -944,7 +944,7 @@ static jboolean nfcManager_sendRawFrame(JNIEnv* e, jobject, jbyteArray data) {
 **
 *******************************************************************************/
 static jboolean nfcManager_routeAid(JNIEnv* e, jobject, jbyteArray aid,
-                                    jint route, jint aidInfo) {
+                                    jint route, jint aidInfo, jint power) {
   uint8_t* buf;
   size_t bufLen;
 
@@ -952,13 +952,13 @@ static jboolean nfcManager_routeAid(JNIEnv* e, jobject, jbyteArray aid,
     buf = NULL;
     bufLen = 0;
     return RoutingManager::getInstance().addAidRouting(buf, bufLen, route,
-                                                       aidInfo);
+                                                       aidInfo, power);
   }
   ScopedByteArrayRO bytes(e, aid);
   buf = const_cast<uint8_t*>(reinterpret_cast<const uint8_t*>(&bytes[0]));
   bufLen = bytes.size();
   return RoutingManager::getInstance().addAidRouting(buf, bufLen, route,
-                                                     aidInfo);
+                                                     aidInfo, power);
 }
 
 /*******************************************************************************
@@ -2071,7 +2071,7 @@ static JNINativeMethod gMethods[] = {
 
     {"sendRawFrame", "([B)Z", (void*)nfcManager_sendRawFrame},
 
-    {"routeAid", "([BII)Z", (void*)nfcManager_routeAid},
+    {"routeAid", "([BIII)Z", (void*)nfcManager_routeAid},
 
     {"unrouteAid", "([B)Z", (void*)nfcManager_unrouteAid},
 

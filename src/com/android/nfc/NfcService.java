@@ -167,6 +167,8 @@ public class NfcService implements DeviceHostListener {
     static final int MSG_DELAY_POLLING = 20;
     static final int MSG_ALWAYS_ON_STATE_CHANGED = 21;
 
+    static final String MSG_ROUTE_AID_PARAM_TAG = "power";
+
     // Negative value for NO polling delay
     static final int NO_POLL_DELAY = -1;
 
@@ -2313,12 +2315,17 @@ public class NfcService implements DeviceHostListener {
         sendMessage(MSG_MOCK_NDEF, msg);
     }
 
-    public void routeAids(String aid, int route, int aidInfo) {
+    public void routeAids(String aid, int route, int aidInfo, int power) {
         Message msg = mHandler.obtainMessage();
         msg.what = MSG_ROUTE_AID;
         msg.arg1 = route;
         msg.obj = aid;
         msg.arg2 = aidInfo;
+
+        Bundle aidPowerState = new Bundle();
+        aidPowerState.putInt(MSG_ROUTE_AID_PARAM_TAG, power);
+        msg.setData(aidPowerState);
+
         mHandler.sendMessage(msg);
     }
 
@@ -2392,7 +2399,14 @@ public class NfcService implements DeviceHostListener {
                     int route = msg.arg1;
                     int aidInfo = msg.arg2;
                     String aid = (String) msg.obj;
-                    mDeviceHost.routeAid(hexStringToBytes(aid), route, aidInfo);
+
+                    int power = 0x00;
+                    Bundle bundle = msg.getData();
+                    if (bundle != null) {
+                        power = bundle.getInt(MSG_ROUTE_AID_PARAM_TAG);
+                    }
+
+                    mDeviceHost.routeAid(hexStringToBytes(aid), route, aidInfo, power);
                     // Restart polling config
                     break;
                 }
