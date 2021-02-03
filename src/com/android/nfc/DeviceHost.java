@@ -190,7 +190,7 @@ public interface DeviceHost {
 
     public boolean sendRawFrame(byte[] data);
 
-    public boolean routeAid(byte[] aid, int route, int aidInfo);
+    public boolean routeAid(byte[] aid, int route, int aidInfo, int power);
 
     public boolean unrouteAid(byte[] aid);
 
