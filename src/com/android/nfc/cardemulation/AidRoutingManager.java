@@ -346,6 +346,12 @@ public class AidRoutingManager {
                           entry.isOnHost = true;
                           default_route_power_state = RegisteredAidCache.POWER_STATE_SWITCH_ON
                                   | RegisteredAidCache.POWER_STATE_SCREEN_ON_LOCKED;
+                          Set<String> aidsForDefaultRoute = mAidRoutingTable.get(mDefaultRoute);
+                          if (aidsForDefaultRoute != null) {
+                              for (String aid : aidsForDefaultRoute) {
+                                  default_route_power_state |= aidMap.get(aid).power;
+                              }
+                          }
                       } else {
                           entry.isOnHost = false;
                           default_route_power_state = RegisteredAidCache.POWER_STATE_ALL;
@@ -369,9 +375,11 @@ public class AidRoutingManager {
                   }
 
                   Set<String> aidsForDefaultRoute = mAidRoutingTable.get(mDefaultRoute);
-                  for (String aid : aidsForDefaultRoute) {
-                      if (aidMap.get(aid).power != default_route_power_state) {
-                          aidRoutingTableCache.put(aid, aidMap.get(aid));
+                  if (aidsForDefaultRoute != null) {
+                      for (String aid : aidsForDefaultRoute) {
+                          if (aidMap.get(aid).power != default_route_power_state) {
+                              aidRoutingTableCache.put(aid, aidMap.get(aid));
+                          }
                       }
                   }
               }
