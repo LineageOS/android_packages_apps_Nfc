@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name">Serviciu NFC</string>
+    <string name="nfcUserLabel">Nfc</string>
+    <string name="accessibility_nfc_enabled">NFC habilitada.</string>
+    <string name="tap_to_beam">Calca pa unviar</string>
+    <string name="beam_progress">Tresferencia entrante...</string>
+    <string name="beam_outgoing">Compartiendo...</string>
+    <string name="beam_complete">Tresferencia completada</string>
+    <string name="beam_failed">Nun se completó la tresferencia</string>
+    <string name="beam_canceled">Tresferencia encaboxada</string>
+    <string name="cancel">Encaboxar</string>
+    <string name="beam_tap_to_view">Calca pa ver</string>
+    <string name="beam_handover_not_supported">El preséu del receptor nun almite la tresferencia de ficheros grandes.</string>
+    <string name="beam_try_again">Vuelvi a xuntar los preseos</string>
+    <string name="beam_busy">Beam ta agora ocupáu. Inténtalo otra vuelta cuando tea fecha dafechu la tresferencia anterior.</string>
+    <string name="device">preséu</string>
+    <string name="connecting_peripheral">Coneutando <xliff:g id="device_name">%1$s</xliff:g></string>
+    <string name="connected_peripheral">Coneutáu <xliff:g id="device_name">%1$s</xliff:g></string>
+    <string name="connect_peripheral_failed">Nun pudo afitase conexón con <xliff:g id="device_name">%1$s</xliff:g></string>
+    <string name="disconnecting_peripheral">Desconeutando <xliff:g id="device_name">%1$s</xliff:g></string>
+    <string name="disconnected_peripheral">Desconeutáu <xliff:g id="device_name">%1$s</xliff:g></string>
+    <string name="pairing_peripheral">Empareyando <xliff:g id="device_name">%1$s</xliff:g></string>
+    <string name="pairing_peripheral_failed">Nun pudo empareyase con <xliff:g id="device_name">%1$s</xliff:g></string>
+    <string name="failed_to_enable_bt">Nun pudo activase Bluetooth</string>
+    <string name="confirm_pairing">Daveres que quies empareyar el preséu Bluetooth <xliff:g id="device_name">%1$s</xliff:g>?</string>
+    <string name="pair_yes">Sí</string>
+    <string name="pair_no">Non</string>
+    <string name="tap_again_to_pay">Volvi tocar pa pagar con <xliff:g id="app">%1$s</xliff:g></string>
+    <string name="tap_again_to_complete">Volvi tocar pa completar con <xliff:g id="app">%1$s</xliff:g></string>
+    <string name="transaction_failure">Nun pudo completase la tresaición con <xliff:g id="app">%1$s</xliff:g>.</string>
+    <string name="could_not_use_app">Nun pudo usase <xliff:g id="app">%1$s</xliff:g>.</string>
+    <string name="pay_with">Pagar con</string>
+    <string name="complete_with">Completar con</string>
+    <string name="default_pay_app_removed">Desanicióse\'l to serviciu preferíu pa la función Tocar &amp; Pagar. Esbillar otru?\"</string>
+    <string name="ask_nfc_tap">Toca otru preséu pa completar</string>
+    <string name="wifi_connect">Coneutar</string>
+    <string name="status_unable_to_connect">Nun pue coneutase a la rede</string>
+    <string name="status_wifi_connected">Coneutada</string>
+    <string name="title_connect_to_network">Afitar conexón con rede</string>
+    <string name="prompt_connect_to_network">Coneutar a la rede <xliff:g id="network_ssid">%1$s</xliff:g>?</string>
+    <string name="beam_requires_nfc_enabled">Android Beam rique que\'l NFC tea habilitáu. ¿Quies habilitalu?</string>
+    <string name="android_beam">Android Beam</string>
+</resources>
