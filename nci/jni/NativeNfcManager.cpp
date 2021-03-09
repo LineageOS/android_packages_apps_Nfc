@@ -86,6 +86,7 @@ SyncEvent gDeactivatedEvent;
 SyncEvent sNfaSetPowerSubState;
 bool legacy_mfc_reader = true;
 int recovery_option = 0;
+int nfcee_power_and_link_conf = 0;
 
 namespace android {
 jmethodID gCachedNfcManagerNotifyNdefMessageListeners;
@@ -205,6 +206,15 @@ void initializeRecoveryOption() {
 
   DLOG_IF(INFO, nfc_debug_enabled)
       << __func__ << ": recovery option=" << recovery_option;
+}
+
+void initializeNfceePowerAndLinkConf() {
+  nfcee_power_and_link_conf =
+      NfcConfig::getUnsigned(NAME_ALWAYS_ON_SET_EE_POWER_AND_LINK_CONF, 0);
+
+  DLOG_IF(INFO, nfc_debug_enabled)
+      << __func__ << ": Always on set NFCEE_POWER_AND_LINK_CONF="
+      << nfcee_power_and_link_conf;
 }
 
 }  // namespace
@@ -670,6 +680,7 @@ static jboolean nfcManager_initNativeStruc(JNIEnv* e, jobject o) {
   initializeGlobalDebugEnabledFlag();
   initializeMfcReaderOption();
   initializeRecoveryOption();
+  initializeNfceePowerAndLinkConf();
   DLOG_IF(INFO, nfc_debug_enabled) << StringPrintf("%s: enter", __func__);
 
   nfc_jni_native_data* nat =
@@ -2055,6 +2066,17 @@ static jstring nfcManager_doGetNfaStorageDir(JNIEnv* e, jobject o) {
   string nfaStorageDir = NfcConfig::getString(NAME_NFA_STORAGE, "/data/nfc");
   return e->NewStringUTF(nfaStorageDir.c_str());
 }
+
+static void nfcManager_doSetNfceePowerAndLinkCtrl(JNIEnv* e, jobject o,
+                                                  jboolean enable) {
+  RoutingManager& routingManager = RoutingManager::getInstance();
+  if (enable) {
+    routingManager.eeSetPwrAndLinkCtrl((uint8_t)nfcee_power_and_link_conf);
+  } else {
+    routingManager.eeSetPwrAndLinkCtrl(0);
+  }
+}
+
 /*****************************************************************************
 **
 ** JNI functions for android-4.0.1_r1
@@ -2147,6 +2169,9 @@ static JNINativeMethod gMethods[] = {
 
     {"getNfaStorageDir", "()Ljava/lang/String;",
      (void*)nfcManager_doGetNfaStorageDir},
+
+    {"doSetNfceePowerAndLinkCtrl", "(Z)V",
+     (void*)nfcManager_doSetNfceePowerAndLinkCtrl},
 };
 
 /*******************************************************************************

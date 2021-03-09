@@ -398,6 +398,12 @@ public class NativeNfcManager implements DeviceHost {
         doStartStopPolling(start);
     }
 
+    private native void doSetNfceePowerAndLinkCtrl(boolean enable);
+    @Override
+    public void setNfceePowerAndLinkCtrl(boolean enable) {
+        doSetNfceePowerAndLinkCtrl(enable);
+    }
+
     /**
      * Notifies Ndef Message (TODO: rename into notifyTargetDiscovered)
      */
