@@ -46,6 +46,7 @@ class RoutingManager {
   int registerJniFunctions(JNIEnv* e);
   bool setNfcSecure(bool enable);
   void updateRoutingTable();
+  void eeSetPwrAndLinkCtrl(uint8_t config);
 
  private:
   RoutingManager();
@@ -121,4 +122,5 @@ class RoutingManager {
   SyncEvent mEeUpdateEvent;
   SyncEvent mEeInfoEvent;
   SyncEvent mEeSetModeEvent;
+  SyncEvent mEePwrAndLinkCtrlEvent;
 };
