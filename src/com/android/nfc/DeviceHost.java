@@ -267,4 +267,9 @@ public interface DeviceHost {
     * Start or stop RF polling
     */
     void startStopPolling(boolean enable);
+
+    /**
+    * Set NFCC power state by sending NFCEE_POWER_AND_LINK_CNTRL_CMD
+    */
+    void setNfceePowerAndLinkCtrl(boolean enable);
 }
