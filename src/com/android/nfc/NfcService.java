@@ -1591,8 +1591,8 @@ public class NfcService implements DeviceHostListener {
         }
 
         @Override
-        public boolean setAlwaysOn(boolean value) throws RemoteException {
-            NfcPermissions.enforceAdminPermissions(mContext);
+        public boolean setControllerAlwaysOn(boolean value) throws RemoteException {
+            NfcPermissions.enforceSetControllerAlwaysOnPermissions(mContext);
             if (!mIsAlwaysOnSupported) {
                 return false;
             }
@@ -1605,14 +1605,14 @@ public class NfcService implements DeviceHostListener {
         }
 
         @Override
-        public boolean isAlwaysOnEnabled() throws RemoteException {
-            NfcPermissions.enforceAdminPermissions(mContext);
+        public boolean isControllerAlwaysOn() throws RemoteException {
+            NfcPermissions.enforceSetControllerAlwaysOnPermissions(mContext);
             return mIsAlwaysOnSupported && mAlwaysOnState == NfcAdapter.STATE_ON;
         }
 
         @Override
-        public boolean isAlwaysOnSupported() throws RemoteException {
-            NfcPermissions.enforceAdminPermissions(mContext);
+        public boolean isControllerAlwaysOnSupported() throws RemoteException {
+            NfcPermissions.enforceSetControllerAlwaysOnPermissions(mContext);
             return mIsAlwaysOnSupported;
         }
     }
