@@ -664,6 +664,7 @@ public class NativeNfcTag implements TagEndpoint {
                 Bundle extras = new Bundle();
                 switch (mTechList[i]) {
                     case TagTechnology.NFC_A: {
+                    case TagTechnology.MIFARE_CLASSIC: {
                         byte[] actBytes = mTechActBytes[i];
                         if ((actBytes != null) && (actBytes.length > 0)) {
                             extras.putShort(NfcA.EXTRA_SAK, (short) (actBytes[0] & (short) 0xFF));
