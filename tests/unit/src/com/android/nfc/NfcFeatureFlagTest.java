@@ -76,10 +76,10 @@ public final class NfcFeatureFlagTest {
     }
 
     @Test
-    public void testIsAlwaysOnSupported() {
+    public void testIsControllerAlwaysOnSupported() {
         if (!mNfcSupported) return;
         assertThat(mContext.getResources()
                 .getBoolean(R.bool.nfcc_always_on_allowed))
-                .isEqualTo(mNfcAdapter.isAlwaysOnSupported());
+                .isEqualTo(mNfcAdapter.isControllerAlwaysOnSupported());
     }
 }
