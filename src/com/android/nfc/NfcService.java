@@ -46,6 +46,7 @@ import android.nfc.IAppCallback;
 import android.nfc.INfcAdapter;
 import android.nfc.INfcAdapterExtras;
 import android.nfc.INfcCardEmulation;
+import android.nfc.INfcControllerAlwaysOnStateCallback;
 import android.nfc.INfcDta;
 import android.nfc.INfcFCardEmulation;
 import android.nfc.INfcTag;
@@ -106,11 +107,14 @@ import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -165,7 +169,6 @@ public class NfcService implements DeviceHostListener {
     static final int MSG_PREFERRED_PAYMENT_CHANGED = 18;
     static final int MSG_TOAST_DEBOUNCE_EVENT = 19;
     static final int MSG_DELAY_POLLING = 20;
-    static final int MSG_ALWAYS_ON_STATE_CHANGED = 21;
 
     static final String MSG_ROUTE_AID_PARAM_TAG = "power";
 
@@ -349,6 +352,8 @@ public class NfcService implements DeviceHostListener {
     boolean mIsVrModeEnabled;
 
     private final boolean mIsAlwaysOnSupported;
+    private final Set<INfcControllerAlwaysOnStateCallback> mAlwaysOnStateCallbacks =
+            Collections.synchronizedSet(new HashSet<>());
 
     public static NfcService getInstance() {
         return sService;
@@ -997,7 +1002,20 @@ public class NfcService implements DeviceHostListener {
                     return;
                 }
                 mAlwaysOnState = newState;
-                sendMessage(NfcService.MSG_ALWAYS_ON_STATE_CHANGED, mAlwaysOnState);
+                if (mAlwaysOnState == NfcAdapter.STATE_OFF
+                        || mAlwaysOnState == NfcAdapter.STATE_ON) {
+                    synchronized (mAlwaysOnStateCallbacks) {
+                        for (INfcControllerAlwaysOnStateCallback callback
+                                : mAlwaysOnStateCallbacks) {
+                            try {
+                                callback.onControllerAlwaysOnStateChanged(
+                                        mAlwaysOnState == NfcAdapter.STATE_ON);
+                            } catch (RemoteException e) {
+                                Log.e(TAG, "error in updateAlwaysOnState");
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -1614,6 +1632,24 @@ public class NfcService implements DeviceHostListener {
         public boolean isControllerAlwaysOnSupported() throws RemoteException {
             NfcPermissions.enforceSetControllerAlwaysOnPermissions(mContext);
             return mIsAlwaysOnSupported;
+        }
+
+        @Override
+        public void registerControllerAlwaysOnStateCallback(
+                INfcControllerAlwaysOnStateCallback callback) throws RemoteException {
+            NfcPermissions.enforceSetControllerAlwaysOnPermissions(mContext);
+            if (!mIsAlwaysOnSupported) return;
+
+            mAlwaysOnStateCallbacks.add(callback);
+        }
+
+        @Override
+        public void unregisterControllerAlwaysOnStateCallback(
+                INfcControllerAlwaysOnStateCallback callback) throws RemoteException {
+            NfcPermissions.enforceSetControllerAlwaysOnPermissions(mContext);
+            if (!mIsAlwaysOnSupported) return;
+
+            mAlwaysOnStateCallbacks.remove(callback);
         }
     }
 
@@ -2738,15 +2774,6 @@ public class NfcService implements DeviceHostListener {
                     }
                     if (DBG) Log.d(TAG, "Polling is started");
                     break;
-                case MSG_ALWAYS_ON_STATE_CHANGED:
-                    int mSendState = (Integer) msg.obj;
-                    Intent intent = new Intent(NfcAdapter.ACTION_ALWAYS_ON_STATE_CHANGED);
-                    intent.setFlags(Intent.FLAG_RECEIVER_REGISTERED_ONLY_BEFORE_BOOT);
-                    intent.putExtra(NfcAdapter.EXTRA_ADAPTER_STATE, mSendState);
-                    sendNfcEeAccessProtectedBroadcast(intent);
-                    Log.d(TAG, "MSG_ALWAYS_ON_STATE_CHANGED " + mSendState);
-                    break;
-
                 default:
                     Log.e(TAG, "Unknown message received");
                     break;
