@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.nfc.NfcAdapter;
+import android.nfc.NfcAdapter.ControllerAlwaysOnStateCallback;
 import android.util.Log;
 
 import androidx.test.InstrumentationRegistry;
@@ -34,6 +35,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.concurrent.Executor;
+
 @RunWith(AndroidJUnit4.class)
 public final class NfcStateTest {
 
@@ -43,7 +46,15 @@ public final class NfcStateTest {
     private NfcAdapter mNfcAdapter;
     private BroadcastReceiver mAdapterStateChangedReceiver;
     private int mState;
+    private boolean mIsAlwaysOnEnabled;
     private boolean mNfcSupported;
+    private ControllerAlwaysOnStateCallback mListener;
+
+    class SynchronousExecutor implements Executor {
+        public void execute(Runnable r) {
+            r.run();
+        }
+    }
 
     @Before
     public void setUp() {
@@ -64,11 +75,19 @@ public final class NfcStateTest {
         } else {
             mState = NfcAdapter.STATE_OFF;
         }
+        if (mNfcAdapter.isControllerAlwaysOnSupported()) {
+            mListener = new AlwaysOnStateListener();
+            mNfcAdapter.registerControllerAlwaysOnStateCallback(new SynchronousExecutor(),
+                    mListener);
+        }
     }
 
     @After
     public void tearDown() throws Exception {
         mContext.unregisterReceiver(mAdapterStateChangedReceiver);
+        if (mNfcAdapter.isControllerAlwaysOnSupported()) {
+            mNfcAdapter.unregisterControllerAlwaysOnStateCallback(mListener);
+        }
     }
 
     @Test
@@ -307,6 +326,13 @@ public final class NfcStateTest {
             }
         }
     }
+    private class AlwaysOnStateListener implements ControllerAlwaysOnStateCallback {
+        @Override
+        public void onStateChanged(boolean isEnabled) {
+            Log.i(TAG, "onStateChanged, mIsAlwaysOnEnabled = " + isEnabled);
+            mIsAlwaysOnEnabled = isEnabled;
+        }
+    }
     private void wait_for_state(int targetState) {
         int duration = 100;
         for (int i = 0; i < MAX_TIMEOUT_MS / duration; i++) {
@@ -318,7 +344,7 @@ public final class NfcStateTest {
         int duration = 1000;
         for (int i = 0; i < MAX_TIMEOUT_MS / duration; i++) {
             msleep(duration);
-            if (isEnabled == mNfcAdapter.isControllerAlwaysOn()) break;
+            if (isEnabled == mIsAlwaysOnEnabled) break;
         }
     }
 
