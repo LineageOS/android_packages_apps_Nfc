@@ -863,7 +863,7 @@ jboolean nativeNfcTag_doDisconnect(JNIEnv*, jobject) {
   NfcTag::getInstance().resetAllTransceiveTimeouts();
 
   if (NfcTag::getInstance().getActivationState() != NfcTag::Active) {
-    LOG(ERROR) << StringPrintf("%s: tag already deactivated", __func__);
+    LOG(WARNING) << StringPrintf("%s: tag already deactivated", __func__);
     goto TheEnd;
   }
 
