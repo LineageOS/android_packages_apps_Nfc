@@ -862,6 +862,24 @@ void nfaDeviceManagementCallback(uint8_t dmEvent,
                           android::gCachedNfcManagerNotifyHwErrorReported);
         {
           DLOG_IF(INFO, nfc_debug_enabled) << StringPrintf(
+              "%s: aborting  sNfaEnableDisablePollingEvent", __func__);
+          SyncEventGuard guard(sNfaEnableDisablePollingEvent);
+          sNfaEnableDisablePollingEvent.notifyOne();
+        }
+        {
+          DLOG_IF(INFO, nfc_debug_enabled)
+              << StringPrintf("%s: aborting  sNfaEnableEvent", __func__);
+          SyncEventGuard guard(sNfaEnableEvent);
+          sNfaEnableEvent.notifyOne();
+        }
+        {
+          DLOG_IF(INFO, nfc_debug_enabled)
+              << StringPrintf("%s: aborting  sNfaDisableEvent", __func__);
+          SyncEventGuard guard(sNfaDisableEvent);
+          sNfaDisableEvent.notifyOne();
+        }
+        {
+          DLOG_IF(INFO, nfc_debug_enabled) << StringPrintf(
               "%s: aborting  sNfaSetPowerSubState", __func__);
           SyncEventGuard guard(sNfaSetPowerSubState);
           sNfaSetPowerSubState.notifyOne();
@@ -872,7 +890,12 @@ void nfaDeviceManagementCallback(uint8_t dmEvent,
           SyncEventGuard guard(sNfaSetConfigEvent);
           sNfaSetConfigEvent.notifyOne();
         }
-
+        {
+          DLOG_IF(INFO, nfc_debug_enabled) << StringPrintf(
+              "%s: aborting  sNfaGetConfigEvent", __func__);
+          SyncEventGuard guard(sNfaGetConfigEvent);
+          sNfaGetConfigEvent.notifyOne();
+        }
       } else {
         nativeNfcTag_abortWaits();
         NfcTag::getInstance().abort();
