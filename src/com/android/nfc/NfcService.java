@@ -46,7 +46,7 @@ import android.nfc.IAppCallback;
 import android.nfc.INfcAdapter;
 import android.nfc.INfcAdapterExtras;
 import android.nfc.INfcCardEmulation;
-import android.nfc.INfcControllerAlwaysOnStateCallback;
+import android.nfc.INfcControllerAlwaysOnListener;
 import android.nfc.INfcDta;
 import android.nfc.INfcFCardEmulation;
 import android.nfc.INfcTag;
@@ -352,7 +352,7 @@ public class NfcService implements DeviceHostListener {
     boolean mIsVrModeEnabled;
 
     private final boolean mIsAlwaysOnSupported;
-    private final Set<INfcControllerAlwaysOnStateCallback> mAlwaysOnStateCallbacks =
+    private final Set<INfcControllerAlwaysOnListener> mAlwaysOnListeners =
             Collections.synchronizedSet(new HashSet<>());
 
     public static NfcService getInstance() {
@@ -1004,11 +1004,11 @@ public class NfcService implements DeviceHostListener {
                 mAlwaysOnState = newState;
                 if (mAlwaysOnState == NfcAdapter.STATE_OFF
                         || mAlwaysOnState == NfcAdapter.STATE_ON) {
-                    synchronized (mAlwaysOnStateCallbacks) {
-                        for (INfcControllerAlwaysOnStateCallback callback
-                                : mAlwaysOnStateCallbacks) {
+                    synchronized (mAlwaysOnListeners) {
+                        for (INfcControllerAlwaysOnListener listener
+                                : mAlwaysOnListeners) {
                             try {
-                                callback.onControllerAlwaysOnStateChanged(
+                                listener.onControllerAlwaysOnChanged(
                                         mAlwaysOnState == NfcAdapter.STATE_ON);
                             } catch (RemoteException e) {
                                 Log.e(TAG, "error in updateAlwaysOnState");
@@ -1635,21 +1635,21 @@ public class NfcService implements DeviceHostListener {
         }
 
         @Override
-        public void registerControllerAlwaysOnStateCallback(
-                INfcControllerAlwaysOnStateCallback callback) throws RemoteException {
+        public void registerControllerAlwaysOnListener(
+                INfcControllerAlwaysOnListener listener) throws RemoteException {
             NfcPermissions.enforceSetControllerAlwaysOnPermissions(mContext);
             if (!mIsAlwaysOnSupported) return;
 
-            mAlwaysOnStateCallbacks.add(callback);
+            mAlwaysOnListeners.add(listener);
         }
 
         @Override
-        public void unregisterControllerAlwaysOnStateCallback(
-                INfcControllerAlwaysOnStateCallback callback) throws RemoteException {
+        public void unregisterControllerAlwaysOnListener(
+                INfcControllerAlwaysOnListener listener) throws RemoteException {
             NfcPermissions.enforceSetControllerAlwaysOnPermissions(mContext);
             if (!mIsAlwaysOnSupported) return;
 
-            mAlwaysOnStateCallbacks.remove(callback);
+            mAlwaysOnListeners.remove(listener);
         }
     }
 
