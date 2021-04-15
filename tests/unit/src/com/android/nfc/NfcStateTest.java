@@ -23,7 +23,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.nfc.NfcAdapter;
-import android.nfc.NfcAdapter.ControllerAlwaysOnStateCallback;
+import android.nfc.NfcAdapter.ControllerAlwaysOnListener;
 import android.util.Log;
 
 import androidx.test.InstrumentationRegistry;
@@ -48,7 +48,7 @@ public final class NfcStateTest {
     private int mState;
     private boolean mIsAlwaysOnEnabled;
     private boolean mNfcSupported;
-    private ControllerAlwaysOnStateCallback mListener;
+    private ControllerAlwaysOnListener mListener;
 
     class SynchronousExecutor implements Executor {
         public void execute(Runnable r) {
@@ -77,8 +77,9 @@ public final class NfcStateTest {
         }
         if (mNfcAdapter.isControllerAlwaysOnSupported()) {
             mListener = new AlwaysOnStateListener();
-            mNfcAdapter.registerControllerAlwaysOnStateCallback(new SynchronousExecutor(),
+            mNfcAdapter.registerControllerAlwaysOnListener(new SynchronousExecutor(),
                     mListener);
+            mIsAlwaysOnEnabled = mNfcAdapter.isControllerAlwaysOn();
         }
     }
 
@@ -86,7 +87,7 @@ public final class NfcStateTest {
     public void tearDown() throws Exception {
         mContext.unregisterReceiver(mAdapterStateChangedReceiver);
         if (mNfcAdapter.isControllerAlwaysOnSupported()) {
-            mNfcAdapter.unregisterControllerAlwaysOnStateCallback(mListener);
+            mNfcAdapter.unregisterControllerAlwaysOnListener(mListener);
         }
     }
 
@@ -326,10 +327,10 @@ public final class NfcStateTest {
             }
         }
     }
-    private class AlwaysOnStateListener implements ControllerAlwaysOnStateCallback {
+    private class AlwaysOnStateListener implements ControllerAlwaysOnListener {
         @Override
-        public void onStateChanged(boolean isEnabled) {
-            Log.i(TAG, "onStateChanged, mIsAlwaysOnEnabled = " + isEnabled);
+        public void onControllerAlwaysOnChanged(boolean isEnabled) {
+            Log.i(TAG, "onControllerAlwaysOnChanged, mIsAlwaysOnEnabled = " + isEnabled);
             mIsAlwaysOnEnabled = isEnabled;
         }
     }
