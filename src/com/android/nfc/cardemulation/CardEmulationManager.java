@@ -534,6 +534,13 @@ public class CardEmulationManager implements RegisteredServicesCache.Callback,
             NfcPermissions.enforcePreferredPaymentInfoPermissions(mContext);
             return mServiceCache.getService(userId, mAidCache.getPreferredService());
         }
+
+        @Override
+        public boolean isDefaultPaymentRegistered() throws RemoteException {
+            String defaultComponent = Settings.Secure.getString(mContext.getContentResolver(),
+                    Settings.Secure.NFC_PAYMENT_DEFAULT_COMPONENT);
+            return defaultComponent != null ? true : false;
+        }
     }
 
     /**
