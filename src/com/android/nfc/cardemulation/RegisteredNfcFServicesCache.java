@@ -33,6 +33,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.nfc.cardemulation.NfcFServiceInfo;
 import android.nfc.cardemulation.NfcFCardEmulation;
 import android.nfc.cardemulation.HostNfcFService;
+import android.os.SystemProperties;
 import android.os.UserHandle;
 import android.util.AtomicFile;
 import android.util.Log;
@@ -61,7 +62,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class RegisteredNfcFServicesCache {
     static final String XML_INDENT_OUTPUT_FEATURE = "http://xmlpull.org/v1/doc/features.html#indent-output";
     static final String TAG = "RegisteredNfcFServicesCache";
-    static final boolean DBG = false;
+    static final boolean DBG = SystemProperties.getBoolean("persist.nfc.debug_enabled", false);
 
     final Context mContext;
     final AtomicReference<BroadcastReceiver> mReceiver;

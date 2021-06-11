@@ -27,6 +27,7 @@ import android.nfc.FormatException;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.os.ParcelUuid;
+import android.os.SystemProperties;
 import android.os.UserHandle;
 import android.util.Log;
 import java.nio.BufferUnderflowException;
@@ -43,7 +44,8 @@ import java.util.Random;
  */
 public class HandoverDataParser {
     private static final String TAG = "NfcHandover";
-    private static final boolean DBG = false;
+    private static final boolean DBG =
+            SystemProperties.getBoolean("persist.nfc.debug_enabled", false);
 
     private static final byte[] TYPE_BT_OOB = "application/vnd.bluetooth.ep.oob"
             .getBytes(StandardCharsets.US_ASCII);
