@@ -31,6 +31,7 @@ import android.nfc.cardemulation.ApduServiceInfo;
 import android.nfc.cardemulation.CardEmulation;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemProperties;
 import android.os.UserHandle;
 import android.provider.Settings;
 import android.provider.Settings.SettingNotFoundException;
@@ -55,7 +56,7 @@ import android.util.proto.ProtoOutputStream;
  */
 public class PreferredServices implements com.android.nfc.ForegroundUtils.Callback {
     static final String TAG = "PreferredCardEmulationServices";
-    static final boolean DBG = false;
+    static final boolean DBG = SystemProperties.getBoolean("persist.nfc.debug_enabled", false);
     static final Uri paymentDefaultUri = Settings.Secure.getUriFor(
             Settings.Secure.NFC_PAYMENT_DEFAULT_COMPONENT);
     static final Uri paymentForegroundUri = Settings.Secure.getUriFor(

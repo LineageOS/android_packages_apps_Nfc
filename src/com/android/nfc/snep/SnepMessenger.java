@@ -22,6 +22,7 @@ import com.android.nfc.sneptest.DtaSnepClient;
 import com.android.nfc.sneptest.ExtDtaSnepServer;
 
 import android.nfc.FormatException;
+import android.os.SystemProperties;
 import android.util.Log;
 
 import java.io.ByteArrayInputStream;
@@ -32,7 +33,8 @@ import java.util.Arrays;
 
 public class SnepMessenger {
     private static final String TAG = "SnepMessager";
-    private static final boolean DBG = false;
+    private static final boolean DBG =
+            SystemProperties.getBoolean("persist.nfc.debug_enabled", false);
     private static final int HEADER_LENGTH = 6;
     final LlcpSocket mSocket;
     final int mFragmentLength;

@@ -20,6 +20,7 @@ import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.nfc.cardemulation.NfcFServiceInfo;
+import android.os.SystemProperties;
 import android.util.Log;
 import android.util.proto.ProtoOutputStream;
 
@@ -34,7 +35,7 @@ import java.util.HashMap;
 public class RegisteredT3tIdentifiersCache {
     static final String TAG = "RegisteredT3tIdentifiersCache";
 
-    static final boolean DBG = false;
+    static final boolean DBG = SystemProperties.getBoolean("persist.nfc.debug_enabled", false);
 
     // All NFC-F services that have registered
     List<NfcFServiceInfo> mServices = new ArrayList<NfcFServiceInfo>();
