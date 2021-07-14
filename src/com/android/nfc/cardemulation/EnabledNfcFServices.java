@@ -26,12 +26,13 @@ import android.content.Context;
 import android.nfc.cardemulation.NfcFServiceInfo;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemProperties;
 import android.util.Log;
 import android.util.proto.ProtoOutputStream;
 
 public class EnabledNfcFServices implements com.android.nfc.ForegroundUtils.Callback {
     static final String TAG = "EnabledNfcFCardEmulationServices";
-    static final boolean DBG = false;
+    static final boolean DBG = SystemProperties.getBoolean("persist.nfc.debug_enabled", false);
 
     final Context mContext;
     final RegisteredNfcFServicesCache mNfcFServiceCache;
