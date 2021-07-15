@@ -36,6 +36,7 @@ import android.os.RemoteException;
 import android.os.UserHandle;
 import android.os.PowerManager;
 import android.os.SystemClock;
+import android.os.SystemProperties;
 import android.provider.Settings;
 import android.util.Log;
 import android.util.proto.ProtoOutputStream;
@@ -64,7 +65,7 @@ public class CardEmulationManager implements RegisteredServicesCache.Callback,
         RegisteredNfcFServicesCache.Callback, PreferredServices.Callback,
         EnabledNfcFServices.Callback {
     static final String TAG = "CardEmulationManager";
-    static final boolean DBG = false;
+    static final boolean DBG = SystemProperties.getBoolean("persist.nfc.debug_enabled", false);
 
     static final int NFC_HCE_APDU = 0x01;
     static final int NFC_HCE_NFCF = 0x04;

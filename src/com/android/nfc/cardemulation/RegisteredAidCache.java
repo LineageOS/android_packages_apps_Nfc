@@ -21,6 +21,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.nfc.cardemulation.ApduServiceInfo;
 import android.nfc.cardemulation.CardEmulation;
+import android.os.SystemProperties;
 import android.util.Log;
 import android.util.proto.ProtoOutputStream;
 
@@ -42,7 +43,7 @@ import java.util.TreeMap;
 public class RegisteredAidCache {
     static final String TAG = "RegisteredAidCache";
 
-    static final boolean DBG = false;
+    static final boolean DBG = SystemProperties.getBoolean("persist.nfc.debug_enabled", false);
 
     static final int AID_ROUTE_QUAL_SUBSET = 0x20;
     static final int AID_ROUTE_QUAL_PREFIX = 0x10;
