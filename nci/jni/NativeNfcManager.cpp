@@ -1587,6 +1587,7 @@ static jboolean nfcManager_doDeinitialize(JNIEnv*, jobject) {
   sPollingEnabled = false;
   sIsDisabling = false;
   sP2pEnabled = false;
+  sReaderModeEnabled = false;
   gActivated = false;
   sLfT3tMax = 0;
 
