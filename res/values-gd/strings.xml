@@ -41,4 +41,13 @@
     <string name="prompt_connect_to_network">An ceangail thu ri lìonra <xliff:g id="network_ssid">%1$s</xliff:g>?</string>
     <string name="beam_requires_nfc_enabled">Chan obraich Android Beam mus cuir thu NFC an comas. A bheil thu airson a chur an comas?</string>
     <string name="android_beam">Android Beam</string>
+    <string name="beam_requires_external_storage_permission">Chan eil cead dhan stòras air an taobh a-muigh aig an aplacaid. Tha feum air seo mus cuir thu Beam dhen fhaidhle seo dha</string>
+    <string name="title_confirm_url_open">Am fosgail thu an ceangal?</string>
+    <string name="summary_confirm_url_open" product="tablet">Fuair an tablaid agad ceangal o NFC:</string>
+    <string name="summary_confirm_url_open" product="default">Fuair am fòn agad ceangal o NFC:</string>
+    <string name="action_confirm_url_open">Fosgail ceangal</string>
+    <string name="tag_read_error">Mearachd leughaidh NFC. Feuch ris a-rithist.</string>
+    <string name="tag_dispatch_failed">Chan eil aplacaid ann a chuireas taic ris an taga NFC seo</string>
+    <string name="nfc_blocking_alert_title">Dh’fhaoidte gu bheil NFC ’ga bhacadh</string>
+    <string name="nfc_blocking_alert_message">Thoir gnogag airson fiosrachaidh air mar a chàraicheas tu seo.</string>
 </resources>
