@@ -1583,6 +1583,7 @@ static jboolean nfcManager_doDeinitialize(JNIEnv*, jobject) {
   sAbortConnlessWait = true;
   nativeLlcpConnectionlessSocket_abortWait();
   sIsNfaEnabled = false;
+  sRoutingInitialized = false;
   sDiscoveryEnabled = false;
   sPollingEnabled = false;
   sIsDisabling = false;
@@ -2109,18 +2110,28 @@ static void nfcManager_doStartStopPolling(JNIEnv* e, jobject o,
   startStopPolling(start);
 }
 
+/*******************************************************************************
+**
+** Function:        nfcManager_doSetNfcSecure
+**
+** Description:     Set NfcSecure enable/disable.
+**                  e: JVM environment.
+**                  o: Java object.
+**                  enable: Sets true/false to enable/disable NfcSecure
+**                  It only updates the routing table cache without commit to
+**                  NFCC.
+**
+** Returns:         True always
+**
+*******************************************************************************/
 static jboolean nfcManager_doSetNfcSecure(JNIEnv* e, jobject o,
                                           jboolean enable) {
   RoutingManager& routingManager = RoutingManager::getInstance();
   routingManager.setNfcSecure(enable);
-  bool rfEnabled = sRfEnabled;
   if (sRoutingInitialized) {
     routingManager.disableRoutingToHost();
-    if (rfEnabled) startRfDiscovery(false);
     routingManager.updateRoutingTable();
     routingManager.enableRoutingToHost();
-    routingManager.commitRouting();
-    if (rfEnabled) startRfDiscovery(true);
   }
   return true;
 }
