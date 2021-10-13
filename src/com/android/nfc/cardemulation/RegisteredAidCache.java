@@ -22,16 +22,20 @@ import android.content.Context;
 import android.nfc.cardemulation.ApduServiceInfo;
 import android.nfc.cardemulation.CardEmulation;
 import android.os.SystemProperties;
+import android.os.UserHandle;
+import android.os.UserManager;
 import android.util.Log;
 import android.util.proto.ProtoOutputStream;
 
 import com.android.nfc.NfcService;
+
 import com.google.android.collect.Maps;
-import java.util.Collections;
+
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -61,6 +65,8 @@ public class RegisteredAidCache {
                                                      | POWER_STATE_SWITCH_OFF
                                                      | POWER_STATE_BATTERY_OFF;
 
+    final Map<Integer, List<ApduServiceInfo>> mUserApduServiceInfo =
+            new HashMap<Integer, List<ApduServiceInfo>>();
     // mAidServices maps AIDs to services that have registered them.
     // It's a TreeMap in order to be able to quickly select subsets
     // of AIDs that conflict with each other.
@@ -409,71 +415,98 @@ public class RegisteredAidCache {
         }
     }
 
+    void generateUserApduServiceInfoLocked(int userId, List<ApduServiceInfo> services) {
+        mUserApduServiceInfo.put(userId, services);
+    }
+
+    private int getProfileParentId(int userId) {
+        UserManager um = mContext.createContextAsUser(
+                UserHandle.of(userId), /*flags=*/0)
+                .getSystemService(UserManager.class);
+        UserHandle uh = um.getProfileParent(UserHandle.of(userId));
+        return uh == null ? userId : uh.getIdentifier();
+    }
+
     void generateServiceMapLocked(List<ApduServiceInfo> services) {
         // Easiest is to just build the entire tree again
         mAidServices.clear();
-        for (ApduServiceInfo service : services) {
-            if (DBG) Log.d(TAG, "generateServiceMap component: " + service.getComponent());
-            List<String> prefixAids = service.getPrefixAids();
-            List<String> subSetAids = service.getSubsetAids();
+        int currentUser = ActivityManager.getCurrentUser();
+        UserManager um = mContext.createContextAsUser(
+                UserHandle.of(currentUser), /*flags=*/0)
+                .getSystemService(UserManager.class);
 
-            for (String aid : service.getAids()) {
-                if (!CardEmulation.isValidAid(aid)) {
-                    Log.e(TAG, "Aid " + aid + " is not valid.");
-                    continue;
-                }
-                if (aid.endsWith("*") && !supportsAidPrefixRegistration()) {
-                    Log.e(TAG, "Prefix AID " + aid + " ignored on device that doesn't support it.");
-                    continue;
-                } else if (supportsAidPrefixRegistration() && prefixAids.size() > 0 && isExact(aid)) {
-                    // Check if we already have an overlapping prefix registered for this AID
-                    boolean foundPrefix = false;
-                    for (String prefixAid : prefixAids) {
-                        String prefix = prefixAid.substring(0, prefixAid.length() - 1);
-                        if (aid.startsWith(prefix)) {
-                            Log.e(TAG, "Ignoring exact AID " + aid + " because prefix AID " + prefixAid +
-                                    " is already registered");
-                            foundPrefix = true;
-                            break;
-                        }
-                    }
-                    if (foundPrefix) {
+        for (Map.Entry<Integer, List<ApduServiceInfo>> entry :
+                mUserApduServiceInfo.entrySet()) {
+            if (currentUser != getProfileParentId(entry.getKey())) {
+                continue;
+            }
+            for (ApduServiceInfo service : entry.getValue()) {
+                if (DBG) Log.d(TAG, "generateServiceMap component: " + service.getComponent());
+                List<String> prefixAids = service.getPrefixAids();
+                List<String> subSetAids = service.getSubsetAids();
+
+                for (String aid : service.getAids()) {
+                    if (!CardEmulation.isValidAid(aid)) {
+                        Log.e(TAG, "Aid " + aid + " is not valid.");
                         continue;
                     }
-                } else if (aid.endsWith("#") && !supportsAidSubsetRegistration()) {
-                    Log.e(TAG, "Subset AID " + aid + " ignored on device that doesn't support it.");
-                    continue;
-                } else if (supportsAidSubsetRegistration() && subSetAids.size() > 0 && isExact(aid)) {
-                    // Check if we already have an overlapping subset registered for this AID
-                    boolean foundSubset = false;
-                    for (String subsetAid : subSetAids) {
-                        String plainSubset = subsetAid.substring(0, subsetAid.length() - 1);
-                        if (plainSubset.startsWith(aid)) {
-                            Log.e(TAG, "Ignoring exact AID " + aid + " because subset AID " + plainSubset +
-                                    " is already registered");
-                            foundSubset = true;
-                            break;
+                    if (aid.endsWith("*") && !supportsAidPrefixRegistration()) {
+                        Log.e(TAG, "Prefix AID " + aid
+                                + " ignored on device that doesn't support it.");
+                        continue;
+                    } else if (supportsAidPrefixRegistration() && prefixAids.size() > 0
+                            && isExact(aid)) {
+                        // Check if we already have an overlapping prefix registered for this AID
+                        boolean foundPrefix = false;
+                        for (String prefixAid : prefixAids) {
+                            String prefix = prefixAid.substring(0, prefixAid.length() - 1);
+                            if (aid.startsWith(prefix)) {
+                                Log.e(TAG, "Ignoring exact AID " + aid + " because prefix AID "
+                                        + prefixAid + " is already registered");
+                                foundPrefix = true;
+                                break;
+                            }
+                        }
+                        if (foundPrefix) {
+                            continue;
+                        }
+                    } else if (aid.endsWith("#") && !supportsAidSubsetRegistration()) {
+                        Log.e(TAG, "Subset AID " + aid
+                                + " ignored on device that doesn't support it.");
+                        continue;
+                    } else if (supportsAidSubsetRegistration() && subSetAids.size() > 0
+                            && isExact(aid)) {
+                        // Check if we already have an overlapping subset registered for this AID
+                        boolean foundSubset = false;
+                        for (String subsetAid : subSetAids) {
+                            String plainSubset = subsetAid.substring(0, subsetAid.length() - 1);
+                            if (plainSubset.startsWith(aid)) {
+                                Log.e(TAG, "Ignoring exact AID " + aid + " because subset AID "
+                                        + plainSubset + " is already registered");
+                                foundSubset = true;
+                                break;
+                            }
+                        }
+                        if (foundSubset) {
+                            continue;
                         }
                     }
-                    if (foundSubset) {
-                        continue;
+
+                    ServiceAidInfo serviceAidInfo = new ServiceAidInfo();
+                    serviceAidInfo.aid = aid.toUpperCase();
+                    serviceAidInfo.service = service;
+                    serviceAidInfo.category = service.getCategoryForAid(aid);
+
+                    if (mAidServices.containsKey(serviceAidInfo.aid)) {
+                        final ArrayList<ServiceAidInfo> serviceAidInfos =
+                                mAidServices.get(serviceAidInfo.aid);
+                        serviceAidInfos.add(serviceAidInfo);
+                    } else {
+                        final ArrayList<ServiceAidInfo> serviceAidInfos =
+                                new ArrayList<ServiceAidInfo>();
+                        serviceAidInfos.add(serviceAidInfo);
+                        mAidServices.put(serviceAidInfo.aid, serviceAidInfos);
                     }
-                }
-
-                ServiceAidInfo serviceAidInfo = new ServiceAidInfo();
-                serviceAidInfo.aid = aid.toUpperCase();
-                serviceAidInfo.service = service;
-                serviceAidInfo.category = service.getCategoryForAid(aid);
-
-                if (mAidServices.containsKey(serviceAidInfo.aid)) {
-                    final ArrayList<ServiceAidInfo> serviceAidInfos =
-                            mAidServices.get(serviceAidInfo.aid);
-                    serviceAidInfos.add(serviceAidInfo);
-                } else {
-                    final ArrayList<ServiceAidInfo> serviceAidInfos =
-                            new ArrayList<ServiceAidInfo>();
-                    serviceAidInfos.add(serviceAidInfo);
-                    mAidServices.put(serviceAidInfo.aid, serviceAidInfos);
                 }
             }
         }
@@ -935,13 +968,10 @@ public class RegisteredAidCache {
     public void onServicesUpdated(int userId, List<ApduServiceInfo> services) {
         if (DBG) Log.d(TAG, "onServicesUpdated");
         synchronized (mLock) {
-            if (ActivityManager.getCurrentUser() == userId) {
-                // Rebuild our internal data-structures
-                generateServiceMapLocked(services);
-                generateAidCacheLocked();
-            } else {
-                if (DBG) Log.d(TAG, "Ignoring update because it's not for the current user.");
-            }
+            generateUserApduServiceInfoLocked(userId, services);
+            // Rebuild our internal data-structures
+            generateServiceMapLocked(services);
+            generateAidCacheLocked();
         }
     }
 
