@@ -42,6 +42,7 @@ import android.util.proto.ProtoOutputStream;
 
 import com.android.internal.annotations.GuardedBy;
 import com.android.internal.util.FastXmlSerializer;
+
 import com.google.android.collect.Maps;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -122,6 +123,14 @@ public class RegisteredServicesCache {
         return services;
     }
 
+    private int getProfileParentId(int userId) {
+        UserManager um = mContext.createContextAsUser(
+                UserHandle.of(userId), /*flags=*/0)
+                .getSystemService(UserManager.class);
+        UserHandle uh = um.getProfileParent(UserHandle.of(userId));
+        return uh == null ? userId : uh.getIdentifier();
+    }
+
     public RegisteredServicesCache(Context context, Callback callback) {
         mContext = context;
         mCallback = callback;
@@ -140,7 +149,7 @@ public class RegisteredServicesCache {
                              Intent.ACTION_PACKAGE_REMOVED.equals(action));
                     if (!replaced) {
                         int currentUser = ActivityManager.getCurrentUser();
-                        if (currentUser == UserHandle.getUserId(uid)) {
+                        if (currentUser == getProfileParentId(UserHandle.getUserId(uid))) {
                             invalidateCache(UserHandle.getUserId(uid));
                         } else {
                             // Cache will automatically be updated on user switch
