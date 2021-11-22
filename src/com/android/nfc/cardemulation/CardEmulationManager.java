@@ -15,36 +15,31 @@
  */
 package com.android.nfc.cardemulation;
 
-import java.io.FileDescriptor;
-import java.io.PrintWriter;
-import java.util.List;
-
-import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
 import android.nfc.INfcCardEmulation;
 import android.nfc.INfcFCardEmulation;
 import android.nfc.NfcAdapter;
 import android.nfc.cardemulation.AidGroup;
 import android.nfc.cardemulation.ApduServiceInfo;
-import android.nfc.cardemulation.NfcFServiceInfo;
 import android.nfc.cardemulation.CardEmulation;
-import android.nfc.cardemulation.NfcFCardEmulation;
+import android.nfc.cardemulation.NfcFServiceInfo;
 import android.os.Binder;
-import android.os.RemoteException;
-import android.os.UserHandle;
 import android.os.PowerManager;
+import android.os.RemoteException;
 import android.os.SystemClock;
 import android.os.SystemProperties;
+import android.os.UserHandle;
 import android.provider.Settings;
 import android.util.Log;
 import android.util.proto.ProtoOutputStream;
 
 import com.android.nfc.NfcPermissions;
 import com.android.nfc.NfcService;
-import com.android.nfc.cardemulation.RegisteredServicesCache;
-import com.android.nfc.cardemulation.RegisteredNfcFServicesCache;
+
+import java.io.FileDescriptor;
+import java.io.PrintWriter;
+import java.util.List;
 
 /**
  * CardEmulationManager is the central entity
@@ -417,12 +412,12 @@ public class CardEmulationManager implements RegisteredServicesCache.Callback,
         @Override
         public boolean setDefaultForNextTap(int userId, ComponentName service)
                 throws RemoteException {
-            NfcPermissions.validateUserId(userId);
+            NfcPermissions.validateProfileId(mContext, userId);
             NfcPermissions.enforceAdminPermissions(mContext);
             if (service != null && !isServiceRegistered(userId, service)) {
                 return false;
             }
-            return mPreferredServices.setDefaultForNextTap(service);
+            return mPreferredServices.setDefaultForNextTap(userId, service);
         }
 
         @Override
@@ -505,7 +500,7 @@ public class CardEmulationManager implements RegisteredServicesCache.Callback,
         @Override
         public List<ApduServiceInfo> getServices(int userId, String category)
                 throws RemoteException {
-            NfcPermissions.validateUserId(userId);
+            NfcPermissions.validateProfileId(mContext, userId);
             NfcPermissions.enforceAdminPermissions(mContext);
             return mServiceCache.getServicesForCategory(userId, category);
         }
@@ -651,18 +646,18 @@ public class CardEmulationManager implements RegisteredServicesCache.Callback,
     }
 
     @Override
-    public void onPreferredPaymentServiceChanged(ComponentName service) {
+    public void onPreferredPaymentServiceChanged(int userId, ComponentName service) {
         mAidCache.onPreferredPaymentServiceChanged(service);
-        mHostEmulationManager.onPreferredPaymentServiceChanged(service);
+        mHostEmulationManager.onPreferredPaymentServiceChanged(userId, service);
 
         NfcService.getInstance().onPreferredPaymentChanged(
                 NfcAdapter.PREFERRED_PAYMENT_CHANGED);
     }
 
     @Override
-    public void onPreferredForegroundServiceChanged(ComponentName service) {
+    public void onPreferredForegroundServiceChanged(int userId, ComponentName service) {
         mAidCache.onPreferredForegroundServiceChanged(service);
-        mHostEmulationManager.onPreferredForegroundServiceChanged(service);
+        mHostEmulationManager.onPreferredForegroundServiceChanged(userId, service);
 
         NfcService.getInstance().onPreferredPaymentChanged(
                 NfcAdapter.PREFERRED_PAYMENT_CHANGED);
