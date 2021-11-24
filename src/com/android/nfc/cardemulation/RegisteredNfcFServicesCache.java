@@ -40,6 +40,7 @@ import android.util.proto.ProtoOutputStream;
 
 import com.android.internal.annotations.GuardedBy;
 import com.android.internal.util.FastXmlSerializer;
+
 import com.google.android.collect.Maps;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -55,7 +56,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -127,6 +127,14 @@ public class RegisteredNfcFServicesCache {
         return userServices;
     }
 
+    private int getProfileParentId(int userId) {
+        UserManager um = mContext.createContextAsUser(
+                UserHandle.of(userId), /*flags=*/0)
+                .getSystemService(UserManager.class);
+        UserHandle uh = um.getProfileParent(UserHandle.of(userId));
+        return uh == null ? userId : uh.getIdentifier();
+    }
+
     public RegisteredNfcFServicesCache(Context context, Callback callback) {
         mContext = context;
         mCallback = callback;
@@ -145,7 +153,7 @@ public class RegisteredNfcFServicesCache {
                              Intent.ACTION_PACKAGE_REMOVED.equals(action));
                     if (!replaced) {
                         int currentUser = ActivityManager.getCurrentUser();
-                        if (currentUser == UserHandle.getUserId(uid)) {
+                        if (currentUser == getProfileParentId(UserHandle.getUserId(uid))) {
                             invalidateCache(UserHandle.getUserId(uid));
                         } else {
                             // Cache will automatically be updated on user switch
