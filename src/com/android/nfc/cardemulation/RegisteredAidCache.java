@@ -420,10 +420,15 @@ public class RegisteredAidCache {
     }
 
     private int getProfileParentId(int userId) {
-        UserManager um = mContext.createContextAsUser(
-                UserHandle.of(userId), /*flags=*/0)
-                .getSystemService(UserManager.class);
-        UserHandle uh = um.getProfileParent(UserHandle.of(userId));
+        UserHandle uh = null;
+        try {
+            UserManager um = mContext.createContextAsUser(
+                    UserHandle.of(userId), /*flags=*/0)
+                    .getSystemService(UserManager.class);
+            uh = um.getProfileParent(UserHandle.of(userId));
+        } catch (IllegalStateException e) {
+            Log.d(TAG, "Failed to query parent id for profileid:" + userId);
+        }
         return uh == null ? userId : uh.getIdentifier();
     }
 
