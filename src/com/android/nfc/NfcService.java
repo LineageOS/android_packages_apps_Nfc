@@ -1475,11 +1475,17 @@ public class NfcService implements DeviceHostListener {
         @Override
         public void setReaderMode(IBinder binder, IAppCallback callback, int flags, Bundle extras)
                 throws RemoteException {
+            boolean privilegedCaller = false;
             int callingUid = Binder.getCallingUid();
             int callingPid = Binder.getCallingPid();
             // Allow non-foreground callers with system uid or systemui
-            boolean privilegedCaller = (callingUid == Process.SYSTEM_UID
-                    || getPackageNameFromUid(callingUid).equals(SYSTEM_UI));
+            String packageName = getPackageNameFromUid(callingUid);
+            if (packageName != null) {
+                privilegedCaller = (callingUid == Process.SYSTEM_UID
+                        || packageName.equals(SYSTEM_UI));
+            } else {
+                privilegedCaller = (callingUid == Process.SYSTEM_UID);
+            }
             if (!privilegedCaller && !mForegroundUtils.isInForeground(callingUid)) {
                 Log.e(TAG, "setReaderMode: Caller is not in foreground and is not system process.");
                 return;
@@ -3099,8 +3105,10 @@ public class NfcService implements DeviceHostListener {
                     }
                     if (!mAntennaBlockedMessageShown && mDispatchFailedCount++ > mDispatchFailedMax) {
                         new NfcBlockedNotification(mContext).startNotification();
-                        mPrefsEditor.putBoolean(PREF_ANTENNA_BLOCKED_MESSAGE_SHOWN, true);
-                        mPrefsEditor.apply();
+                        synchronized (NfcService.this) {
+                            mPrefsEditor.putBoolean(PREF_ANTENNA_BLOCKED_MESSAGE_SHOWN, true);
+                            mPrefsEditor.apply();
+                        }
                         mBackupManager.dataChanged();
                         mAntennaBlockedMessageShown = true;
                         mDispatchFailedCount = 0;
@@ -3340,19 +3348,27 @@ public class NfcService implements DeviceHostListener {
     }
 
     private void storeNativeCrashLogs() {
-      try {
-          File file = new File(NATIVE_LOG_FILE_PATH, NATIVE_LOG_FILE_NAME);
-          if (file.length() >= NATIVE_CRASH_FILE_SIZE) {
-              file.createNewFile();
-          }
+        FileOutputStream fos = null;
+        try {
+            File file = new File(NATIVE_LOG_FILE_PATH, NATIVE_LOG_FILE_NAME);
+            if (file.length() >= NATIVE_CRASH_FILE_SIZE) {
+                file.createNewFile();
+            }
 
-          FileOutputStream fos = new FileOutputStream(file, true);
-          mDeviceHost.dump(fos.getFD());
-          fos.flush();
-          fos.close();
-      } catch (IOException e) {
-          Log.e(TAG, "Exception in storeNativeCrashLogs " + e);
-      }
+            fos = new FileOutputStream(file, true);
+            mDeviceHost.dump(fos.getFD());
+            fos.flush();
+        } catch (IOException e) {
+            Log.e(TAG, "Exception in storeNativeCrashLogs " + e);
+        } finally {
+            if (fos != null) {
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    Log.e(TAG, "Exception in storeNativeCrashLogs: file close " + e);
+                }
+            }
+        }
     }
 
     void dump(FileDescriptor fd, PrintWriter pw, String[] args) {
@@ -3366,11 +3382,25 @@ public class NfcService implements DeviceHostListener {
 
         for (String arg : args) {
             if ("--proto".equals(arg)) {
-                ProtoOutputStream proto = new ProtoOutputStream(new FileOutputStream(fd));
-                synchronized (this) {
-                    dumpDebug(proto);
+                FileOutputStream fos = null;
+                try {
+                    fos = new FileOutputStream(fd);
+                    ProtoOutputStream proto = new ProtoOutputStream(fos);
+                    synchronized (this) {
+                        dumpDebug(proto);
+                    }
+                    proto.flush();
+                } catch (Exception e) {
+                    Log.e(TAG, "Exception in dump nfc --proto " + e);
+                } finally {
+                    if (fos != null) {
+                        try {
+                            fos.close();
+                        } catch (IOException e) {
+                            Log.e(TAG, "Exception in storeNativeCrashLogs " + e);
+                        }
+                    }
                 }
-                proto.flush();
                 return;
             }
         }
