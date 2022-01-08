@@ -48,4 +48,6 @@
     <string name="action_confirm_url_open">Agor y ddolen</string>
     <string name="tag_read_error">Gwall darllen NFC. Rho gynnig arall arni.</string>
     <string name="tag_dispatch_failed">Does dim ap yn gydnaws â\u2019r tag NFC hwn</string>
+    <string name="nfc_blocking_alert_title">Gall fod NFC wedi\'i rwystro</string>
+    <string name="nfc_blocking_alert_message">Tapia i ddysgu sut i\'w drwsio.</string>
 </resources>
