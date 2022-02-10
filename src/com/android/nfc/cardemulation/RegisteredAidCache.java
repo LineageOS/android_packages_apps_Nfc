@@ -145,7 +145,9 @@ public class RegisteredAidCache {
     final Object mLock = new Object();
 
     ComponentName mPreferredPaymentService;
+    int mUserIdPreferredPaymentService;
     ComponentName mPreferredForegroundService;
+    int mUserIdPreferredForegroundService;
 
     boolean mNfcEnabled = false;
     boolean mSupportsPrefixes = false;
@@ -155,7 +157,9 @@ public class RegisteredAidCache {
         mContext = context;
         mRoutingManager = new AidRoutingManager();
         mPreferredPaymentService = null;
+        mUserIdPreferredPaymentService = -1;
         mPreferredForegroundService = null;
+        mUserIdPreferredForegroundService = -1;
         mSupportsPrefixes = mRoutingManager.supportsAidPrefixRouting();
         mSupportsSubset   = mRoutingManager.supportsAidSubsetRouting();
         if (mSupportsPrefixes) {
@@ -272,13 +276,19 @@ public class RegisteredAidCache {
         for (ServiceAidInfo serviceAidInfo : conflictingServices) {
             boolean serviceClaimsPaymentAid =
                     CardEmulation.CATEGORY_PAYMENT.equals(serviceAidInfo.category);
-            if (serviceAidInfo.service.getComponent().equals(mPreferredForegroundService)) {
+            int userId = UserHandle.getUserHandleForUid(serviceAidInfo.service.getUid())
+                    .getIdentifier();
+            ComponentName componentName = serviceAidInfo.service.getComponent();
+
+            if (componentName.equals(mPreferredForegroundService) &&
+                    userId == mUserIdPreferredForegroundService) {
                 resolveInfo.services.add(serviceAidInfo.service);
                 if (serviceClaimsPaymentAid) {
                     resolveInfo.category = CardEmulation.CATEGORY_PAYMENT;
                 }
                 matchedForeground = serviceAidInfo.service;
-            } else if (serviceAidInfo.service.getComponent().equals(mPreferredPaymentService) &&
+            } else if (componentName.equals(mPreferredPaymentService) &&
+                    userId == mUserIdPreferredPaymentService &&
                     serviceClaimsPaymentAid) {
                 resolveInfo.services.add(serviceAidInfo.service);
                 resolveInfo.category = CardEmulation.CATEGORY_PAYMENT;
@@ -332,9 +342,15 @@ public class RegisteredAidCache {
         for (ServiceAidInfo serviceAidInfo : serviceAidInfos) {
             boolean serviceClaimsPaymentAid =
                     CardEmulation.CATEGORY_PAYMENT.equals(serviceAidInfo.category);
-            if (serviceAidInfo.service.getComponent().equals(mPreferredForegroundService)) {
+            int userId = UserHandle.getUserHandleForUid(serviceAidInfo.service.getUid())
+                    .getIdentifier();
+            ComponentName componentName = serviceAidInfo.service.getComponent();
+
+            if (componentName.equals(mPreferredForegroundService) &&
+                    userId == mUserIdPreferredForegroundService) {
                 defaultServiceInfo.foregroundDefault = serviceAidInfo;
-            } else if (serviceAidInfo.service.getComponent().equals(mPreferredPaymentService) &&
+            } else if (componentName.equals(mPreferredPaymentService) &&
+                    userId == mUserIdPreferredPaymentService &&
                     serviceClaimsPaymentAid) {
                 defaultServiceInfo.paymentDefault = serviceAidInfo;
             }
@@ -557,8 +573,12 @@ public class RegisteredAidCache {
                 String plainPrefix= prefixAid.substring(0, prefixAid.length() - 1);
                 if( plainSubsetAid.startsWith(plainPrefix)) {
                     if (priorityRootAid) {
-                       if (CardEmulation.CATEGORY_PAYMENT.equals(service.getCategoryForAid(prefixAid)) ||
-                               (service.getComponent().equals(mPreferredForegroundService)))
+                       int userId = UserHandle.getUserHandleForUid(service.getUid())
+                               .getIdentifier();
+                       if (CardEmulation.CATEGORY_PAYMENT
+                               .equals(service.getCategoryForAid(prefixAid)) ||
+                               (service.getComponent().equals(mPreferredForegroundService) &&
+                                userId == mUserIdPreferredForegroundService))
                            prefixAids.add(prefixAid);
                     } else {
                         prefixAids.add(prefixAid);
@@ -674,8 +694,14 @@ public class RegisteredAidCache {
                     resolvedAids.addAll(prefixConflicts.aids);
                     for (String aid : resolveInfo.defaultService.getSubsetAids()) {
                         if (prefixConflicts.aids.contains(aid)) {
-                            if ((CardEmulation.CATEGORY_PAYMENT.equals(resolveInfo.defaultService.getCategoryForAid(aid))) ||
-                                    (resolveInfo.defaultService.getComponent().equals(mPreferredForegroundService))) {
+                            int userId = UserHandle.
+                                    getUserHandleForUid(resolveInfo.defaultService.getUid()).
+                                    getIdentifier();
+                            if ((CardEmulation.CATEGORY_PAYMENT.
+                                  equals(resolveInfo.defaultService.getCategoryForAid(aid))) ||
+                                    (resolveInfo.defaultService.getComponent().
+                                     equals(mPreferredForegroundService) &&
+                                     userId == mUserIdPreferredForegroundService)) {
                                 AidResolveInfo childResolveInfo = resolveAidConflictLocked(mAidServices.get(aid), false);
                                 aidCache.put(aid,childResolveInfo);
                                 Log.d(TAG, "AID " + aid+ " shared with prefix; " +
@@ -980,18 +1006,20 @@ public class RegisteredAidCache {
         }
     }
 
-    public void onPreferredPaymentServiceChanged(ComponentName service) {
-        if (DBG) Log.d(TAG, "Preferred payment service changed.");
-       synchronized (mLock) {
-           mPreferredPaymentService = service;
-           generateAidCacheLocked();
-       }
+    public void onPreferredPaymentServiceChanged(int userId, ComponentName service) {
+        if (DBG) Log.d(TAG, "Preferred payment service changed for user:" + userId);
+        synchronized (mLock) {
+            mPreferredPaymentService = service;
+            mUserIdPreferredPaymentService = userId;
+            generateAidCacheLocked();
+        }
     }
 
-    public void onPreferredForegroundServiceChanged(ComponentName service) {
-        if (DBG) Log.d(TAG, "Preferred foreground service changed.");
+    public void onPreferredForegroundServiceChanged(int userId, ComponentName service) {
+        if (DBG) Log.d(TAG, "Preferred foreground service changed for user:" + userId);
         synchronized (mLock) {
             mPreferredForegroundService = service;
+            mUserIdPreferredForegroundService = userId;
             generateAidCacheLocked();
         }
     }
@@ -1036,10 +1064,10 @@ public class RegisteredAidCache {
 
         for (ApduServiceInfo serviceInfo : entry.getValue().services) {
             sb.append("        ");
-            if (serviceInfo.getComponent().equals(defaultComponent)) {
+            if (serviceInfo.equals(defaultServiceInfo)) {
                 sb.append("*DEFAULT* ");
             }
-            sb.append(serviceInfo.getComponent() +
+            sb.append(serviceInfo +
                     " (Description: " + serviceInfo.getDescription() + ")\n");
         }
         return sb.toString();
@@ -1051,7 +1079,9 @@ public class RegisteredAidCache {
             pw.println(dumpEntry(entry));
         }
         pw.println("    Service preferred by foreground app: " + mPreferredForegroundService);
+        pw.println("    UserId: " + mUserIdPreferredForegroundService);
         pw.println("    Preferred payment service: " + mPreferredPaymentService);
+        pw.println("    UserId: " + mUserIdPreferredPaymentService);
         pw.println("");
         mRoutingManager.dump(fd, pw, args);
         pw.println("");
