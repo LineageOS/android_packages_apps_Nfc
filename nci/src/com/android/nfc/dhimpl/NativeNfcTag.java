@@ -50,6 +50,8 @@ public class NativeNfcTag implements TagEndpoint {
     private byte[][] mTechPollBytes;
     private byte[][] mTechActBytes;
     private byte[] mUid;
+    // Based on flag send T2T tag classification request
+    private boolean mClassifyT2T = true;
 
     // mConnectedHandle stores the *real* libnfc handle
     // that we're connected to.
@@ -284,6 +286,7 @@ public class NativeNfcTag implements TagEndpoint {
 
         mConnectedTechIndex = -1;
         mConnectedHandle = -1;
+        mClassifyT2T = true;
         return result;
     }
 
@@ -733,8 +736,10 @@ public class NativeNfcTag implements TagEndpoint {
                     }
 
                     case TagTechnology.MIFARE_ULTRALIGHT: {
-                        boolean isUlc = isUltralightC();
-                        extras.putBoolean(MifareUltralight.EXTRA_IS_UL_C, isUlc);
+                        if (mClassifyT2T) {
+                            boolean isUlc = isUltralightC();
+                            extras.putBoolean(MifareUltralight.EXTRA_IS_UL_C, isUlc);
+                        }
                         break;
                     }
 
@@ -858,6 +863,7 @@ public class NativeNfcTag implements TagEndpoint {
         int[] technologies = getTechList();
         int[] handles = mTechHandles;
         int currHandle = 0;
+        mClassifyT2T = !hasTech(TagTechnology.MIFARE_ULTRALIGHT);
 
         for (int techIndex = 0; techIndex < technologies.length; techIndex++) {
             if (currHandle != handles[techIndex]) {
