@@ -1230,7 +1230,7 @@ phNciNfc_RecvMfResp(phNciNfc_Buff_t* RspBuffInfo,
     }
     else
     {
-        if((0 == (RspBuffInfo->wLen))
+        if(((PHNCINFC_EXTNID_SIZE + PHNCINFC_EXTNSTATUS_SIZE) > RspBuffInfo->wLen)
                 || (PH_NCINFC_STATUS_OK != wStatus)
                 || (NULL == (RspBuffInfo->pBuff))
                 )
@@ -1249,13 +1249,6 @@ phNciNfc_RecvMfResp(phNciNfc_Buff_t* RspBuffInfo,
                     if( PH_NCINFC_STATUS_OK == RspBuffInfo->pBuff[RspBuffInfo->wLen-1] )
                     {
                         status = NFCSTATUS_SUCCESS;
-
-                        if ((PHNCINFC_EXTNID_SIZE + PHNCINFC_EXTNSTATUS_SIZE) >
-                            RspBuffInfo->wLen)
-                        {
-                            android_errorWriteLog(0x534e4554, "181346550");
-                            return NFCSTATUS_FAILED;
-                        }
 
                         /* DataLen = TotalRecvdLen - (sizeof(RspId) + sizeof(Status)) */
                         wPldDataSize = ((RspBuffInfo->wLen) -
