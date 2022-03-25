@@ -56,7 +56,6 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
-
 /**
  * Interface to listen for P2P events.
  * All callbacks are made from the UI thread.
