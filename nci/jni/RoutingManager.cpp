@@ -598,7 +598,8 @@ void RoutingManager::updateDefaultProtocolRoute() {
   tNFA_PROTOCOL_MASK protoMask = NFA_PROTOCOL_MASK_ISO_DEP;
   tNFA_STATUS nfaStat;
   if (mDefaultIsoDepRoute != NFC_DH_ID &&
-      isTypeATypeBTechSupportedInEe(mDefaultIsoDepRoute)) {
+      isTypeATypeBTechSupportedInEe(mDefaultIsoDepRoute |
+                                    NFA_HANDLE_GROUP_EE)) {
     nfaStat = NFA_EeClearDefaultProtoRouting(mDefaultIsoDepRoute, protoMask);
     nfaStat = NFA_EeSetDefaultProtoRouting(
         mDefaultIsoDepRoute, protoMask, mSecureNfcEnabled ? 0 : protoMask, 0,
@@ -654,12 +655,14 @@ void RoutingManager::updateDefaultRoute() {
         << fn << ": Succeed to register system code";
   } else {
     LOG(ERROR) << fn << ": Fail to register system code";
+    // still support SCBR routing for other NFCEEs
+    mIsScbrSupported = true;
   }
 
   // Register zero lengthy Aid for default Aid Routing
   if (mDefaultEe != mDefaultIsoDepRoute) {
     if ((mDefaultEe != NFC_DH_ID) &&
-        (!isTypeATypeBTechSupportedInEe(mDefaultEe))) {
+        (!isTypeATypeBTechSupportedInEe(mDefaultEe | NFA_HANDLE_GROUP_EE))) {
       DLOG_IF(INFO, nfc_debug_enabled)
           << fn << ": mDefaultEE Doesn't support either Tech A/B. Returning...";
       return;
