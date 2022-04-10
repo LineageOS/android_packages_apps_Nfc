@@ -16,6 +16,23 @@
       "message": "Topic P_asb_2022-04 builds OK for hammerhead",
       "revId": "3b0076ee97e8e804459f22e2238c31e3ff29733a",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "110c2fc4_b304f995",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 26658
+      },
+      "writtenOn": "2022-04-10T09:30:55Z",
+      "side": 1,
+      "message": "Whole topic builds fine for potter.",
+      "revId": "3b0076ee97e8e804459f22e2238c31e3ff29733a",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
