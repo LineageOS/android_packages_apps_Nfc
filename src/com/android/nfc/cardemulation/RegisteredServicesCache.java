@@ -91,7 +91,11 @@ public class RegisteredServicesCache {
     final AtomicFile mDynamicSettingsFile;
 
     public interface Callback {
-        void onServicesUpdated(int userId, final List<ApduServiceInfo> services);
+        /**
+         * ServicesUpdated for specific userId.
+         */
+        void onServicesUpdated(int userId, List<ApduServiceInfo> services,
+                boolean validateInstalled);
     };
 
     static class DynamicSettings {
@@ -150,7 +154,11 @@ public class RegisteredServicesCache {
                     if (!replaced) {
                         int currentUser = ActivityManager.getCurrentUser();
                         if (currentUser == getProfileParentId(UserHandle.getUserId(uid))) {
-                            invalidateCache(UserHandle.getUserId(uid));
+                            if (Intent.ACTION_PACKAGE_REMOVED.equals(action)) {
+                                invalidateCache(UserHandle.getUserId(uid), true);
+                            } else {
+                                invalidateCache(UserHandle.getUserId(uid), false);
+                            }
                         } else {
                             // Cache will automatically be updated on user switch
                         }
@@ -186,7 +194,7 @@ public class RegisteredServicesCache {
         synchronized (mLock) {
             readDynamicSettingsLocked();
             for (UserHandle uh : mUserHandles) {
-                invalidateCache(uh.getIdentifier());
+                invalidateCache(uh.getIdentifier(), false);
             }
         }
     }
@@ -317,7 +325,10 @@ public class RegisteredServicesCache {
         return validServices;
     }
 
-    public void invalidateCache(int userId) {
+    /**
+     * invalidateCache for specific userId.
+     */
+    public void invalidateCache(int userId, boolean validateInstalled) {
         final ArrayList<ApduServiceInfo> validServices = getInstalledServices(userId);
         if (validServices == null) {
             return;
@@ -371,7 +382,8 @@ public class RegisteredServicesCache {
                 writeDynamicSettingsLocked();
             }
         }
-        mCallback.onServicesUpdated(userId, Collections.unmodifiableList(validServices));
+        mCallback.onServicesUpdated(userId, Collections.unmodifiableList(validServices),
+                validateInstalled);
         dump(validServices);
     }
 
@@ -539,7 +551,7 @@ public class RegisteredServicesCache {
             newServices = new ArrayList<ApduServiceInfo>(services.services.values());
         }
         // Make callback without the lock held
-        mCallback.onServicesUpdated(userId, newServices);
+        mCallback.onServicesUpdated(userId, newServices, true);
         return true;
     }
 
@@ -580,7 +592,7 @@ public class RegisteredServicesCache {
             newServices = new ArrayList<ApduServiceInfo>(services.services.values());
         }
         // Make callback without the lock held
-        mCallback.onServicesUpdated(userId, newServices);
+        mCallback.onServicesUpdated(userId, newServices, true);
         return true;
     }
 
@@ -633,7 +645,7 @@ public class RegisteredServicesCache {
         }
         if (success) {
             // Make callback without the lock held
-            mCallback.onServicesUpdated(userId, newServices);
+            mCallback.onServicesUpdated(userId, newServices, true);
         }
         return success;
     }
@@ -690,7 +702,7 @@ public class RegisteredServicesCache {
             }
         }
         if (success) {
-            mCallback.onServicesUpdated(userId, newServices);
+            mCallback.onServicesUpdated(userId, newServices, true);
         }
         return success;
     }
