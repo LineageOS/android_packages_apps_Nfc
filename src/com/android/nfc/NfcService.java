@@ -74,6 +74,7 @@ import android.os.SystemClock;
 import android.os.SystemProperties;
 import android.os.UserHandle;
 import android.os.UserManager;
+import android.os.VibrationAttributes;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.provider.Settings;
@@ -241,6 +242,9 @@ public class NfcService implements DeviceHostListener {
 
     // Timeout to re-apply routing if a tag was present and we postponed it
     private static final int APPLY_ROUTING_RETRY_TIMEOUT_MS = 5000;
+
+    private static final VibrationAttributes HARDWARE_FEEDBACK_VIBRATION_ATTRIBUTES =
+            VibrationAttributes.createForUsage(VibrationAttributes.USAGE_HARDWARE_FEEDBACK);
 
     private final UserManager mUserManager;
 
@@ -3109,7 +3113,8 @@ public class NfcService implements DeviceHostListener {
                 if (readerParams != null) {
                     try {
                         if ((readerParams.flags & NfcAdapter.FLAG_READER_NO_PLATFORM_SOUNDS) == 0) {
-                            mVibrator.vibrate(mVibrationEffect);
+                            mVibrator.vibrate(mVibrationEffect,
+                                    HARDWARE_FEEDBACK_VIBRATION_ATTRIBUTES);
                             playSound(SOUND_END);
                         }
                         if (readerParams.callback != null) {
@@ -3172,7 +3177,7 @@ public class NfcService implements DeviceHostListener {
                                 PowerManager.USER_ACTIVITY_EVENT_OTHER, 0);
                     }
                     mDispatchFailedCount = 0;
-                    mVibrator.vibrate(mVibrationEffect);
+                    mVibrator.vibrate(mVibrationEffect, HARDWARE_FEEDBACK_VIBRATION_ATTRIBUTES);
                     playSound(SOUND_END);
                 }
             } catch (Exception e) {
