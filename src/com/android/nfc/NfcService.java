@@ -74,6 +74,7 @@ import android.os.SystemClock;
 import android.os.SystemProperties;
 import android.os.UserHandle;
 import android.os.UserManager;
+import android.os.VibrationAttributes;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.provider.Settings;
@@ -241,6 +242,9 @@ public class NfcService implements DeviceHostListener {
 
     // Timeout to re-apply routing if a tag was present and we postponed it
     private static final int APPLY_ROUTING_RETRY_TIMEOUT_MS = 5000;
+
+    private static final VibrationAttributes HARDWARE_FEEDBACK_VIBRATION_ATTRIBUTES =
+            VibrationAttributes.createForUsage(VibrationAttributes.USAGE_HARDWARE_FEEDBACK);
 
     private final UserManager mUserManager;
 
@@ -938,10 +942,6 @@ public class NfcService implements DeviceHostListener {
                 mP2pLinkManager.enableDisable(false, false);
             }
 
-            // Disable delay polling when disabling
-            mPollingDelayed = false;
-            mHandler.removeMessages(MSG_DELAY_POLLING);
-
             // Stop watchdog if tag present
             // A convenient way to stop the watchdog properly consists of
             // disconnecting the tag. The polling loop shall be stopped before
@@ -949,6 +949,9 @@ public class NfcService implements DeviceHostListener {
             maybeDisconnectTarget();
 
             synchronized (NfcService.this) {
+                // Disable delay polling when disabling
+                mPollingDelayed = false;
+                mHandler.removeMessages(MSG_DELAY_POLLING);
                 mPollingDisableDeathRecipients.clear();
                 mReaderModeParams = null;
             }
@@ -2827,12 +2830,11 @@ public class NfcService implements DeviceHostListener {
                     mScreenState = (Integer)msg.obj;
                     Log.d(TAG, "MSG_APPLY_SCREEN_STATE " + mScreenState);
 
-                    // Disable delay polling when screen state changed
-                    mPollingDelayed = false;
-                    mHandler.removeMessages(MSG_DELAY_POLLING);
-
-                    // If NFC is turning off, we shouldn't need any changes here
                     synchronized (NfcService.this) {
+                        // Disable delay polling when screen state changed
+                        mPollingDelayed = false;
+                        mHandler.removeMessages(MSG_DELAY_POLLING);
+                        // If NFC is turning off, we shouldn't need any changes here
                         if (mState == NfcAdapter.STATE_TURNING_OFF)
                             return;
                     }
@@ -3109,7 +3111,8 @@ public class NfcService implements DeviceHostListener {
                 if (readerParams != null) {
                     try {
                         if ((readerParams.flags & NfcAdapter.FLAG_READER_NO_PLATFORM_SOUNDS) == 0) {
-                            mVibrator.vibrate(mVibrationEffect);
+                            mVibrator.vibrate(mVibrationEffect,
+                                    HARDWARE_FEEDBACK_VIBRATION_ATTRIBUTES);
                             playSound(SOUND_END);
                         }
                         if (readerParams.callback != null) {
@@ -3137,13 +3140,19 @@ public class NfcService implements DeviceHostListener {
                     unregisterObject(tagEndpoint.getHandle());
                     if (mPollDelay > NO_POLL_DELAY) {
                         tagEndpoint.stopPresenceChecking();
-                        mDeviceHost.startStopPolling(false);
-                        mPollingDelayed = true;
-                        if (DBG) Log.d(TAG, "Polling delayed");
-                        mHandler.sendMessageDelayed(
-                                mHandler.obtainMessage(MSG_DELAY_POLLING), mPollDelay);
+                        synchronized (NfcService.this) {
+                            if (!mPollingDelayed) {
+                                mPollingDelayed = true;
+                                mDeviceHost.startStopPolling(false);
+                                if (DBG) Log.d(TAG, "Polling delayed");
+                                mHandler.sendMessageDelayed(
+                                        mHandler.obtainMessage(MSG_DELAY_POLLING), mPollDelay);
+                            } else {
+                                if (DBG) Log.d(TAG, "Keep waiting for polling delay");
+                            }
+                        }
                     } else {
-                        Log.e(TAG, "Keep presence checking.");
+                        Log.d(TAG, "Keep presence checking.");
                     }
                     if (mScreenState == ScreenStateHelper.SCREEN_STATE_ON_UNLOCKED && mNotifyDispatchFailed) {
                         if (!sToast_debounce) {
@@ -3172,7 +3181,7 @@ public class NfcService implements DeviceHostListener {
                                 PowerManager.USER_ACTIVITY_EVENT_OTHER, 0);
                     }
                     mDispatchFailedCount = 0;
-                    mVibrator.vibrate(mVibrationEffect);
+                    mVibrator.vibrate(mVibrationEffect, HARDWARE_FEEDBACK_VIBRATION_ATTRIBUTES);
                     playSound(SOUND_END);
                 }
             } catch (Exception e) {
@@ -3315,6 +3324,10 @@ public class NfcService implements DeviceHostListener {
                     action.equals(Intent.ACTION_EXTERNAL_APPLICATIONS_UNAVAILABLE)) {
                 updatePackageCache();
             } else if (action.equals(Intent.ACTION_SHUTDOWN)) {
+                if (DBG) Log.d(TAG, "Shutdown received with UserId: " + getSendingUserId());
+                if (getSendingUserId() != UserHandle.USER_ALL) {
+                    return;
+                }
                 if (DBG) Log.d(TAG, "Device is shutting down.");
                 if (mIsAlwaysOnSupported && mAlwaysOnState == NfcAdapter.STATE_ON) {
                     new EnableDisableTask().execute(TASK_DISABLE_ALWAYS_ON);
