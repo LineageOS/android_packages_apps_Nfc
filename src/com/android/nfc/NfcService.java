@@ -84,6 +84,7 @@ import android.se.omapi.ISecureElementService;
 import android.service.vr.IVrManager;
 import android.service.vr.IVrStateCallbacks;
 import android.text.TextUtils;
+import android.util.EventLog;
 import android.util.Log;
 import android.util.proto.ProtoOutputStream;
 import android.widget.Toast;
@@ -332,6 +333,9 @@ public class NfcService implements DeviceHostListener {
     int mPollDelay;
     boolean mNotifyDispatchFailed;
     boolean mNotifyReadFailed;
+
+    // for recording the latest Tag object cookie
+    long mCookieUpToDate = 0;
 
     private NfcDispatcher mNfcDispatcher;
     private PowerManager mPowerManager;
@@ -2007,6 +2011,25 @@ public class NfcService implements DeviceHostListener {
         @Override
         public boolean getExtendedLengthApdusSupported() throws RemoteException {
             return mDeviceHost.getExtendedLengthApdusSupported();
+        }
+
+        @Override
+        public void setTagUpToDate(long cookie) throws RemoteException {
+            if (DBG) Log.d(TAG, "Register Tag " + Long.toString(cookie) + " as the latest");
+            mCookieUpToDate = cookie;
+        }
+
+        @Override
+        public boolean isTagUpToDate(long cookie) throws RemoteException {
+            if (mCookieUpToDate == cookie) {
+                if (DBG) Log.d(TAG, "Tag " + Long.toString(cookie) + " is up to date");
+                return true;
+            }
+
+            if (DBG) Log.d(TAG, "Tag " + Long.toString(cookie) + " is out of date");
+            EventLog.writeEvent(0x534e4554, "199291025", -1,
+                    "The obsolete tag was attempted to be accessed");
+            return false;
         }
     }
 
