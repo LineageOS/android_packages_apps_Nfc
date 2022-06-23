@@ -288,7 +288,6 @@ public class NfcService implements DeviceHostListener {
 
     private int mUserId;
     boolean mPollingPaused;
-    boolean mPollingDelayed;
 
     // True if nfc notification message already shown
     boolean mAntennaBlockedMessageShown;
@@ -341,7 +340,13 @@ public class NfcService implements DeviceHostListener {
     boolean mIsRequestUnlockShowed;
     boolean mIsRecovering;
 
-    int mPollDelay;
+    // polling delay control variables
+    private final int mPollDelayTime;
+    private final int mPollDelayTimeLong;
+    private final int mPollDelayCountMax;
+    private int mPollDelayCount;
+    private boolean mPollDelayed;
+
     boolean mNotifyDispatchFailed;
     boolean mNotifyReadFailed;
 
@@ -620,8 +625,15 @@ public class NfcService implements DeviceHostListener {
             mAntennaBlockedMessageShown = true;
         }
 
-        // Polling delay variables
-        mPollDelay = mContext.getResources().getInteger(R.integer.unknown_tag_polling_delay);
+        // Polling delay count for switching from stage one to stage two.
+        mPollDelayCountMax =
+                mContext.getResources().getInteger(R.integer.unknown_tag_polling_delay_count_max);
+        // Stage one: polling delay time for the first few unknown tag detections
+        mPollDelayTime = mContext.getResources().getInteger(R.integer.unknown_tag_polling_delay);
+        // Stage two: longer polling delay time after max_poll_delay_count
+        mPollDelayTimeLong =
+                mContext.getResources().getInteger(R.integer.unknown_tag_polling_delay_long);
+
         mNotifyDispatchFailed = mContext.getResources().getBoolean(R.bool.enable_notify_dispatch_failed);
         mNotifyReadFailed = mContext.getResources().getBoolean(R.bool.enable_notify_read_failed);
 
@@ -953,7 +965,8 @@ public class NfcService implements DeviceHostListener {
 
             synchronized (NfcService.this) {
                 // Disable delay polling when disabling
-                mPollingDelayed = false;
+                mPollDelayed = false;
+                mPollDelayCount = 0;
                 mHandler.removeMessages(MSG_DELAY_POLLING);
                 mPollingDisableDeathRecipients.clear();
                 mReaderModeParams = null;
@@ -2834,7 +2847,7 @@ public class NfcService implements DeviceHostListener {
 
                     synchronized (NfcService.this) {
                         // Disable delay polling when screen state changed
-                        mPollingDelayed = false;
+                        mPollDelayed = false;
                         mHandler.removeMessages(MSG_DELAY_POLLING);
                         // If NFC is turning off, we shouldn't need any changes here
                         if (mState == NfcAdapter.STATE_TURNING_OFF)
@@ -2876,10 +2889,10 @@ public class NfcService implements DeviceHostListener {
 
                 case MSG_DELAY_POLLING:
                     synchronized (NfcService.this) {
-                        if (!mPollingDelayed) {
+                        if (!mPollDelayed) {
                             return;
                         }
-                        mPollingDelayed = false;
+                        mPollDelayed = false;
                         mDeviceHost.startStopPolling(true);
                     }
                     if (DBG) Log.d(TAG, "Polling is started");
@@ -3143,15 +3156,21 @@ public class NfcService implements DeviceHostListener {
                 if (dispatchResult == NfcDispatcher.DISPATCH_FAIL && !mInProvisionMode) {
                     if (DBG) Log.d(TAG, "Tag dispatch failed");
                     unregisterObject(tagEndpoint.getHandle());
-                    if (mPollDelay > NO_POLL_DELAY) {
+                    if (mPollDelayTime > NO_POLL_DELAY) {
                         tagEndpoint.stopPresenceChecking();
                         synchronized (NfcService.this) {
-                            if (!mPollingDelayed) {
-                                mPollingDelayed = true;
+                            if (!mPollDelayed) {
+                                int delayTime = mPollDelayTime;
+                                mPollDelayed = true;
                                 mDeviceHost.startStopPolling(false);
-                                if (DBG) Log.d(TAG, "Polling delayed");
+                                if (mPollDelayCount < mPollDelayCountMax) {
+                                    mPollDelayCount++;
+                                } else {
+                                    delayTime = mPollDelayTimeLong;
+                                }
+                                if (DBG) Log.d(TAG, "Polling delayed " + delayTime);
                                 mHandler.sendMessageDelayed(
-                                        mHandler.obtainMessage(MSG_DELAY_POLLING), mPollDelay);
+                                        mHandler.obtainMessage(MSG_DELAY_POLLING), delayTime);
                             } else {
                                 if (DBG) Log.d(TAG, "Keep waiting for polling delay");
                             }
@@ -3181,6 +3200,7 @@ public class NfcService implements DeviceHostListener {
                         if (DBG) Log.d(TAG, "Tag dispatch failed notification");
                     }
                 } else if (dispatchResult == NfcDispatcher.DISPATCH_SUCCESS) {
+                    mPollDelayCount = 0;
                     if (mScreenState == ScreenStateHelper.SCREEN_STATE_ON_UNLOCKED) {
                         mPowerManager.userActivity(SystemClock.uptimeMillis(),
                                 PowerManager.USER_ACTIVITY_EVENT_OTHER, 0);
@@ -3235,6 +3255,7 @@ public class NfcService implements DeviceHostListener {
                         ScreenStateHelper.SCREEN_STATE_OFF_LOCKED : ScreenStateHelper.SCREEN_STATE_OFF_UNLOCKED;
                      }
                 } else if (action.equals(Intent.ACTION_SCREEN_ON)) {
+                    mPollDelayCount = 0;
                     screenState = mKeyguard.isKeyguardLocked()
                             ? ScreenStateHelper.SCREEN_STATE_ON_LOCKED
                             : ScreenStateHelper.SCREEN_STATE_ON_UNLOCKED;
