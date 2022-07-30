@@ -846,8 +846,8 @@ void nfaDeviceManagementCallback(uint8_t dmEvent,
         LOG(ERROR) << StringPrintf("%s: NFA_DM_NFCC_TRANSPORT_ERR_EVT; abort",
                                    __func__);
 
-      if (recovery_option) {
-        struct nfc_jni_native_data* nat = getNative(NULL, NULL);
+      struct nfc_jni_native_data* nat = getNative(NULL, NULL);
+      if (recovery_option && nat != NULL) {
         JNIEnv* e = NULL;
         ScopedAttach attach(nat->vm, &e);
         if (e == NULL) {
