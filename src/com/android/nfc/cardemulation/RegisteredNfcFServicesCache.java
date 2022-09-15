@@ -39,9 +39,6 @@ import android.util.Xml;
 import android.util.proto.ProtoOutputStream;
 
 import com.android.internal.annotations.GuardedBy;
-import com.android.internal.util.FastXmlSerializer;
-
-import com.google.android.collect.Maps;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -111,11 +108,11 @@ public class RegisteredNfcFServicesCache {
          * All services that have registered
          */
         final HashMap<ComponentName, NfcFServiceInfo> services =
-                Maps.newHashMap(); // Re-built at run-time
+                new HashMap<>(); // Re-built at run-time
         final HashMap<ComponentName, DynamicSystemCode> dynamicSystemCode =
-                Maps.newHashMap(); // In memory cache of dynamic System Code store
+                new HashMap<>(); // In memory cache of dynamic System Code store
         final HashMap<ComponentName, DynamicNfcid2> dynamicNfcid2 =
-                Maps.newHashMap(); // In memory cache of dynamic NFCID2 store
+                new HashMap<>(); // In memory cache of dynamic NFCID2 store
     };
 
     private UserServices findOrCreateUserLocked(int userId) {
@@ -500,7 +497,7 @@ public class RegisteredNfcFServicesCache {
         FileOutputStream fos = null;
         try {
             fos = mDynamicSystemCodeNfcid2File.startWrite();
-            XmlSerializer out = new FastXmlSerializer();
+            XmlSerializer out = Xml.newSerializer();
             out.setOutput(fos, "utf-8");
             out.startDocument(null, true);
             out.setFeature(XML_INDENT_OUTPUT_FEATURE, true);

@@ -41,9 +41,6 @@ import android.util.Xml;
 import android.util.proto.ProtoOutputStream;
 
 import com.android.internal.annotations.GuardedBy;
-import com.android.internal.util.FastXmlSerializer;
-
-import com.google.android.collect.Maps;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -100,7 +97,7 @@ public class RegisteredServicesCache {
 
     static class DynamicSettings {
         public final int uid;
-        public final HashMap<String, AidGroup> aidGroups = Maps.newHashMap();
+        public final HashMap<String, AidGroup> aidGroups = new HashMap<>();
         public String offHostSE;
 
         DynamicSettings(int uid) {
@@ -113,9 +110,9 @@ public class RegisteredServicesCache {
          * All services that have registered
          */
         final HashMap<ComponentName, ApduServiceInfo> services =
-                Maps.newHashMap(); // Re-built at run-time
+                new HashMap<>(); // Re-built at run-time
         final HashMap<ComponentName, DynamicSettings> dynamicSettings =
-                Maps.newHashMap(); // In memory cache of dynamic settings
+                new HashMap<>(); // In memory cache of dynamic settings
     };
 
     private UserServices findOrCreateUserLocked(int userId) {
@@ -478,7 +475,7 @@ public class RegisteredServicesCache {
         FileOutputStream fos = null;
         try {
             fos = mDynamicSettingsFile.startWrite();
-            XmlSerializer out = new FastXmlSerializer();
+            XmlSerializer out = Xml.newSerializer();
             out.setOutput(fos, "utf-8");
             out.startDocument(null, true);
             out.setFeature(XML_INDENT_OUTPUT_FEATURE, true);

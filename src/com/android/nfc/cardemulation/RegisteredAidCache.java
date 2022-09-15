@@ -29,8 +29,6 @@ import android.util.proto.ProtoOutputStream;
 
 import com.android.nfc.NfcService;
 
-import com.google.android.collect.Maps;
-
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -890,7 +888,7 @@ public class RegisteredAidCache {
             if (DBG) Log.d(TAG, "Not updating routing table because NFC is off.");
             return;
         }
-        final HashMap<String, AidRoutingManager.AidEntry> routingEntries = Maps.newHashMap();
+        final HashMap<String, AidRoutingManager.AidEntry> routingEntries = new HashMap<>();
         // For each AID, find interested services
         for (Map.Entry<String, AidResolveInfo> aidEntry:
                 mAidCache.entrySet()) {
