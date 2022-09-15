@@ -523,7 +523,7 @@ public class NfcService implements DeviceHostListener {
 
         mIsDebugBuild = "userdebug".equals(Build.TYPE) || "eng".equals(Build.TYPE);
 
-        mPowerManager = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
+        mPowerManager = mContext.getSystemService(PowerManager.class);
 
         mRoutingWakeLock = mPowerManager.newWakeLock(
                 PowerManager.PARTIAL_WAKE_LOCK, "NfcService:mRoutingWakeLock");
@@ -532,9 +532,9 @@ public class NfcService implements DeviceHostListener {
                         | PowerManager.ACQUIRE_CAUSES_WAKEUP
                         | PowerManager.ON_AFTER_RELEASE, "NfcService:mRequireUnlockWakeLock");
 
-        mKeyguard = (KeyguardManager) mContext.getSystemService(Context.KEYGUARD_SERVICE);
-        mUserManager = (UserManager) mContext.getSystemService(Context.USER_SERVICE);
-        mVibrator = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
+        mKeyguard = mContext.getSystemService(KeyguardManager.class);
+        mUserManager = mContext.getSystemService(UserManager.class);
+        mVibrator = mContext.getSystemService(Vibrator.class);
         mVibrationEffect = VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE);
 
         mScreenState = mScreenStateHelper.checkScreenState();
@@ -1155,7 +1155,7 @@ public class NfcService implements DeviceHostListener {
     }
 
     void enforceBeamShareActivityPolicy(Context context, UserHandle uh) {
-        UserManager um = (UserManager) context.getSystemService(Context.USER_SERVICE);
+        UserManager um = context.getSystemService(UserManager.class);
         IPackageManager mIpm = IPackageManager.Stub.asInterface(ServiceManager.getService("package"));
         boolean isGlobalEnabled = mIsNdefPushEnabled;
         boolean isActiveForUser =
@@ -1256,7 +1256,7 @@ public class NfcService implements DeviceHostListener {
                 mPrefsEditor.apply();
                 mIsNdefPushEnabled = true;
                 // Propagate the state change to all user profiles
-                UserManager um = (UserManager) mContext.getSystemService(Context.USER_SERVICE);
+                UserManager um = mContext.getSystemService(UserManager.class);
                 List <UserHandle> luh = um.getUserProfiles();
                 for (UserHandle uh : luh){
                     enforceBeamShareActivityPolicy(mContext, uh);
@@ -1323,7 +1323,7 @@ public class NfcService implements DeviceHostListener {
                 mPrefsEditor.apply();
                 mIsNdefPushEnabled = false;
                 // Propagate the state change to all user profiles
-                UserManager um = (UserManager) mContext.getSystemService(Context.USER_SERVICE);
+                UserManager um = mContext.getSystemService(UserManager.class);
                 List <UserHandle> luh = um.getUserProfiles();
                 for (UserHandle uh : luh){
                     enforceBeamShareActivityPolicy(mContext, uh);
@@ -3317,7 +3317,7 @@ public class NfcService implements DeviceHostListener {
                            mIsNdefPushEnabled = true;
                         }
                         // Propagate the state change to all user profiles
-                        UserManager um = (UserManager) mContext.getSystemService(Context.USER_SERVICE);
+                        UserManager um = mContext.getSystemService(UserManager.class);
                         List <UserHandle> luh = um.getUserProfiles();
                         for (UserHandle uh : luh){
                             enforceBeamShareActivityPolicy(mContext, uh);
