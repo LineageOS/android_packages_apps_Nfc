@@ -63,6 +63,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.window.ScreenCapture;
 
 import com.android.internal.policy.PhoneWindow;
 import com.android.internal.policy.SystemBarUtils;
@@ -633,13 +634,13 @@ public class SendUi implements Animator.AnimatorListener, View.OnTouchListener,
         // Take the screenshot. SurfaceControl will generate a hardware bitmap in the correct
         // orientation and size.
         IBinder displayToken = SurfaceControl.getInternalDisplayToken();
-        final SurfaceControl.DisplayCaptureArgs captureArgs =
-                new SurfaceControl.DisplayCaptureArgs.Builder(displayToken)
+        final ScreenCapture.DisplayCaptureArgs captureArgs =
+                new ScreenCapture.DisplayCaptureArgs.Builder(displayToken)
                         .setSourceCrop(crop)
                         .setSize(width, height)
                         .build();
-        SurfaceControl.ScreenshotHardwareBuffer screenshotBuffer =
-                SurfaceControl.captureDisplay(captureArgs);
+        ScreenCapture.ScreenshotHardwareBuffer screenshotBuffer =
+                ScreenCapture.captureDisplay(captureArgs);
         final Bitmap bitmap = screenshotBuffer == null ? null : screenshotBuffer.asBitmap();
 
         // Bail if we couldn't take the screenshot
