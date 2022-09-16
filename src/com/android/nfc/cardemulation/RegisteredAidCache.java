@@ -29,8 +29,6 @@ import android.util.proto.ProtoOutputStream;
 
 import com.android.nfc.NfcService;
 
-import com.google.android.collect.Maps;
-
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -125,7 +123,7 @@ public class RegisteredAidCache {
         ApduServiceInfo defaultService = null;
         String category = null;
         boolean mustRoute = true; // Whether this AID should be routed at all
-        ReslovedPrefixConflictAid prefixInfo = null;
+        ResolvedPrefixConflictAid prefixInfo = null;
         @Override
         public String toString() {
             return "AidResolveInfo{" +
@@ -545,7 +543,7 @@ public class RegisteredAidCache {
         return aid.endsWith("#");
     }
 
-    final class ReslovedPrefixConflictAid {
+    final class ResolvedPrefixConflictAid {
         String prefixAid = null;
         boolean matchingSubset = false;
     }
@@ -556,7 +554,7 @@ public class RegisteredAidCache {
         final HashSet<String> aids = new HashSet<String>();
     }
 
-    ReslovedPrefixConflictAid findPrefixConflictForSubsetAid(String subsetAid ,
+    ResolvedPrefixConflictAid findPrefixConflictForSubsetAid(String subsetAid ,
             ArrayList<ApduServiceInfo> prefixServices, boolean priorityRootAid){
         ArrayList<String> prefixAids = new ArrayList<String>();
         String minPrefix = null;
@@ -588,7 +586,7 @@ public class RegisteredAidCache {
         }
         if (prefixAids.size() > 0)
             minPrefix = Collections.min(prefixAids);
-        ReslovedPrefixConflictAid resolvedPrefix = new ReslovedPrefixConflictAid();
+        ResolvedPrefixConflictAid resolvedPrefix = new ResolvedPrefixConflictAid();
         resolvedPrefix.prefixAid = minPrefix;
         if ((minPrefix != null ) &&
                 plainSubsetAid.equalsIgnoreCase(minPrefix.substring(0, minPrefix.length() - 1)))
@@ -890,7 +888,7 @@ public class RegisteredAidCache {
             if (DBG) Log.d(TAG, "Not updating routing table because NFC is off.");
             return;
         }
-        final HashMap<String, AidRoutingManager.AidEntry> routingEntries = Maps.newHashMap();
+        final HashMap<String, AidRoutingManager.AidEntry> routingEntries = new HashMap<>();
         // For each AID, find interested services
         for (Map.Entry<String, AidResolveInfo> aidEntry:
                 mAidCache.entrySet()) {
