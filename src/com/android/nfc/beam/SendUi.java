@@ -16,6 +16,7 @@
 
 package com.android.nfc.beam;
 
+import static android.view.Display.DEFAULT_DISPLAY;
 import static android.view.WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS;
 
 import android.animation.Animator;
@@ -38,9 +39,10 @@ import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.os.AsyncTask;
 import android.os.Binder;
-import android.os.IBinder;
+import android.os.RemoteException;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.Pair;
 import android.view.ActionMode;
 import android.view.Display;
 import android.view.KeyEvent;
@@ -50,12 +52,12 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.SearchEvent;
 import android.view.Surface;
-import android.view.SurfaceControl;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.WindowManagerGlobal;
 import android.view.WindowManager.LayoutParams;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -64,6 +66,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.window.ScreenCapture;
+import android.window.ScreenCapture.CaptureArgs;
+import android.window.ScreenCapture.ScreenCaptureListener;
+import android.window.ScreenCapture.ScreenshotHardwareBuffer;
+import android.window.ScreenCapture.ScreenshotSync;
 
 import com.android.internal.policy.PhoneWindow;
 import com.android.internal.policy.SystemBarUtils;
@@ -631,16 +637,21 @@ public class SendUi implements Animator.AnimatorListener, View.OnTouchListener,
 
         int width = crop.width();
         int height = crop.height();
-        // Take the screenshot. SurfaceControl will generate a hardware bitmap in the correct
+        // Take the screenshot. SurfaceFlinger will generate a hardware bitmap in the correct
         // orientation and size.
-        IBinder displayToken = SurfaceControl.getInternalDisplayToken();
-        final ScreenCapture.DisplayCaptureArgs captureArgs =
-                new ScreenCapture.DisplayCaptureArgs.Builder(displayToken)
+
+        final CaptureArgs captureArgs = new CaptureArgs.Builder<>()
                         .setSourceCrop(crop)
-                        .setSize(width, height)
                         .build();
-        ScreenCapture.ScreenshotHardwareBuffer screenshotBuffer =
-                ScreenCapture.captureDisplay(captureArgs);
+        Pair<ScreenCaptureListener, ScreenshotSync> syncScreenCapture =
+                ScreenCapture.createSyncCaptureListener();
+        try {
+            WindowManagerGlobal.getWindowManagerService().captureDisplay(DEFAULT_DISPLAY,
+                captureArgs, syncScreenCapture.first);
+        } catch (RemoteException e) {
+            e.rethrowAsRuntimeException();
+        }
+        ScreenshotHardwareBuffer screenshotBuffer = syncScreenCapture.second.get();
         final Bitmap bitmap = screenshotBuffer == null ? null : screenshotBuffer.asBitmap();
 
         // Bail if we couldn't take the screenshot
