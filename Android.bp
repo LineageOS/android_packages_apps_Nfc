@@ -22,10 +22,11 @@ android_app {
     certificate: "platform",
     jni_libs: ["libnfc_nci_jni"],
     static_libs: [
+        "androidx.annotation_annotation",
         "androidx.appcompat_appcompat",
         "com.google.android.material_material",
     ],
     optimize: {
-        enabled: false,
+        proguard_flags_files: ["proguard.flags"],
     },
 }
