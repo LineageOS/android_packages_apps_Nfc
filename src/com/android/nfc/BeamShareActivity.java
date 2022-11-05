@@ -95,7 +95,7 @@ public class BeamShareActivity extends Activity {
 
     private void showNfcDialogAndExit(int msgId) {
         IntentFilter filter = new IntentFilter(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED);
-        registerReceiverAsUser(mReceiver, UserHandle.ALL, filter, null, null);
+        registerReceiverForAllUsers(mReceiver, filter, null, null);
 
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this,
                 com.android.nfc.R.style.DialogAlertDayNight);
@@ -212,7 +212,7 @@ public class BeamShareActivity extends Activity {
         }
 
         BeamShareData shareData = null;
-        UserHandle myUserHandle = new UserHandle(UserHandle.myUserId());
+        UserHandle myUserHandle = UserHandle.of(UserHandle.myUserId());
         if (mUris.size() > 0) {
             // Uris have our first preference for sharing
             Uri[] uriArray = new Uri[mUris.size()];
