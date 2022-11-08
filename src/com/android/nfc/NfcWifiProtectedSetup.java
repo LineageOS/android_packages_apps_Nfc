@@ -77,8 +77,7 @@ public final class NfcWifiProtectedSetup {
             return false;
         }
 
-        UserManager um = context.getSystemService(UserManager.class);
-        if (wifiConfiguration != null && !um.hasUserRestrictionForUser(
+        if (wifiConfiguration != null &&!UserManager.get(context).hasUserRestriction(
                 UserManager.DISALLOW_CONFIG_WIFI,
                 // hasUserRestriction does not support UserHandle.CURRENT.
                 UserHandle.of(ActivityManager.getCurrentUser()))) {

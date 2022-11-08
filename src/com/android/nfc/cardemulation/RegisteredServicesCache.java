@@ -150,14 +150,11 @@ public class RegisteredServicesCache {
                              Intent.ACTION_PACKAGE_REMOVED.equals(action));
                     if (!replaced) {
                         int currentUser = ActivityManager.getCurrentUser();
-                        if (currentUser == getProfileParentId(UserHandle.
-                                getUserHandleForUid(uid).getIdentifier())) {
+                        if (currentUser == getProfileParentId(UserHandle.getUserId(uid))) {
                             if (Intent.ACTION_PACKAGE_REMOVED.equals(action)) {
-                                invalidateCache(UserHandle.
-                                        getUserHandleForUid(uid).getIdentifier(), true);
+                                invalidateCache(UserHandle.getUserId(uid), true);
                             } else {
-                                invalidateCache(UserHandle.
-                                        getUserHandleForUid(uid).getIdentifier(), false);
+                                invalidateCache(UserHandle.getUserId(uid), false);
                             }
                         } else {
                             // Cache will automatically be updated on user switch
@@ -178,13 +175,13 @@ public class RegisteredServicesCache {
         intentFilter.addAction(Intent.ACTION_PACKAGE_FIRST_LAUNCH);
         intentFilter.addAction(Intent.ACTION_PACKAGE_RESTARTED);
         intentFilter.addDataScheme("package");
-        mContext.registerReceiverForAllUsers(mReceiver.get(), intentFilter, null, null);
+        mContext.registerReceiverAsUser(mReceiver.get(), UserHandle.ALL, intentFilter, null, null);
 
         // Register for events related to sdcard operations
         IntentFilter sdFilter = new IntentFilter();
         sdFilter.addAction(Intent.ACTION_EXTERNAL_APPLICATIONS_AVAILABLE);
         sdFilter.addAction(Intent.ACTION_EXTERNAL_APPLICATIONS_UNAVAILABLE);
-        mContext.registerReceiverForAllUsers(mReceiver.get(), sdFilter, null, null);
+        mContext.registerReceiverAsUser(mReceiver.get(), UserHandle.ALL, sdFilter, null, null);
 
         File dataDir = mContext.getFilesDir();
         mDynamicSettingsFile = new AtomicFile(new File(dataDir, "dynamic_aids.xml"));
@@ -274,7 +271,7 @@ public class RegisteredServicesCache {
         PackageManager pm;
         try {
             pm = mContext.createPackageContextAsUser("android", 0,
-                    UserHandle.of(userId)).getPackageManager();
+                    new UserHandle(userId)).getPackageManager();
         } catch (NameNotFoundException e) {
             Log.e(TAG, "Could not create user package context");
             return null;
@@ -448,8 +445,7 @@ public class RegisteredServicesCache {
                             // See if we have a valid service
                             if (currentComponent != null && currentUid >= 0 &&
                                     (currentGroups.size() > 0 || currentOffHostSE != null)) {
-                                final int userId = UserHandle.
-                                        getUserHandleForUid(currentUid).getIdentifier();
+                                final int userId = UserHandle.getUserId(currentUid);
                                 DynamicSettings dynSettings = new DynamicSettings(currentUid);
                                 for (AidGroup group : currentGroups) {
                                     dynSettings.aidGroups.put(group.getCategory(), group);

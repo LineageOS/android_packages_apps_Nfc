@@ -382,9 +382,9 @@ public class CardEmulationManager implements RegisteredServicesCache.Callback,
             return null;
         }
         // Load current payment default from settings
-        String name = Settings.Secure.getString(
-                mContext.createContextAsUser(UserHandle.of(userId), 0).getContentResolver(),
-                Settings.Secure.NFC_PAYMENT_DEFAULT_COMPONENT);
+        String name = Settings.Secure.getStringForUser(
+                mContext.getContentResolver(), Settings.Secure.NFC_PAYMENT_DEFAULT_COMPONENT,
+                userId);
         if (name != null) {
             ComponentName service = ComponentName.unflattenFromString(name);
             if (!validateInstalled || service == null) {
@@ -407,10 +407,9 @@ public class CardEmulationManager implements RegisteredServicesCache.Callback,
         // ideally we overlay our local changes over whatever is in
         // Settings.Secure
         if (service == null || mServiceCache.hasService(userId, service)) {
-            Settings.Secure.putString(mContext
-                    .createContextAsUser(UserHandle.of(userId), 0).getContentResolver(),
+            Settings.Secure.putStringForUser(mContext.getContentResolver(),
                     Settings.Secure.NFC_PAYMENT_DEFAULT_COMPONENT,
-                    service != null ? service.flattenToString() : null);
+                    service != null ? service.flattenToString() : null, userId);
         } else {
             Log.e(TAG, "Could not find default service to make default: " + service);
         }
@@ -625,8 +624,7 @@ public class CardEmulationManager implements RegisteredServicesCache.Callback,
         public boolean setPreferredService(ComponentName service)
                 throws RemoteException {
             NfcPermissions.enforceUserPermissions(mContext);
-            if (!isServiceRegistered( UserHandle.getUserHandleForUid(
-                    Binder.getCallingUid()).getIdentifier(), service)) {
+            if (!isServiceRegistered(UserHandle.getCallingUserId(), service)) {
                 Log.e(TAG, "setPreferredService: unknown component.");
                 return false;
             }
@@ -732,8 +730,7 @@ public class CardEmulationManager implements RegisteredServicesCache.Callback,
         public boolean enableNfcFForegroundService(ComponentName service)
                 throws RemoteException {
             NfcPermissions.enforceUserPermissions(mContext);
-            if (isNfcFServiceInstalled(UserHandle.getUserHandleForUid(
-                    Binder.getCallingUid()).getIdentifier(), service)) {
+            if (isNfcFServiceInstalled(UserHandle.getCallingUserId(), service)) {
                 return mEnabledNfcFServices.registerEnabledForegroundService(service,
                         Binder.getCallingUid());
             }

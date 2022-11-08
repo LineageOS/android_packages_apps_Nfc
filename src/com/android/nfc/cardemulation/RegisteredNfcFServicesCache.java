@@ -150,9 +150,8 @@ public class RegisteredNfcFServicesCache {
                              Intent.ACTION_PACKAGE_REMOVED.equals(action));
                     if (!replaced) {
                         int currentUser = ActivityManager.getCurrentUser();
-                        if (currentUser == getProfileParentId(UserHandle.
-                                getUserHandleForUid(uid).getIdentifier())) {
-                            invalidateCache(UserHandle.getUserHandleForUid(uid).getIdentifier());
+                        if (currentUser == getProfileParentId(UserHandle.getUserId(uid))) {
+                            invalidateCache(UserHandle.getUserId(uid));
                         } else {
                             // Cache will automatically be updated on user switch
                         }
@@ -173,13 +172,13 @@ public class RegisteredNfcFServicesCache {
         intentFilter.addAction(Intent.ACTION_PACKAGE_FIRST_LAUNCH);
         intentFilter.addAction(Intent.ACTION_PACKAGE_RESTARTED);
         intentFilter.addDataScheme("package");
-        mContext.registerReceiverForAllUsers(mReceiver.get(), intentFilter, null, null);
+        mContext.registerReceiverAsUser(mReceiver.get(), UserHandle.ALL, intentFilter, null, null);
 
         // Register for events related to sdcard operations
         IntentFilter sdFilter = new IntentFilter();
         sdFilter.addAction(Intent.ACTION_EXTERNAL_APPLICATIONS_AVAILABLE);
         sdFilter.addAction(Intent.ACTION_EXTERNAL_APPLICATIONS_UNAVAILABLE);
-        mContext.registerReceiverForAllUsers(mReceiver.get(), sdFilter, null, null);
+        mContext.registerReceiverAsUser(mReceiver.get(), UserHandle.ALL, sdFilter, null, null);
 
         File dataDir = mContext.getFilesDir();
         mDynamicSystemCodeNfcid2File =
@@ -234,7 +233,7 @@ public class RegisteredNfcFServicesCache {
         PackageManager pm;
         try {
             pm = mContext.createPackageContextAsUser("android", 0,
-                    UserHandle.of(userId)).getPackageManager();
+                    new UserHandle(userId)).getPackageManager();
         } catch (NameNotFoundException e) {
             Log.e(TAG, "Could not create user package context");
             return null;
@@ -455,8 +454,7 @@ public class RegisteredNfcFServicesCache {
                         if ("service".equals(tagName)) {
                             // See if we have a valid service
                             if (componentName != null && currentUid >= 0) {
-                                final int userId = UserHandle.
-                                        getUserHandleForUid(currentUid).getIdentifier();
+                                final int userId = UserHandle.getUserId(currentUid);
                                 UserServices userServices = findOrCreateUserLocked(userId);
                                 if (systemCode != null) {
                                     DynamicSystemCode dynamicSystemCode =
