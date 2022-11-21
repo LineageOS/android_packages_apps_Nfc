@@ -39,6 +39,7 @@ import android.content.res.Resources.NotFoundException;
 import android.media.AudioAttributes;
 import android.media.SoundPool;
 import android.net.Uri;
+import android.nfc.AvailableNfcAntenna;
 import android.nfc.BeamShareData;
 import android.nfc.ErrorCodes;
 import android.nfc.FormatException;
@@ -54,6 +55,7 @@ import android.nfc.INfcUnlockHandler;
 import android.nfc.ITagRemovedCallback;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
+import android.nfc.NfcAntennaInfo;
 import android.nfc.Tag;
 import android.nfc.TechListParcel;
 import android.nfc.TransceiveResult;
@@ -1630,6 +1632,31 @@ public class NfcService implements DeviceHostListener {
                 return false;
             }
             return true;
+        }
+
+        @Override
+        public NfcAntennaInfo getNfcAntennaInfo() {
+            int positionX[] = mContext.getResources().getIntArray(
+                    R.array.antenna_x);
+            int positionY[] = mContext.getResources().getIntArray(
+                    R.array.antenna_y);
+            if(positionX.length != positionY.length){
+                return null;
+            }
+            int width = mContext.getResources().getInteger(R.integer.device_width);
+            int height = mContext.getResources().getInteger(R.integer.device_height);
+            List<AvailableNfcAntenna> availableNfcAntennas = new ArrayList<>();
+            for(int i = 0; i < positionX.length; i++){
+                if(positionX[i] >= width | positionY[i] >= height){
+                    return null;
+                }
+                availableNfcAntennas.add(new AvailableNfcAntenna(positionX[i], positionY[i]));
+            }
+            return new NfcAntennaInfo(
+                    width,
+                    height,
+                    mContext.getResources().getBoolean(R.bool.device_foldable),
+                    availableNfcAntennas);
         }
 
         private int computeLockscreenPollMask(int[] techList) {
