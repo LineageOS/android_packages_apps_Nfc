@@ -1528,6 +1528,12 @@ phNciNfc_MfCreateXchgDataHdr(phNciNfc_TransceiveInfo_t tTranscvInfo,
     NFCSTATUS   status = NFCSTATUS_SUCCESS;
     uint8_t     i = 0;
 
+    if (tTranscvInfo.tSendData.wLen > (MAX_BUFF_SIZE - 1))
+    {
+      android_errorWriteLog(0x534e4554, "246932269");
+      return NFCSTATUS_FAILED;
+    }
+
     buff[i++] = phNciNfc_e_MfRawDataXchgHdr;
     memcpy(&buff[i],tTranscvInfo.tSendData.pBuff,tTranscvInfo.tSendData.wLen);
     *buffSz = i + tTranscvInfo.tSendData.wLen;
