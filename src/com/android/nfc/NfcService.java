@@ -93,7 +93,6 @@ import android.util.proto.ProtoOutputStream;
 import android.widget.Toast;
 
 import com.android.internal.logging.MetricsLogger;
-import com.android.internal.util.ArrayUtils;
 import com.android.nfc.DeviceHost.DeviceHostListener;
 import com.android.nfc.DeviceHost.LlcpConnectionlessSocket;
 import com.android.nfc.DeviceHost.LlcpServerSocket;
@@ -102,6 +101,7 @@ import com.android.nfc.DeviceHost.NfcDepEndpoint;
 import com.android.nfc.DeviceHost.TagEndpoint;
 import com.android.nfc.cardemulation.CardEmulationManager;
 import com.android.nfc.dhimpl.NativeNfcManager;
+import com.android.nfc.Utils;
 import com.android.nfc.handover.HandoverDataParser;
 
 import java.io.File;
@@ -1625,7 +1625,7 @@ public class NfcService implements DeviceHostListener {
             String skuList[] = mContext.getResources().getStringArray(
                 R.array.config_skuSupportsSecureNfc);
             String sku = SystemProperties.get("ro.boot.hardware.sku");
-            if (TextUtils.isEmpty(sku) || !ArrayUtils.contains(skuList, sku)) {
+            if (TextUtils.isEmpty(sku) || !Utils.arrayContains(skuList, sku)) {
                 return false;
             }
             return true;
