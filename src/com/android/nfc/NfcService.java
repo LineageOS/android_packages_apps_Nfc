@@ -34,6 +34,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.IPackageManager;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.content.pm.UserInfo;
 import android.content.res.Resources.NotFoundException;
 import android.media.AudioAttributes;
@@ -456,8 +457,6 @@ public class NfcService implements DeviceHostListener {
     public void onNfcTransactionEvent(byte[] aid, byte[] data, String seName) {
         byte[][] dataObj = {aid, data, seName.getBytes()};
         sendMessage(NfcService.MSG_TRANSACTION_EVENT, dataObj);
-        NfcStatsLog.write(NfcStatsLog.NFC_CARDEMULATION_OCCURRED,
-                NfcStatsLog.NFC_CARDEMULATION_OCCURRED__CATEGORY__OFFHOST, seName);
     }
 
     @Override
@@ -2955,6 +2954,7 @@ public class NfcService implements DeviceHostListener {
 
             try {
                 String reader = new String(readerByteArray, "UTF-8");
+                int uid = -1;
                 for (int userId : mNfcEventInstalledPackages.keySet()) {
                     List<String> packagesOfUser = mNfcEventInstalledPackages.get(userId);
                     String[] installedPackages = new String[packagesOfUser.size()];
@@ -2979,14 +2979,40 @@ public class NfcService implements DeviceHostListener {
 
                     final BroadcastOptions options = BroadcastOptions.makeBasic();
                     options.setBackgroundActivityStartsAllowed(true);
+
+                    Map<String, Integer> hasIntentPackages = mContext
+                            .getPackageManager()
+                            .queryBroadcastReceiversAsUser(intent, 0, UserHandle.of(userId))
+                            .stream()
+                            .collect(Collectors.toMap(
+                                      activity -> activity.activityInfo.applicationInfo.packageName,
+                                      activity -> activity.activityInfo.applicationInfo.uid));
+                    if (DBG) {
+                        String[] packageNames = hasIntentPackages
+                                .keySet().toArray(new String[hasIntentPackages.size()]);
+                        Log.d(TAG,
+                                "queryBroadcastReceiversAsUser: " + Arrays.toString(packageNames));
+                    }
+
                     for (int i = 0; i < nfcAccess.length; i++) {
                         if (nfcAccess[i]) {
+                            if (DBG) {
+                                Log.d(TAG,
+                                        "sendOffHostTransactionEvent to " + packagesOfUser.get(i));
+                            }
+                            if (uid == -1 && hasIntentPackages.containsKey(packagesOfUser.get(i))) {
+                                uid = hasIntentPackages.get(packagesOfUser.get(i));
+                            }
                             intent.setPackage(packagesOfUser.get(i));
                             mContext.sendBroadcastAsUser(intent, UserHandle.of(userId), null,
                                     options.toBundle());
                         }
                     }
                 }
+                NfcStatsLog.write(NfcStatsLog.NFC_CARDEMULATION_OCCURRED,
+                        NfcStatsLog.NFC_CARDEMULATION_OCCURRED__CATEGORY__OFFHOST,
+                        reader,
+                        uid);
             } catch (RemoteException e) {
                 Log.e(TAG, "Error in isNfcEventAllowed() " + e);
             } catch (UnsupportedEncodingException e) {
