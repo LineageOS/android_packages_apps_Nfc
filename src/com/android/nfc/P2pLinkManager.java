@@ -16,12 +16,12 @@
 
 package com.android.nfc;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.pm.UserInfo;
 import android.net.Uri;
 import android.nfc.BeamShareData;
 import android.nfc.IAppCallback;
@@ -54,8 +54,8 @@ import java.io.FileDescriptor;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.util.List;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Interface to listen for P2P events.
@@ -283,7 +283,8 @@ class P2pLinkManager implements Handler.Callback, P2pEventListener.Callback {
         mDefaultRwSize = defaultRwSize;
         mLlcpServicesConnected = false;
         mNdefCallbackUid = -1;
-        mForegroundUtils = ForegroundUtils.getInstance();
+        mForegroundUtils = ForegroundUtils.getInstance(
+                context.getSystemService(ActivityManager.class));
      }
 
     /**
