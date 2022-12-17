@@ -31,18 +31,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
-import android.content.pm.IPackageManager;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
-import android.content.pm.UserInfo;
 import android.content.res.Resources.NotFoundException;
 import android.media.AudioAttributes;
 import android.media.SoundPool;
 import android.net.Uri;
 import android.nfc.AvailableNfcAntenna;
 import android.nfc.BeamShareData;
-import android.nfc.cardemulation.CardEmulation;
 import android.nfc.ErrorCodes;
 import android.nfc.FormatException;
 import android.nfc.IAppCallback;
@@ -61,6 +57,7 @@ import android.nfc.NfcAntennaInfo;
 import android.nfc.Tag;
 import android.nfc.TechListParcel;
 import android.nfc.TransceiveResult;
+import android.nfc.cardemulation.CardEmulation;
 import android.nfc.tech.Ndef;
 import android.nfc.tech.TagTechnology;
 import android.os.AsyncTask;
@@ -255,6 +252,7 @@ public class NfcService implements DeviceHostListener {
             VibrationAttributes.createForUsage(VibrationAttributes.USAGE_HARDWARE_FEEDBACK);
 
     private final UserManager mUserManager;
+    private final ActivityManager mActivityManager;
 
     private static int nci_version = NCI_VERSION_1_0;
     // NFC Execution Environment
@@ -534,6 +532,7 @@ public class NfcService implements DeviceHostListener {
 
         mKeyguard = mContext.getSystemService(KeyguardManager.class);
         mUserManager = mContext.getSystemService(UserManager.class);
+        mActivityManager = mContext.getSystemService(ActivityManager.class);
         mVibrator = mContext.getSystemService(Vibrator.class);
         mVibrationEffect = VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE);
 
@@ -595,7 +594,7 @@ public class NfcService implements DeviceHostListener {
         if (mIsHceCapable) {
             mCardEmulationManager = new CardEmulationManager(mContext);
         }
-        mForegroundUtils = ForegroundUtils.getInstance();
+        mForegroundUtils = ForegroundUtils.getInstance(mActivityManager);
 
         mIsSecureNfcCapable = mNfcAdapter.deviceSupportsNfcSecure();
         mIsSecureNfcEnabled =
