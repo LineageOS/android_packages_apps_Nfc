@@ -994,6 +994,11 @@ NFCSTATUS Mfc_Transceive(uint8_t* p_data, uint32_t len) {
     return status;
   }
 
+  if (len > (MAX_BUFF_SIZE * 2)) {
+    android_errorWriteLog(0x534e4554, "241387741");
+    return status;
+  }
+
   gphNxpExtns_Context.RawWriteCallBack = false;
   gphNxpExtns_Context.CallBackMifare = NULL;
   gphNxpExtns_Context.CallBackCtxt = NdefMap;
