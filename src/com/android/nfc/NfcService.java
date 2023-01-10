@@ -1045,17 +1045,12 @@ public class NfcService implements DeviceHostListener {
                 updateAlwaysOnState(NfcAdapter.STATE_OFF);
             } else if (mState == NfcAdapter.STATE_OFF) {
                 /* Special case when mState is OFF but NFCC is already initialized.
-                 * Temperatorily enable NfcAdapter without initialize NFCC and applyRouting.
-                 * And disable NfcAdapter normally with deinitialize.
-                 * All state will switch back to OFF in the end.
+                 * Deinitialize mDevicehost directly.
                  */
                 updateAlwaysOnState(NfcAdapter.STATE_TURNING_OFF);
                 mDeviceHost.setNfceePowerAndLinkCtrl(false);
-                if (!enableInternal()) {
-                    updateAlwaysOnState(NfcAdapter.STATE_OFF);
-                    return;
-                }
-                disableInternal();
+                boolean result = mDeviceHost.deinitialize();
+                if (DBG) Log.d(TAG, "mDeviceHost.deinitialize() = " + result);
                 updateAlwaysOnState(NfcAdapter.STATE_OFF);
             }
         }
