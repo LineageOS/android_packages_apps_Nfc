@@ -136,6 +136,7 @@ public class SendUi implements Animator.AnimatorListener, View.OnTouchListener,
     // all members are only used on UI thread
     final WindowManager mWindowManager;
     final Context mContext;
+    final Context mDefaultDisplayContext;
     final Display mDisplay;
     final DisplayMetrics mDisplayMetrics;
     final Matrix mDisplayMatrix;
@@ -209,6 +210,7 @@ public class SendUi implements Animator.AnimatorListener, View.OnTouchListener,
         mStatusBarManager = (StatusBarManager) context.getSystemService(Context.STATUS_BAR_SERVICE);
 
         mDisplay = mWindowManager.getDefaultDisplay();
+        mDefaultDisplayContext = mContext.createDisplayContext(mDisplay);
 
         mLayoutInflater = (LayoutInflater)
                 context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -360,7 +362,7 @@ public class SendUi implements Animator.AnimatorListener, View.OnTouchListener,
         // Update display metrics
         mDisplay.getRealMetrics(mDisplayMetrics);
 
-        final int statusBarHeight = SystemBarUtils.getStatusBarHeight(mContext);
+        final int statusBarHeight = SystemBarUtils.getStatusBarHeight(mDefaultDisplayContext);
 
         mBlackLayer.setVisibility(View.GONE);
         mBlackLayer.setAlpha(0f);
@@ -592,7 +594,7 @@ public class SendUi implements Animator.AnimatorListener, View.OnTouchListener,
     Bitmap createScreenshot() {
         boolean hasNavBar =  mContext.getResources().getBoolean(
                 com.android.internal.R.bool.config_showNavigationBar);
-        final int statusBarHeight = SystemBarUtils.getStatusBarHeight(mContext);
+        final int statusBarHeight = SystemBarUtils.getStatusBarHeight(mDefaultDisplayContext);
 
         // Navbar has different sizes, depending on orientation
         final int navBarHeight = hasNavBar ? mContext.getResources().getDimensionPixelSize(
