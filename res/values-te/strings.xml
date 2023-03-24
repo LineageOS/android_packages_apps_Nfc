@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_name" msgid="78565911793142902">"Nfc సేవ"</string>
+    <string name="app_name" msgid="78565911793142902">"Nfc సర్వీస్"</string>
     <string name="nfcUserLabel" msgid="7708535817084357357">"Nfc"</string>
     <string name="accessibility_nfc_enabled" msgid="7796246979948787735">"NFC ప్రారంభించబడింది."</string>
     <string name="tap_to_beam" msgid="5819197866281059878">"ప్రసారం చేయడానికి నొక్కండి"</string>
@@ -53,6 +53,6 @@
     <string name="tag_dispatch_failed" msgid="3562984995049738400">"NFC ట్యాగ్‌కి మద్దతు ఇచ్చే అప్లికేషన్ ఏదీ లేదు"</string>
     <string name="nfc_blocking_alert_title" msgid="1086172436984457085">"NFC బ్లాక్ చేయబడవచ్చు"</string>
     <string name="nfc_blocking_alert_message" msgid="7003156052570107490">"ఎలా పరిష్కరించాలో తెలుసుకోవడానికి ట్యాప్ చేయండి."</string>
-    <string name="nfc_logging_alert_title" msgid="5300867034660942987">"NFC డేటా రికార్డ్ చేయబడుతోంది"</string>
+    <string name="nfc_logging_alert_title" msgid="5300867034660942987">"NFC డేటా రికార్డ్ అవుతోంది"</string>
     <string name="nfc_logging_alert_message" msgid="1550187184825467942">"రికార్డింగ్ ఆపడానికి ట్యాప్ చేయండి."</string>
 </resources>
