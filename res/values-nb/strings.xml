@@ -14,7 +14,7 @@
     <string name="beam_tap_to_view" msgid="7430394753262448349">"Trykk for å se"</string>
     <string name="beam_handover_not_supported" msgid="4083165921751489015">"Mottakerens enhet støtter ikke store filoverføringer via Android Beam."</string>
     <string name="beam_try_again" msgid="3364677301009783455">"Før enhetene sammen igjen"</string>
-    <string name="beam_busy" msgid="5253335587620612576">"Beam er opptatt for øyeblikket. Prøv på nytt når den forrige overføringen er fullført."</string>
+    <string name="beam_busy" msgid="5253335587620612576">"Beam er opptatt for øyeblikket. Prøv igjen når den forrige overføringen er fullført."</string>
     <string name="device" msgid="4459621591392478151">"enhet"</string>
     <string name="connecting_peripheral" msgid="1296182660525660935">"Kobler til <xliff:g id="DEVICE_NAME">%1$s</xliff:g>"</string>
     <string name="connected_peripheral" msgid="20748648543160091">"Tilkoblet <xliff:g id="DEVICE_NAME">%1$s</xliff:g>"</string>
@@ -53,6 +53,4 @@
     <string name="tag_dispatch_failed" msgid="3562984995049738400">"Ingen apper støttes for denne NFC-brikken"</string>
     <string name="nfc_blocking_alert_title" msgid="1086172436984457085">"NFC kan være blokkert"</string>
     <string name="nfc_blocking_alert_message" msgid="7003156052570107490">"Trykk for å finne ut hvordan du løser dette."</string>
-    <string name="nfc_logging_alert_title" msgid="5300867034660942987">"Det registreres NFC-data"</string>
-    <string name="nfc_logging_alert_message" msgid="1550187184825467942">"Trykk for å stoppe registreringen."</string>
 </resources>
