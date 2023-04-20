@@ -37,7 +37,7 @@
     <string name="complete_with" msgid="6797459104103012992">"దీనితో పూర్తి చేయండి"</string>
     <string name="default_pay_app_removed" msgid="4108250545457437360">"నొక్కి చెల్లించడం కోసం మీ ప్రాధాన్య సేవ తీసివేయబడింది. మరోదాన్ని ఎంచుకోవాలా?"</string>
     <string name="ask_nfc_tap" msgid="2925239870458286340">"పూర్తి చేయడానికి మరో పరికరాన్ని నొక్కండి"</string>
-    <string name="wifi_connect" msgid="6250727951843550671">"కనెక్ట్ చేయి"</string>
+    <string name="wifi_connect" msgid="6250727951843550671">"కనెక్ట్ చేయండి"</string>
     <string name="status_unable_to_connect" msgid="9183908200295307657">"నెట్‌వర్క్‌కు కనెక్ట్ చేయడం సాధ్యపడలేదు"</string>
     <string name="status_wifi_connected" msgid="5893022897732105739">"కనెక్ట్ చేయబడింది"</string>
     <string name="title_connect_to_network" msgid="2474034615817280146">"నెట్‌‍వర్క్‌కు కనెక్ట్ చేయి"</string>
