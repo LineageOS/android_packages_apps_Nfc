@@ -3,13 +3,15 @@
     <string name="app_name">Serviciu NFC</string>
     <string name="nfcUserLabel">NFC</string>
     <string name="accessibility_nfc_enabled">NFC habilitáu.</string>
+    <string name="tap_to_beam">Toca equí pa tresmitir</string>
     <string name="beam_progress">Tresmisión entrante…</string>
     <string name="beam_outgoing">Tresmitiendo…</string>
     <string name="beam_complete">Completóse la tresmisión</string>
     <string name="beam_failed">La tresmisión nun se completó</string>
     <string name="beam_canceled">La tresmisión encaboxóse</string>
     <string name="cancel">Encaboxar</string>
-    <string name="beam_handover_not_supported">El preséu del receutor nun ye compatible coles tresmisiones de ficheros grandes.</string>
+    <string name="beam_tap_to_view">Toca equí pa ver el conteníu</string>
+    <string name="beam_handover_not_supported">El preséu del receutor nun ye compatible cola tresmisión de ficheros grandes.</string>
     <string name="beam_try_again">Volvi axuntar los preseos</string>
     <string name="beam_busy">La tresmisión nun ta disponible. Volvi tentalo cuando se complete l\'anterior.</string>
     <string name="device">preséu</string>
@@ -39,4 +41,13 @@
     <string name="prompt_connect_to_network">¿Quies conectate a la rede «<xliff:g id="network_ssid">%1$s</xliff:g>»?</string>
     <string name="beam_requires_nfc_enabled">Android Beam rique que\'l NFC tea habilitáu. ¿Quies habilitalu?</string>
     <string name="android_beam">Android Beam</string>
+    <string name="beam_requires_external_storage_permission">L\'aplicación nun tien el permisu del almacenamientu esternu, obligatoriu pa tresmitir el ficheru</string>
+    <string name="title_confirm_url_open">¿Quies abrir l\'enllaz?</string>
+    <string name="summary_confirm_url_open" product="tablet">La tableta recibió un enllaz pente NFC:</string>
+    <string name="summary_confirm_url_open" product="default">El teléfonu recibió un enllaz pente NFC:</string>
+    <string name="action_confirm_url_open">Abrir l\'enllaz</string>
+    <string name="tag_read_error">Fallu de la llectura NFC. Volvi tentalo.</string>
+    <string name="tag_dispatch_failed">Nun hai nenguna aplicación compatible con esta etiqueta NFC</string>
+    <string name="nfc_blocking_alert_title">El NFC pue tar bloquiáu</string>
+    <string name="nfc_blocking_alert_message">Toca equí pa saber cómo igualo.</string>
 </resources>
