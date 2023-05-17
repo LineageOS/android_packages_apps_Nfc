@@ -353,6 +353,7 @@ public class NfcService implements DeviceHostListener, ForegroundUtils.Callback 
     // for recording the latest Tag object cookie
     long mCookieUpToDate = -1;
 
+    private DeviceConfigFacade mDeviceConfigFacade;
     private NfcDispatcher mNfcDispatcher;
     private PowerManager mPowerManager;
     private KeyguardManager mKeyguard;
@@ -547,6 +548,7 @@ public class NfcService implements DeviceHostListener, ForegroundUtils.Callback 
         } else {
             mInProvisionMode = false;
         }
+        mDeviceConfigFacade = new DeviceConfigFacade(mContext, mHandler);
 
         mNfcDispatcher = new NfcDispatcher(mContext, mHandoverDataParser, mInProvisionMode);
 
@@ -636,7 +638,7 @@ public class NfcService implements DeviceHostListener, ForegroundUtils.Callback 
 
         // Notification message variables
         mDispatchFailedCount = 0;
-        if (mContext.getResources().getBoolean(R.bool.enable_antenna_blocked_alert) &&
+        if (mDeviceConfigFacade.isAntennaBlockedAlertEnabled() &&
             !mPrefs.getBoolean(PREF_ANTENNA_BLOCKED_MESSAGE_SHOWN, ANTENNA_BLOCKED_MESSAGE_SHOWN_DEFAULT)) {
             mAntennaBlockedMessageShown = false;
             mDispatchFailedMax =
