@@ -248,6 +248,7 @@ public class NfcService implements DeviceHostListener {
             VibrationAttributes.createForUsage(VibrationAttributes.USAGE_HARDWARE_FEEDBACK);
 
     private final UserManager mUserManager;
+    private final ActivityManager mActivityManager;
 
     private static int nci_version = NCI_VERSION_1_0;
     // NFC Execution Environment
@@ -533,9 +534,10 @@ public class NfcService implements DeviceHostListener {
                         | PowerManager.ACQUIRE_CAUSES_WAKEUP
                         | PowerManager.ON_AFTER_RELEASE, "NfcService:mRequireUnlockWakeLock");
 
-        mKeyguard = (KeyguardManager) mContext.getSystemService(Context.KEYGUARD_SERVICE);
-        mUserManager = (UserManager) mContext.getSystemService(Context.USER_SERVICE);
-        mVibrator = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
+        mKeyguard = mContext.getSystemService(KeyguardManager.class);
+        mUserManager = mContext.getSystemService(UserManager.class);
+        mActivityManager = mContext.getSystemService(ActivityManager.class);
+        mVibrator = mContext.getSystemService(Vibrator.class);
         mVibrationEffect = VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE);
 
         mScreenState = mScreenStateHelper.checkScreenState();
@@ -600,7 +602,7 @@ public class NfcService implements DeviceHostListener {
         if (mIsHceCapable) {
             mCardEmulationManager = new CardEmulationManager(mContext);
         }
-        mForegroundUtils = ForegroundUtils.getInstance();
+        mForegroundUtils = ForegroundUtils.getInstance(mActivityManager);
 
         mIsSecureNfcCapable = mNfcAdapter.deviceSupportsNfcSecure();
         mIsSecureNfcEnabled =

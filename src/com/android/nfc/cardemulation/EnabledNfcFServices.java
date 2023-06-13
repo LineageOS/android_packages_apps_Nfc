@@ -15,6 +15,7 @@
  */
 package com.android.nfc.cardemulation;
 
+import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.nfc.cardemulation.NfcFServiceInfo;
@@ -38,7 +39,7 @@ public class EnabledNfcFServices implements com.android.nfc.ForegroundUtils.Call
     final RegisteredNfcFServicesCache mNfcFServiceCache;
     final RegisteredT3tIdentifiersCache mT3tIdentifiersCache;
     final Callback mCallback;
-    final ForegroundUtils mForegroundUtils = ForegroundUtils.getInstance();
+    final ForegroundUtils mForegroundUtils;
     final Handler mHandler = new Handler(Looper.getMainLooper());
 
     final Object mLock = new Object();
@@ -62,6 +63,8 @@ public class EnabledNfcFServices implements com.android.nfc.ForegroundUtils.Call
             RegisteredT3tIdentifiersCache t3tIdentifiersCache, Callback callback) {
         if (DBG) Log.d(TAG, "EnabledNfcFServices");
         mContext = context;
+        mForegroundUtils = ForegroundUtils.getInstance(
+                context.getSystemService(ActivityManager.class));
         mNfcFServiceCache = nfcFServiceCache;
         mT3tIdentifiersCache = t3tIdentifiersCache;
         mCallback = callback;
