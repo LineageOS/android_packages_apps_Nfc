@@ -203,18 +203,19 @@ public class SendUi implements Animator.AnimatorListener, View.OnTouchListener,
     }
 
     public SendUi(Context context, Callback callback) {
-        mContext = context;
+        mWindowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        mDisplay = mWindowManager.getDefaultDisplay();
+
+        mContext = context.createDisplayContext(mDisplay);
         mCallback = callback;
 
         mDisplayMetrics = new DisplayMetrics();
         mDisplayMatrix = new Matrix();
-        mWindowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        mStatusBarManager = (StatusBarManager) context.getSystemService(Context.STATUS_BAR_SERVICE);
-
-        mDisplay = mWindowManager.getDefaultDisplay();
+        mStatusBarManager = (StatusBarManager)
+                mContext.getSystemService(Context.STATUS_BAR_SERVICE);
 
         mLayoutInflater = (LayoutInflater)
-                context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mScreenshotLayout = mLayoutInflater.inflate(R.layout.screenshot, null);
 
         mScreenshotView = (ImageView) mScreenshotLayout.findViewById(R.id.screenshot);
@@ -314,7 +315,7 @@ public class SendUi implements Animator.AnimatorListener, View.OnTouchListener,
         window.setContentView(mScreenshotLayout, mWindowLayoutParams);
 
         if (mHardwareAccelerated) {
-            mFireflyRenderer = new FireflyRenderer(context);
+            mFireflyRenderer = new FireflyRenderer(mContext);
         } else {
             mFireflyRenderer = null;
         }
