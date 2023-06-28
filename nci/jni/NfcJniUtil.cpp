@@ -51,15 +51,7 @@ jint JNI_OnLoad(JavaVM* jvm, void*) {
 
   if (android::register_com_android_nfc_NativeNfcManager(e) == -1)
     return JNI_ERR;
-  if (android::register_com_android_nfc_NativeLlcpServiceSocket(e) == -1)
-    return JNI_ERR;
-  if (android::register_com_android_nfc_NativeLlcpSocket(e) == -1)
-    return JNI_ERR;
   if (android::register_com_android_nfc_NativeNfcTag(e) == -1) return JNI_ERR;
-  if (android::register_com_android_nfc_NativeLlcpConnectionlessSocket(e) == -1)
-    return JNI_ERR;
-  if (android::register_com_android_nfc_NativeP2pDevice(e) == -1)
-    return JNI_ERR;
   if (RoutingManager::getInstance().registerJniFunctions(e) == -1)
     return JNI_ERR;
   DLOG_IF(INFO, nfc_debug_enabled) << StringPrintf("%s: exit", __func__);
