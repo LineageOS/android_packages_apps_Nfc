@@ -32,7 +32,6 @@
 #endif /* DTA_ENABLED */
 #include "NfcJniUtil.h"
 #include "NfcTag.h"
-#include "PeerToPeer.h"
 #include "PowerSwitch.h"
 #include "RoutingManager.h"
 #include "SyncEvent.h"
@@ -40,7 +39,6 @@
 #include "debug_lmrt.h"
 #include "nfa_api.h"
 #include "nfa_ee_api.h"
-#include "nfa_p2p_api.h"
 #include "nfc_brcm_defs.h"
 #include "nfc_config.h"
 #include "rw_api.h"
@@ -588,31 +586,6 @@ static void nfaConnectionCallback(uint8_t connEvent,
                           eventData->ndef_write_cplt.len);
       break;
 
-    case NFA_LLCP_ACTIVATED_EVT:  // LLCP link is activated
-      DLOG_IF(INFO, nfc_debug_enabled) << StringPrintf(
-          "%s: NFA_LLCP_ACTIVATED_EVT: is_initiator: %d  remote_wks: %d, "
-          "remote_lsc: %d, remote_link_miu: %d, local_link_miu: %d",
-          __func__, eventData->llcp_activated.is_initiator,
-          eventData->llcp_activated.remote_wks,
-          eventData->llcp_activated.remote_lsc,
-          eventData->llcp_activated.remote_link_miu,
-          eventData->llcp_activated.local_link_miu);
-
-      PeerToPeer::getInstance().llcpActivatedHandler(getNative(0, 0),
-                                                     eventData->llcp_activated);
-      break;
-
-    case NFA_LLCP_DEACTIVATED_EVT:  // LLCP link is deactivated
-      DLOG_IF(INFO, nfc_debug_enabled)
-          << StringPrintf("%s: NFA_LLCP_DEACTIVATED_EVT", __func__);
-      PeerToPeer::getInstance().llcpDeactivatedHandler(
-          getNative(0, 0), eventData->llcp_deactivated);
-      break;
-    case NFA_LLCP_FIRST_PACKET_RECEIVED_EVT:  // Received first packet over llcp
-      DLOG_IF(INFO, nfc_debug_enabled)
-          << StringPrintf("%s: NFA_LLCP_FIRST_PACKET_RECEIVED_EVT", __func__);
-      PeerToPeer::getInstance().llcpFirstPacketHandler(getNative(0, 0));
-      break;
     case NFA_PRESENCE_CHECK_EVT:
       DLOG_IF(INFO, nfc_debug_enabled)
           << StringPrintf("%s: NFA_PRESENCE_CHECK_EVT", __func__);
@@ -635,15 +608,9 @@ static void nfaConnectionCallback(uint8_t connEvent,
                           __func__, eventData->status);
       break;
 
-    case NFA_SET_P2P_LISTEN_TECH_EVT:
-      DLOG_IF(INFO, nfc_debug_enabled)
-          << StringPrintf("%s: NFA_SET_P2P_LISTEN_TECH_EVT", __func__);
-      PeerToPeer::getInstance().connectionEventHandler(connEvent, eventData);
-      break;
-
     default:
       DLOG_IF(INFO, nfc_debug_enabled)
-          << StringPrintf("%s: unknown event ????", __func__);
+          << StringPrintf("%s: unknown event (%d) ????", __func__, connEvent);
       break;
   }
 }
@@ -881,7 +848,6 @@ void nfaDeviceManagementCallback(uint8_t dmEvent,
         nativeNfcTag_abortWaits();
         NfcTag::getInstance().abort();
         sAbortConnlessWait = true;
-        nativeLlcpConnectionlessSocket_abortWait();
         {
           DLOG_IF(INFO, nfc_debug_enabled) << StringPrintf(
               "%s: aborting  sNfaEnableDisablePollingEvent", __func__);
@@ -1160,8 +1126,6 @@ static jboolean nfcManager_doInitialize(JNIEnv* e, jobject o) {
             RoutingManager::getInstance().initialize(getNative(e, o));
         nativeNfcTag_registerNdefTypeHandler();
         NfcTag::getInstance().initialize(getNative(e, o));
-        PeerToPeer::getInstance().initialize();
-        PeerToPeer::getInstance().handleNfcOnOff(true);
         HciEventManager::getInstance().initialize(getNative(e, o));
 
         /////////////////////////////////////////////////////////////////////////////////
@@ -1324,16 +1288,6 @@ static void nfcManager_enableDiscovery(JNIEnv* e, jobject o,
       DLOG_IF(INFO, nfc_debug_enabled)
           << StringPrintf("%s: Enable p2pListening", __func__);
 
-      if (enable_p2p && !sP2pEnabled) {
-        sP2pEnabled = true;
-        PeerToPeer::getInstance().enableP2pListening(true);
-        NFA_ResumeP2p();
-      } else if (!enable_p2p && sP2pEnabled) {
-        sP2pEnabled = false;
-        PeerToPeer::getInstance().enableP2pListening(false);
-        NFA_PauseP2p();
-      }
-
       if (reader_mode && !sReaderModeEnabled) {
         sReaderModeEnabled = true;
         NFA_DisableListening();
@@ -1354,20 +1308,6 @@ static void nfcManager_enableDiscovery(JNIEnv* e, jobject o,
       }
     }
   } else {
-    /* enable_p2p=> request to enable p2p, P2pEnabled=> current state of p2p */
-    if (enable_p2p && !sP2pEnabled) {
-      sP2pEnabled = true;
-      DLOG_IF(INFO, nfc_debug_enabled)
-          << StringPrintf("%s: Enable p2pListening", __func__);
-      PeerToPeer::getInstance().enableP2pListening(true);
-      NFA_ResumeP2p();
-    } else if (!enable_p2p && sP2pEnabled) {
-      sP2pEnabled = false;
-      DLOG_IF(INFO, nfc_debug_enabled)
-          << StringPrintf("%s: Disable p2pListening", __func__);
-      PeerToPeer::getInstance().enableP2pListening(false);
-      NFA_PauseP2p();
-    }
     // No technologies configured, stop polling
     stopPolling_rfDiscoveryDisabled();
   }
@@ -1415,9 +1355,6 @@ void nfcManager_disableDiscovery(JNIEnv* e, jobject o) {
 
   if (sPollingEnabled) status = stopPolling_rfDiscoveryDisabled();
 
-  PeerToPeer::getInstance().enableP2pListening(false);
-  sP2pEnabled = false;
-  sDiscoveryEnabled = false;
   // if nothing is active after this, then tell the controller to power down
   if (!PowerSwitch::getInstance().setModeOff(PowerSwitch::DISCOVERY))
     PowerSwitch::getInstance().setLevel(PowerSwitch::LOW_POWER);
@@ -1446,68 +1383,14 @@ static jobject nfcManager_doCreateLlcpServiceSocket(JNIEnv* e, jobject,
                                                     jint nSap, jstring sn,
                                                     jint miu, jint rw,
                                                     jint linearBufferLength) {
-  PeerToPeer::tJNI_HANDLE jniHandle =
-      PeerToPeer::getInstance().getNewJniHandle();
-
   ScopedUtfChars serviceName(e, sn);
 
   DLOG_IF(INFO, nfc_debug_enabled) << StringPrintf(
       "%s: enter: sap=%i; name=%s; miu=%i; rw=%i; buffLen=%i", __func__, nSap,
       serviceName.c_str(), miu, rw, linearBufferLength);
 
-  /* Create new NativeLlcpServiceSocket object */
   jobject serviceSocket = NULL;
-  if (nfc_jni_cache_object_local(e, gNativeLlcpServiceSocketClassName,
-                                 &(serviceSocket)) == -1) {
-    LOG(ERROR) << StringPrintf("%s: Llcp socket object creation error",
-                               __func__);
-    return NULL;
-  }
-
-  /* Get NativeLlcpServiceSocket class object */
-  ScopedLocalRef<jclass> clsNativeLlcpServiceSocket(
-      e, e->GetObjectClass(serviceSocket));
-  if (e->ExceptionCheck()) {
-    e->ExceptionClear();
-    LOG(ERROR) << StringPrintf("%s: Llcp Socket get object class error",
-                               __func__);
-    return NULL;
-  }
-
-  if (!PeerToPeer::getInstance().registerServer(jniHandle,
-                                                serviceName.c_str())) {
-    LOG(ERROR) << StringPrintf("%s: RegisterServer error", __func__);
-    return NULL;
-  }
-
-  jfieldID f;
-
-  /* Set socket handle to be the same as the NfaHandle*/
-  f = e->GetFieldID(clsNativeLlcpServiceSocket.get(), "mHandle", "I");
-  e->SetIntField(serviceSocket, f, (jint)jniHandle);
-  DLOG_IF(INFO, nfc_debug_enabled)
-      << StringPrintf("%s: socket Handle = 0x%X", __func__, jniHandle);
-
-  /* Set socket linear buffer length */
-  f = e->GetFieldID(clsNativeLlcpServiceSocket.get(),
-                    "mLocalLinearBufferLength", "I");
-  e->SetIntField(serviceSocket, f, (jint)linearBufferLength);
-  DLOG_IF(INFO, nfc_debug_enabled)
-      << StringPrintf("%s: buffer length = %d", __func__, linearBufferLength);
-
-  /* Set socket MIU */
-  f = e->GetFieldID(clsNativeLlcpServiceSocket.get(), "mLocalMiu", "I");
-  e->SetIntField(serviceSocket, f, (jint)miu);
-  DLOG_IF(INFO, nfc_debug_enabled)
-      << StringPrintf("%s: MIU = %d", __func__, miu);
-
-  /* Set socket RW */
-  f = e->GetFieldID(clsNativeLlcpServiceSocket.get(), "mLocalRw", "I");
-  e->SetIntField(serviceSocket, f, (jint)rw);
-  DLOG_IF(INFO, nfc_debug_enabled)
-      << StringPrintf("%s:  RW = %d", __func__, rw);
-
-  sLastError = 0;
+  /* Create new NativeLlcpServiceSocket object */
   DLOG_IF(INFO, nfc_debug_enabled) << StringPrintf("%s: exit", __func__);
   return serviceSocket;
 }
@@ -1558,7 +1441,6 @@ static jboolean nfcManager_doDeinitialize(JNIEnv*, jobject) {
       DLOG_IF(INFO, nfc_debug_enabled)
           << StringPrintf("%s: wait for completion", __func__);
       sNfaDisableEvent.wait();  // wait for NFA command to finish
-      PeerToPeer::getInstance().handleNfcOnOff(false);
     } else {
       LOG(ERROR) << StringPrintf("%s: fail disable; error=0x%X", __func__,
                                  stat);
@@ -1567,7 +1449,6 @@ static jboolean nfcManager_doDeinitialize(JNIEnv*, jobject) {
   nativeNfcTag_abortWaits();
   NfcTag::getInstance().abort();
   sAbortConnlessWait = true;
-  nativeLlcpConnectionlessSocket_abortWait();
   sIsNfaEnabled = false;
   sRoutingInitialized = false;
   sDiscoveryEnabled = false;
@@ -1613,45 +1494,8 @@ static jobject nfcManager_doCreateLlcpSocket(JNIEnv* e, jobject, jint nSap,
       << StringPrintf("%s: enter; sap=%d; miu=%d; rw=%d; buffer len=%d",
                       __func__, nSap, miu, rw, linearBufferLength);
 
-  PeerToPeer::tJNI_HANDLE jniHandle =
-      PeerToPeer::getInstance().getNewJniHandle();
-  PeerToPeer::getInstance().createClient(jniHandle, miu, rw);
-
   /* Create new NativeLlcpSocket object */
   jobject clientSocket = NULL;
-  if (nfc_jni_cache_object_local(e, gNativeLlcpSocketClassName,
-                                 &(clientSocket)) == -1) {
-    LOG(ERROR) << StringPrintf("%s: fail Llcp socket creation", __func__);
-    return clientSocket;
-  }
-
-  /* Get NativeConnectionless class object */
-  ScopedLocalRef<jclass> clsNativeLlcpSocket(e,
-                                             e->GetObjectClass(clientSocket));
-  if (e->ExceptionCheck()) {
-    e->ExceptionClear();
-    LOG(ERROR) << StringPrintf("%s: fail get class object", __func__);
-    return clientSocket;
-  }
-
-  jfieldID f;
-
-  /* Set socket SAP */
-  f = e->GetFieldID(clsNativeLlcpSocket.get(), "mSap", "I");
-  e->SetIntField(clientSocket, f, (jint)nSap);
-
-  /* Set socket handle */
-  f = e->GetFieldID(clsNativeLlcpSocket.get(), "mHandle", "I");
-  e->SetIntField(clientSocket, f, (jint)jniHandle);
-
-  /* Set socket MIU */
-  f = e->GetFieldID(clsNativeLlcpSocket.get(), "mLocalMiu", "I");
-  e->SetIntField(clientSocket, f, (jint)miu);
-
-  /* Set socket RW */
-  f = e->GetFieldID(clsNativeLlcpSocket.get(), "mLocalRw", "I");
-  e->SetIntField(clientSocket, f, (jint)rw);
-
   DLOG_IF(INFO, nfc_debug_enabled) << StringPrintf("%s: exit", __func__);
   return clientSocket;
 }
@@ -1688,9 +1532,7 @@ static jobject nfcManager_doCreateLlcpConnectionlessSocket(JNIEnv*, jobject,
 ** Returns:         True if the peer supports NFC-DEP.
 **
 *******************************************************************************/
-static bool isPeerToPeer(tNFA_ACTIVATED& activated) {
-  return activated.activate_ntf.protocol == NFA_PROTOCOL_NFC_DEP;
-}
+static bool isPeerToPeer(tNFA_ACTIVATED& activated) { return false; }
 
 /*******************************************************************************
 **
@@ -2026,15 +1868,6 @@ static void nfcManager_doSetP2pInitiatorModes(JNIEnv* e, jobject o,
 static void nfcManager_doSetP2pTargetModes(JNIEnv*, jobject, jint modes) {
   DLOG_IF(INFO, nfc_debug_enabled)
       << StringPrintf("%s: modes=0x%X", __func__, modes);
-  // Map in the right modes
-  tNFA_TECHNOLOGY_MASK mask = 0;
-  if (modes & 0x01) mask |= NFA_TECHNOLOGY_MASK_A;
-  if (modes & 0x02) mask |= NFA_TECHNOLOGY_MASK_F;
-  if (modes & 0x04) mask |= NFA_TECHNOLOGY_MASK_F;
-  if (modes & 0x08)
-    mask |= NFA_TECHNOLOGY_MASK_A_ACTIVE | NFA_TECHNOLOGY_MASK_F_ACTIVE;
-
-  PeerToPeer::getInstance().setP2pListenMask(mask);
 }
 
 static void nfcManager_doEnableScreenOffSuspend(JNIEnv* e, jobject o) {
