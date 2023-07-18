@@ -1007,8 +1007,8 @@ public class NfcService implements DeviceHostListener, ForegroundUtils.Callback 
                 mRoutingWakeLock.acquire();
                 try {
                     if (!mIsAlwaysOnSupported || mIsRecovering
-                            || mAlwaysOnState != NfcAdapter.STATE_ON
-                            || mAlwaysOnState != NfcAdapter.STATE_TURNING_OFF) {
+                            || (mAlwaysOnState != NfcAdapter.STATE_ON
+                                && mAlwaysOnState != NfcAdapter.STATE_TURNING_OFF)) {
                         if (!mDeviceHost.initialize()) {
                             Log.w(TAG, "Error enabling NFC");
                             updateState(NfcAdapter.STATE_OFF);
@@ -1061,8 +1061,8 @@ public class NfcService implements DeviceHostListener, ForegroundUtils.Callback 
 
             /* Skip applyRouting if always on state is switching */
             if (!mIsAlwaysOnSupported
-                    || mAlwaysOnState != NfcAdapter.STATE_TURNING_ON
-                    || mAlwaysOnState != NfcAdapter.STATE_TURNING_OFF) {
+                    || (mAlwaysOnState != NfcAdapter.STATE_TURNING_ON
+                        && mAlwaysOnState != NfcAdapter.STATE_TURNING_OFF)) {
                 /* Start polling loop */
                 applyRouting(true);
             }
