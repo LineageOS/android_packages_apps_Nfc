@@ -24,6 +24,10 @@ import android.provider.DeviceConfig;
  * This class allows getting all configurable flags from DeviceConfig.
  */
 public class DeviceConfigFacade {
+    // TODO: Temporary hack to copy string from DeviceConfig.NAMESPACE_NFC. Use API constant
+    // once build problems are resolved.
+    private static final String DEVICE_CONFIG_NAMESPACE_NFC = "nfc";
+
     private final Context mContext;
 
     // Cached values of fields updated via updateDeviceConfigFlags()
@@ -41,7 +45,7 @@ public class DeviceConfigFacade {
         mContext = context;
         updateDeviceConfigFlags();
         DeviceConfig.addOnPropertiesChangedListener(
-                DeviceConfig.NAMESPACE_NFC,
+                DEVICE_CONFIG_NAMESPACE_NFC,
                 command -> handler.post(command),
                 properties -> {
                     updateDeviceConfigFlags();
@@ -51,7 +55,7 @@ public class DeviceConfigFacade {
     }
 
     private void updateDeviceConfigFlags() {
-        mAntennaBlockedAlertEnabled = DeviceConfig.getBoolean(DeviceConfig.NAMESPACE_NFC,
+        mAntennaBlockedAlertEnabled = DeviceConfig.getBoolean(DEVICE_CONFIG_NAMESPACE_NFC,
                 "enable_antenna_blocked_alert",
                 mContext.getResources().getBoolean(R.bool.enable_antenna_blocked_alert));
     }
