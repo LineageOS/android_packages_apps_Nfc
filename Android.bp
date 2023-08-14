@@ -27,6 +27,7 @@ android_app {
         "androidx.appcompat_appcompat",
         "com.google.android.material_material",
         "PlatformProperties",
+        "nfc_flags_lib",
     ],
     optimize: {
         proguard_flags_files: ["proguard.flags"],
