@@ -1166,6 +1166,12 @@ public class NfcService implements DeviceHostListener {
         }
     }
 
+    public boolean isSecureNfcEnabled() {
+        synchronized (NfcService.this) {
+            return mIsSecureNfcEnabled;
+        }
+    }
+
     final class NfcAdapterService extends INfcAdapter.Stub {
         @Override
         public boolean enable() throws RemoteException {
