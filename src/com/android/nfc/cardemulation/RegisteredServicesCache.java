@@ -32,6 +32,7 @@ import android.nfc.cardemulation.ApduServiceInfo;
 import android.nfc.cardemulation.CardEmulation;
 import android.nfc.cardemulation.HostApduService;
 import android.nfc.cardemulation.OffHostApduService;
+import android.os.ParcelFileDescriptor;
 import android.os.UserHandle;
 import android.os.UserManager;
 import android.sysprop.NfcProperties;
@@ -373,7 +374,7 @@ public class RegisteredServicesCache {
                     continue;
                 } else {
                     for (AidGroup group : dynamicSettings.aidGroups.values()) {
-                        serviceInfo.setOrReplaceDynamicAidGroup(group);
+                        serviceInfo.setDynamicAidGroup(group);
                     }
                     if (dynamicSettings.offHostSE != null) {
                         serviceInfo.setOffHostSecureElement(dynamicSettings.offHostSE);
@@ -563,7 +564,7 @@ public class RegisteredServicesCache {
         return true;
     }
 
-    public boolean unsetOffHostSecureElement(int userId, int uid, ComponentName componentName) {
+    public boolean resetOffHostSecureElement(int userId, int uid, ComponentName componentName) {
         ArrayList<ApduServiceInfo> newServices = null;
         synchronized (mLock) {
             UserServices services = findOrCreateUserLocked(userId);
@@ -596,7 +597,7 @@ public class RegisteredServicesCache {
                 return false;
             }
 
-            serviceInfo.unsetOffHostSecureElement();
+            serviceInfo.resetOffHostSecureElement();
             newServices = new ArrayList<ApduServiceInfo>(services.services.values());
         }
         // Make callback without the lock held
@@ -633,7 +634,7 @@ public class RegisteredServicesCache {
                     return false;
                 }
             }
-            serviceInfo.setOrReplaceDynamicAidGroup(aidGroup);
+            serviceInfo.setDynamicAidGroup(aidGroup);
             DynamicSettings dynSettings = services.dynamicSettings.get(componentName);
             if (dynSettings == null) {
                 dynSettings = new DynamicSettings(uid);
@@ -717,7 +718,12 @@ public class RegisteredServicesCache {
 
     public void dump(FileDescriptor fd, PrintWriter pw, String[] args) {
         pw.println("Registered HCE services for current user: ");
-
+        ParcelFileDescriptor pFd;
+        try {
+            pFd = ParcelFileDescriptor.dup(fd);
+        } catch (IOException e) {
+            return;
+        }
         synchronized (mLock) {
             for (UserHandle uh : mUserHandles) {
                 UserManager um = mContext.createContextAsUser(
@@ -725,7 +731,7 @@ public class RegisteredServicesCache {
                 pw.println("User " + um.getUserName() + " : ");
                 UserServices userServices = findOrCreateUserLocked(uh.getIdentifier());
                 for (ApduServiceInfo service : userServices.services.values()) {
-                    service.dump(fd, pw, args);
+                    service.dump(pFd, pw, args);
                     pw.println("");
                 }
                 pw.println("");
