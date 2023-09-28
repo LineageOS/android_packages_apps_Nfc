@@ -973,7 +973,7 @@ public class NfcService implements DeviceHostListener, ForegroundUtils.Callback 
                         // TODO(279846422) The system property will be temporary
                         // available for vendors that depend on it.
                         // Remove this code when a replacement API is added.
-                        SystemProperties.set("nfc.initialized", "true");
+                        NfcProperties.initialized(true);
                     }
                     if (mIsTagAppPrefSupported) {
                         synchronized (NfcService.this) {
@@ -3129,10 +3129,8 @@ public class NfcService implements DeviceHostListener, ForegroundUtils.Callback 
                             if (SEPackages != null && SEPackages.contains(pkgName)) {
                                 continue;
                             }
-                            if (info.applicationInfo != null && ((info.applicationInfo.flags
-                                    & ApplicationInfo.FLAG_SYSTEM) != 0
-                                    || (info.applicationInfo.privateFlags
-                                    & ApplicationInfo.PRIVATE_FLAG_PRIVILEGED) != 0)) {
+                            if (info.applicationInfo != null && (info.applicationInfo.isSystemApp()
+                                    || info.applicationInfo.isPrivilegedApp())) {
                                 intent.setPackage(pkgName);
                                 intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
                                 mContext.sendBroadcastAsUser(intent, userHandle);
