@@ -41,6 +41,8 @@ import android.media.AudioAttributes;
 import android.media.SoundPool;
 import android.net.Uri;
 import android.nfc.AvailableNfcAntenna;
+import android.nfc.NfcFrameworkInitializer;
+import android.nfc.NfcServiceManager;
 import android.nfc.cardemulation.CardEmulation;
 import android.nfc.ErrorCodes;
 import android.nfc.FormatException;
@@ -635,7 +637,12 @@ public class NfcService implements DeviceHostListener, ForegroundUtils.Callback 
         mPollingDisableAllowed = mContext.getResources().getBoolean(R.bool.polling_disable_allowed);
 
         // Make sure this is only called when object construction is complete.
-        ServiceManager.addService(SERVICE_NAME, mNfcAdapter);
+        NfcServiceManager manager = NfcFrameworkInitializer.getNfcServiceManager();
+        if (manager == null) {
+            Log.e(TAG, "NfcServiceManager is null");
+            throw new UnsupportedOperationException();
+        }
+        manager.getNfcManagerServiceRegisterer().register(mNfcAdapter);
 
         mIsAlwaysOnSupported =
             mContext.getResources().getBoolean(R.bool.nfcc_always_on_allowed);
@@ -1291,6 +1298,12 @@ public class NfcService implements DeviceHostListener, ForegroundUtils.Callback 
                 mReaderModeParams.binder.unlinkToDeath(mReaderModeDeathRecipient, 0);
                 resetReaderModeParams();
             }
+        }
+    }
+
+    public boolean isSecureNfcEnabled() {
+        synchronized (NfcService.this) {
+            return mIsSecureNfcEnabled;
         }
     }
 
