@@ -10,7 +10,6 @@ cc_library_shared {
         "-Wextra",
         "-Wno-unused-parameter",
         "-Werror",
-
         "-DNXP_UICC_ENABLE",
     ],
 
@@ -31,13 +30,27 @@ cc_library_shared {
         "libcutils",
         "libutils",
         "liblog",
-        "libnfc-nci",
         "libchrome",
         "libbase",
-        "libstatslog_nfc",
+        // Treble configuration
+        "libhidlbase",
+        "libutils",
+        "libbinder_ndk",
+        "libstatssocket",
+        "libz",
     ],
 
-    static_libs: ["libxml2"],
+    static_libs: [
+        "android.hardware.nfc@1.0",
+        "android.hardware.nfc@1.1",
+        "android.hardware.nfc@1.2",
+        // Add for AIDL
+        "android.hardware.nfc-V1-ndk",
+        "libnfcutils",
+        "libnfc-nci",
+        "libstatslog_nfc",
+        "libxml2"
+    ],
 
     product_variables: {
         debuggable: {
@@ -52,6 +65,11 @@ cc_library_shared {
         misc_undefined: ["bounds"],
         scs: true,
     },
+    stl: "libc++_static",
+    apex_available: [
+         "//apex_available:platform",
+         "com.android.nfcservices"
+    ],
 }
 
 cc_test {
