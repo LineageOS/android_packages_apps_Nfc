@@ -20,7 +20,6 @@ android_app {
     ],
     platform_apis: true,
     certificate: "platform",
-    jni_libs: ["libnfc_nci_jni"],
     static_libs: [
         "android.se.omapi-V1-java",
         "androidx.annotation_annotation",
@@ -32,6 +31,10 @@ android_app {
     optimize: {
         proguard_flags_files: ["proguard.flags"],
     },
+    apex_available: [
+         "//apex_available:platform",
+         "com.android.nfcservices"
+    ],
     jarjar_rules: "jarjar-rules.txt",
 }
 
