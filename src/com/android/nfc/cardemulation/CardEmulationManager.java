@@ -47,6 +47,8 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.List;
 
+import com.android.nfc.R;
+
 /**
  * CardEmulationManager is the central entity
  * responsible for delegating to individual components
@@ -653,6 +655,16 @@ public class CardEmulationManager implements RegisteredServicesCache.Callback,
             NfcPermissions.enforceUserPermissions(mContext);
             NfcPermissions.enforcePreferredPaymentInfoPermissions(mContext);
             return mServiceCache.getService(userId, mAidCache.getPreferredService());
+        }
+
+        @Override
+        public boolean setServiceEnabledForCategoryOther(int userId,
+                ComponentName app, boolean status) throws RemoteException {
+            if (!mContext.getResources().getBoolean(R.bool.enable_service_for_category_other))
+              return false;
+            NfcPermissions.enforceUserPermissions(mContext);
+
+            return mServiceCache.registerOtherForService(userId, app, status);
         }
 
         @Override
