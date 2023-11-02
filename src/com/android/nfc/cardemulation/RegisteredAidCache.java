@@ -152,6 +152,7 @@ public class RegisteredAidCache {
     boolean mNfcEnabled = false;
     boolean mSupportsPrefixes = false;
     boolean mSupportsSubset = false;
+    boolean mRequiresScreenOnServiceExist = false;
 
     public RegisteredAidCache(Context context) {
         mContext = context;
@@ -248,6 +249,10 @@ public class RegisteredAidCache {
             // More than one service, not the default
             return false;
         }
+    }
+
+    public boolean isRequiresScreenOnServiceExist() {
+        return mRequiresScreenOnServiceExist;
     }
 
     /**
@@ -895,6 +900,7 @@ public class RegisteredAidCache {
             return;
         }
         final HashMap<String, AidRoutingManager.AidEntry> routingEntries = new HashMap<>();
+        boolean requiresScreenOnServiceExist = false;
         // For each AID, find interested services
         for (Map.Entry<String, AidResolveInfo> aidEntry:
                 mAidCache.entrySet()) {
@@ -925,6 +931,7 @@ public class RegisteredAidCache {
 
                 boolean requiresUnlock = resolveInfo.defaultService.requiresUnlock();
                 boolean requiresScreenOn = resolveInfo.defaultService.requiresScreenOn();
+                requiresScreenOnServiceExist |= requiresScreenOn;
                 aidType.power =
                         computeAidPowerState(aidType.isOnHost, requiresScreenOn, requiresUnlock);
 
@@ -945,6 +952,7 @@ public class RegisteredAidCache {
 
                 boolean requiresUnlock = resolveInfo.services.get(0).requiresUnlock();
                 boolean requiresScreenOn = resolveInfo.services.get(0).requiresScreenOn();
+                requiresScreenOnServiceExist |= requiresScreenOn;
                 aidType.power =
                         computeAidPowerState(aidType.isOnHost, requiresScreenOn, requiresUnlock);
 
@@ -986,6 +994,7 @@ public class RegisteredAidCache {
                             break;
                         }
                     }
+                    requiresScreenOnServiceExist |= service.requiresScreenOn();
                 }
                 aidType.isOnHost = onHost;
                 aidType.offHostSE = onHost ? null : offHostSE;
@@ -997,6 +1006,7 @@ public class RegisteredAidCache {
                 routingEntries.put(aid, aidType);
             }
         }
+        mRequiresScreenOnServiceExist = requiresScreenOnServiceExist;
         mRoutingManager.configureRouting(routingEntries, force);
     }
 
