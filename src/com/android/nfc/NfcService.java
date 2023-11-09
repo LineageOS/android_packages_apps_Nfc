@@ -100,6 +100,7 @@ import com.android.nfc.DeviceHost.NfcDepEndpoint;
 import com.android.nfc.DeviceHost.TagEndpoint;
 import com.android.nfc.cardemulation.CardEmulationManager;
 import com.android.nfc.dhimpl.NativeNfcManager;
+import com.android.nfc.flags.FeatureFlags;
 import com.android.nfc.Utils;
 import com.android.nfc.handover.HandoverDataParser;
 
@@ -342,6 +343,7 @@ public class NfcService implements DeviceHostListener, ForegroundUtils.Callback 
     boolean mIsRequestUnlockShowed;
     boolean mIsRecovering;
     boolean mIsNfcUserRestricted;
+    boolean mIsWatchType;
 
     // polling delay control variables
     private final int mPollDelayTime;
@@ -383,6 +385,8 @@ public class NfcService implements DeviceHostListener, ForegroundUtils.Callback 
     private final boolean mIsAlwaysOnSupported;
     private final Set<INfcControllerAlwaysOnListener> mAlwaysOnListeners =
             Collections.synchronizedSet(new HashSet<>());
+
+    private final FeatureFlags mFeatureFlags = new com.android.nfc.flags.FeatureFlagsImpl();
 
     public static NfcService getInstance() {
         return sService;
@@ -602,6 +606,7 @@ public class NfcService implements DeviceHostListener, ForegroundUtils.Callback 
 
         PackageManager pm = mContext.getPackageManager();
 
+        mIsWatchType = pm.hasSystemFeature(PackageManager.FEATURE_WATCH);
         mIsHceCapable =
                 pm.hasSystemFeature(PackageManager.FEATURE_NFC_HOST_CARD_EMULATION) ||
                 pm.hasSystemFeature(PackageManager.FEATURE_NFC_HOST_CARD_EMULATION_NFCF);
@@ -3459,6 +3464,14 @@ public class NfcService implements DeviceHostListener, ForegroundUtils.Callback 
     };
 
     private void applyScreenState(int screenState) {
+        if(mFeatureFlags.reduceStateTransition() &&
+                mIsWatchType && !mCardEmulationManager.isRequiresScreenOnServiceExist()) {
+            if (screenState == ScreenStateHelper.SCREEN_STATE_OFF_LOCKED) {
+                screenState = ScreenStateHelper.SCREEN_STATE_ON_LOCKED;
+            } else if (screenState == ScreenStateHelper.SCREEN_STATE_OFF_UNLOCKED) {
+                screenState = ScreenStateHelper.SCREEN_STATE_ON_UNLOCKED;
+            }
+        }
         if (mScreenState != screenState) {
             if (nci_version != NCI_VERSION_2_0) {
                 new ApplyRoutingTask().execute(Integer.valueOf(screenState));
