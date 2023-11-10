@@ -152,6 +152,7 @@ public class RegisteredAidCache {
     boolean mNfcEnabled = false;
     boolean mSupportsPrefixes = false;
     boolean mSupportsSubset = false;
+    boolean mRequiresScreenOnServiceExist = false;
 
     public RegisteredAidCache(Context context) {
         mContext = context;
@@ -250,6 +251,10 @@ public class RegisteredAidCache {
         }
     }
 
+    public boolean isRequiresScreenOnServiceExist() {
+        return mRequiresScreenOnServiceExist;
+    }
+
     /**
      * Resolves a conflict between multiple services handling the same
      * AIDs. Note that the AID itself is not an input to the decision
@@ -302,7 +307,7 @@ public class RegisteredAidCache {
                             serviceAidInfo.service.getComponent() +
                             " because it's not the payment default.)");
                 } else {
-                    if (serviceAidInfo.service.isSelectedOtherService()) {
+                    if (serviceAidInfo.service.isOtherServiceEnabled()) {
                         if (DBG) Log.d(TAG, serviceAidInfo.service.getComponent() +
                                 " is selected other service");
                         resolveInfo.services.add(serviceAidInfo.service);
@@ -895,6 +900,7 @@ public class RegisteredAidCache {
             return;
         }
         final HashMap<String, AidRoutingManager.AidEntry> routingEntries = new HashMap<>();
+        boolean requiresScreenOnServiceExist = false;
         // For each AID, find interested services
         for (Map.Entry<String, AidResolveInfo> aidEntry:
                 mAidCache.entrySet()) {
@@ -925,6 +931,7 @@ public class RegisteredAidCache {
 
                 boolean requiresUnlock = resolveInfo.defaultService.requiresUnlock();
                 boolean requiresScreenOn = resolveInfo.defaultService.requiresScreenOn();
+                requiresScreenOnServiceExist |= requiresScreenOn;
                 aidType.power =
                         computeAidPowerState(aidType.isOnHost, requiresScreenOn, requiresUnlock);
 
@@ -945,6 +952,7 @@ public class RegisteredAidCache {
 
                 boolean requiresUnlock = resolveInfo.services.get(0).requiresUnlock();
                 boolean requiresScreenOn = resolveInfo.services.get(0).requiresScreenOn();
+                requiresScreenOnServiceExist |= requiresScreenOn;
                 aidType.power =
                         computeAidPowerState(aidType.isOnHost, requiresScreenOn, requiresUnlock);
 
@@ -986,6 +994,7 @@ public class RegisteredAidCache {
                             break;
                         }
                     }
+                    requiresScreenOnServiceExist |= service.requiresScreenOn();
                 }
                 aidType.isOnHost = onHost;
                 aidType.offHostSE = onHost ? null : offHostSE;
@@ -997,6 +1006,7 @@ public class RegisteredAidCache {
                 routingEntries.put(aid, aidType);
             }
         }
+        mRequiresScreenOnServiceExist = requiresScreenOnServiceExist;
         mRoutingManager.configureRouting(routingEntries, force);
     }
 

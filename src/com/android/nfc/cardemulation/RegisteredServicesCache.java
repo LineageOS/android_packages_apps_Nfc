@@ -460,7 +460,7 @@ public class RegisteredServicesCache {
                 } else {
                     Log.d(TAG, "Existed other service");
                 }
-                service.setOtherServiceState(status.checked);
+                service.setOtherServiceEnabled(status.checked);
                 userServices.others.put(component, status);
             }
 
@@ -971,12 +971,12 @@ public class RegisteredServicesCache {
             return false;
         }
 
-        if (service.isSelectedOtherService() == checked) {
+        if (service.isOtherServiceEnabled() == checked) {
             Log.d(TAG, "already same status: " + checked);
             return false;
         }
 
-        service.setOtherServiceState(checked);
+        service.setOtherServiceEnabled(checked);
         status.checked = checked;
 
         return writeOthersLocked();
@@ -987,21 +987,22 @@ public class RegisteredServicesCache {
         ParcelFileDescriptor pFd;
         try {
             pFd = ParcelFileDescriptor.dup(fd);
-        } catch (IOException e) {
-            return;
-        }
-        synchronized (mLock) {
-            for (UserHandle uh : mUserHandles) {
-                UserManager um = mContext.createContextAsUser(
-                        uh, /*flags=*/0).getSystemService(UserManager.class);
-                pw.println("User " + um.getUserName() + " : ");
-                UserServices userServices = findOrCreateUserLocked(uh.getIdentifier());
-                for (ApduServiceInfo service : userServices.services.values()) {
-                    service.dump(pFd, pw, args);
+            synchronized (mLock) {
+                for (UserHandle uh : mUserHandles) {
+                    UserManager um = mContext.createContextAsUser(
+                            uh, /*flags=*/0).getSystemService(UserManager.class);
+                    pw.println("User " + um.getUserName() + " : ");
+                    UserServices userServices = findOrCreateUserLocked(uh.getIdentifier());
+                    for (ApduServiceInfo service : userServices.services.values()) {
+                        service.dump(pFd, pw, args);
+                        pw.println("");
+                    }
                     pw.println("");
                 }
-                pw.println("");
             }
+            pFd.close();
+        } catch (IOException e) {
+            pw.println("Failed to dump HCE services: " + e);
         }
     }
 
