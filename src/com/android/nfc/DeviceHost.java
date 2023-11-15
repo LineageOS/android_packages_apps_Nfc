@@ -42,6 +42,8 @@ public interface DeviceHost {
         public void onEeUpdated();
 
         public void onHwErrorReported();
+
+        public void onPollingLoopDetected(Bundle pollingFrame);
     }
 
     public interface TagEndpoint {
@@ -201,6 +203,10 @@ public interface DeviceHost {
     public boolean setNfcSecure(boolean enable);
 
     public String getNfaStorageDir();
+
+    public boolean isObserveModeSupported();
+
+    public boolean setObserveMode(boolean enable);
 
     /**
     * Get the committed listen mode routing configuration
