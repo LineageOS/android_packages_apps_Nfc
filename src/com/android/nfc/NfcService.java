@@ -432,6 +432,13 @@ public class NfcService implements DeviceHostListener, ForegroundUtils.Callback 
     }
 
     @Override
+    public void onPollingLoopDetected(Bundle pollingFrame) {
+        if (mCardEmulationManager != null) {
+            mCardEmulationManager.onPollingLoopDetected(pollingFrame);
+        }
+    }
+
+    @Override
     public void onNfcTransactionEvent(byte[] aid, byte[] data, String seName) {
         byte[][] dataObj = {aid, data, seName.getBytes()};
         sendMessage(NfcService.MSG_TRANSACTION_EVENT, dataObj);
@@ -566,7 +573,16 @@ public class NfcService implements DeviceHostListener, ForegroundUtils.Callback 
         mActivityManager = mContext.getSystemService(ActivityManager.class);
         mVibrator = mContext.getSystemService(Vibrator.class);
         mVibrationEffect = VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE);
-        mVrManager = mContext.getSystemService(VrManager.class);
+
+        PackageManager pm = mContext.getPackageManager();
+        mIsWatchType = pm.hasSystemFeature(PackageManager.FEATURE_WATCH);
+
+        if (pm.hasSystemFeature(PackageManager.FEATURE_VR_MODE_HIGH_PERFORMANCE) &&
+                !mIsWatchType) {
+            mVrManager = mContext.getSystemService(VrManager.class);
+        } else {
+            mVrManager = null;
+        }
 
         mScreenState = mScreenStateHelper.checkScreenState();
 
@@ -604,9 +620,6 @@ public class NfcService implements DeviceHostListener, ForegroundUtils.Callback 
 
         updatePackageCache();
 
-        PackageManager pm = mContext.getPackageManager();
-
-        mIsWatchType = pm.hasSystemFeature(PackageManager.FEATURE_WATCH);
         mIsHceCapable =
                 pm.hasSystemFeature(PackageManager.FEATURE_NFC_HOST_CARD_EMULATION) ||
                 pm.hasSystemFeature(PackageManager.FEATURE_NFC_HOST_CARD_EMULATION_NFCF);
@@ -1361,6 +1374,45 @@ public class NfcService implements DeviceHostListener, ForegroundUtils.Callback 
             new EnableDisableTask().execute(TASK_DISABLE);
 
             return true;
+        }
+
+        @Override
+        public boolean isObserveModeSupported() {
+            if (!android.nfc.Flags.nfcObserveMode()) {
+                return false;
+            }
+            return mDeviceHost.isObserveModeSupported();
+        }
+
+        @Override
+        public boolean setObserveMode(boolean enable) {
+            if (!android.nfc.Flags.nfcObserveMode()) {
+                return false;
+            }
+            boolean privilegedCaller = false;
+            int callingUid = Binder.getCallingUid();
+            UserHandle user = Binder.getCallingUserHandle();
+            // Allow non-foreground callers with system uid or default payment service.
+            String packageName = getPackageNameFromUid(callingUid);
+            if (packageName != null) {
+                String defaultPaymentService = Settings.Secure.getString(
+                    mContext.createContextAsUser(user, 0).getContentResolver(),
+                Constants.SETTINGS_SECURE_NFC_PAYMENT_DEFAULT_COMPONENT);
+                String defaultPaymentPackage =
+                    ComponentName.unflattenFromString(defaultPaymentService).getPackageName();
+                privilegedCaller = (callingUid == Process.SYSTEM_UID
+                        || packageName.equals(defaultPaymentPackage));
+            } else {
+                privilegedCaller = (callingUid == Process.SYSTEM_UID);
+            }
+            if (!privilegedCaller) {
+                NfcPermissions.enforceUserPermissions(mContext);
+                if (!mForegroundUtils.isInForeground(Binder.getCallingUid())) {
+                    Log.e(TAG, "setObserveMode: Caller not in foreground.");
+                    return false;
+                }
+            }
+            return mDeviceHost.setObserveMode(enable);
         }
 
         @Override
