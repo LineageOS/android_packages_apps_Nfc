@@ -74,6 +74,8 @@ public class AidRoutingManager {
 
     // Easy look-up what the route is for a certain AID
     HashMap<String, Integer> mRouteForAid = new HashMap<String, Integer>();
+    // Easy look-up what the power is for a certain AID
+    HashMap<String, Integer> mPowerForAid = new HashMap<String, Integer>();
 
     private native int doGetDefaultRouteDestination();
     private native int doGetDefaultOffHostRouteDestination();
@@ -211,6 +213,7 @@ public class AidRoutingManager {
 
         SparseArray<Set<String>> aidRoutingTable = new SparseArray<Set<String>>(aidMap.size());
         HashMap<String, Integer> routeForAid = new HashMap<String, Integer>(aidMap.size());
+        HashMap<String, Integer> powerForAid = new HashMap<String, Integer>(aidMap.size());
         HashMap<String, Integer> infoForAid = new HashMap<String, Integer>(aidMap.size());
         // Then, populate internal data structures first
         for (Map.Entry<String, AidEntry> aidEntry : aidMap.entrySet())  {
@@ -231,17 +234,19 @@ public class AidRoutingManager {
                 seList.add(route);
             aidEntry.getValue().route = route;
             int aidType = aidEntry.getValue().aidInfo;
+            int power = aidEntry.getValue().power;
             String aid = aidEntry.getKey();
             Set<String> entries =
                     aidRoutingTable.get(route, new HashSet<String>());
             entries.add(aid);
             aidRoutingTable.put(route, entries);
             routeForAid.put(aid, route);
+            powerForAid.put(aid, power);
             infoForAid.put(aid, aidType);
         }
 
         synchronized (mLock) {
-            if (routeForAid.equals(mRouteForAid) && !force) {
+            if (routeForAid.equals(mRouteForAid) && powerForAid.equals(mPowerForAid) && !force) {
                 if (DBG) Log.d(TAG, "Routing table unchanged, not updating");
                 return false;
             }
@@ -249,6 +254,7 @@ public class AidRoutingManager {
             // Otherwise, update internal structures and commit new routing
             clearNfcRoutingTableLocked();
             mRouteForAid = routeForAid;
+            mPowerForAid = powerForAid;
             mAidRoutingTable = aidRoutingTable;
 
             mMaxAidRoutingTableSize = NfcService.getInstance().getAidRoutingTableSize();
@@ -443,6 +449,7 @@ public class AidRoutingManager {
         synchronized (mLock) {
             mAidRoutingTable.clear();
             mRouteForAid.clear();
+            mPowerForAid.clear();
         }
     }
 
