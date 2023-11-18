@@ -809,7 +809,7 @@ public class CardEmulationManager implements RegisteredServicesCache.Callback,
         NfcService.getInstance().onPreferredPaymentChanged(
                 NfcAdapter.PREFERRED_PAYMENT_CHANGED);
 
-        if (!android.nfc.Flags.nfcObserveMode()) {
+        if (android.nfc.Flags.nfcObserveMode()) {
             ComponentName paymentService = getDefaultServiceForCategory(userId,
                         CardEmulation.CATEGORY_PAYMENT, false);
             NfcManager manager = mContext.getSystemService(NfcManager.class);
