@@ -927,6 +927,9 @@ static jboolean nfcManager_routeAid(JNIEnv* e, jobject, jbyteArray aid,
                                     jint route, jint aidInfo, jint power) {
   uint8_t* buf;
   size_t bufLen;
+  if (sIsDisabling || !sIsNfaEnabled) {
+    return false;
+  }
 
   if (aid == NULL) {
     buf = NULL;
@@ -955,6 +958,9 @@ static jboolean nfcManager_routeAid(JNIEnv* e, jobject, jbyteArray aid,
 static jboolean nfcManager_unrouteAid(JNIEnv* e, jobject, jbyteArray aid) {
   uint8_t* buf;
   size_t bufLen;
+  if (sIsDisabling || !sIsNfaEnabled) {
+    return false;
+  }
 
   if (aid == NULL) {
     buf = NULL;
