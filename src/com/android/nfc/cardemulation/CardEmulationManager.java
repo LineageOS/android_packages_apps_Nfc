@@ -808,18 +808,24 @@ public class CardEmulationManager implements RegisteredServicesCache.Callback,
 
         NfcService.getInstance().onPreferredPaymentChanged(
                 NfcAdapter.PREFERRED_PAYMENT_CHANGED);
-
-        if (android.nfc.Flags.nfcObserveMode()) {
-            ComponentName paymentService = getDefaultServiceForCategory(userId,
-                        CardEmulation.CATEGORY_PAYMENT, false);
-            NfcManager manager = mContext.getSystemService(NfcManager.class);
-            NfcAdapter adapter = manager.getDefaultAdapter();
-            if (mServiceCache.doesServiceDefaultToObserveMode(userId,
-                service != null ? service : paymentService)) {
-                adapter.disallowTransaction();
-            } else {
-                adapter.allowTransaction();
+        long token = Binder.clearCallingIdentity();
+        try {
+            if (!android.nfc.Flags.nfcObserveMode()) {
+                return;
             }
+        } finally {
+            Binder.restoreCallingIdentity(token);
+        }
+
+        ComponentName paymentService = getDefaultServiceForCategory(userId,
+                    CardEmulation.CATEGORY_PAYMENT, false);
+        NfcManager manager = mContext.getSystemService(NfcManager.class);
+        NfcAdapter adapter = manager.getDefaultAdapter();
+        if (mServiceCache.doesServiceDefaultToObserveMode(userId,
+            service != null ? service : paymentService)) {
+            adapter.disallowTransaction();
+        } else {
+            adapter.allowTransaction();
         }
     }
 
