@@ -17,14 +17,15 @@
 package com.android.nfc;
 
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.nfc.Constants;
 
 /**
  * Boot completed receiver. used to disable the application if the device doesn't
  * support NFC when device boots.
- *
  */
 public class NfcBootCompletedReceiver extends BroadcastReceiver {
     @Override
@@ -33,9 +34,17 @@ public class NfcBootCompletedReceiver extends BroadcastReceiver {
 
         if (Intent.ACTION_BOOT_COMPLETED.equals(action)) {
             PackageManager pm = context.getPackageManager();
-            if (!pm.hasSystemFeature(PackageManager.FEATURE_NFC_ANY)) {
+            if (!pm.hasSystemFeature(Constants.FEATURE_NFC_ANY)) {
                 pm.setApplicationEnabledSetting(context.getPackageName(),
                     PackageManager.COMPONENT_ENABLED_STATE_DISABLED, 0);
+            } else {
+                // If the device does support NFC, we know that we don't need to run
+                // this code again, so disabling the boot receiver. This is for saving
+                // CPU cycles spent on NFC cold-start during boot for devices that
+                // actually support NFC.
+                pm.setComponentEnabledSetting(new ComponentName(context, this.getClass()),
+                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                    PackageManager.DONT_KILL_APP);
             }
         }
     }

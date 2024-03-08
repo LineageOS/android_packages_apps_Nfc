@@ -1,5 +1,7 @@
 package com.android.nfc;
 
+import static android.view.WindowManager.LayoutParams.SYSTEM_FLAG_HIDE_NON_SYSTEM_OVERLAY_WINDOWS;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AppOpsManager;
@@ -28,6 +30,7 @@ public class ConfirmConnectToWifiNetworkActivity extends Activity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        getWindow().addSystemFlags(SYSTEM_FLAG_HIDE_NON_SYSTEM_OVERLAY_WINDOWS);
         Intent intent = getIntent();
         mCurrentWifiConfiguration =
                 intent.getParcelableExtra(NfcWifiProtectedSetup.EXTRA_WIFI_CONFIG);
@@ -39,7 +42,7 @@ public class ConfirmConnectToWifiNetworkActivity extends Activity
                         String.format(getResources().getString(R.string.prompt_connect_to_network),
                         printableSsid))
                 .setOnDismissListener(this)
-                .setNegativeButton(com.android.internal.R.string.cancel, null)
+                .setNegativeButton(R.string.cancel, null)
                 .setPositiveButton(R.string.wifi_connect, null)
                 .create();
 

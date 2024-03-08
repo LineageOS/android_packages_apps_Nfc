@@ -21,6 +21,8 @@ import android.annotation.Nullable;
 import android.app.PendingIntent;
 import android.app.PendingIntentProto;
 import android.content.AuthorityEntryProto;
+import android.content.ComponentName;
+import android.content.ComponentNameProto;
 import android.content.IntentFilter;
 import android.content.IntentFilterProto;
 import android.os.PatternMatcher;
@@ -85,15 +87,17 @@ public final class Utils {
         for (int i = 0; i < intentFilter.countDataTypes(); i++) {
             proto.write(IntentFilterProto.DATA_TYPES, intentFilter.getDataType(i));
         }
+        /*
         for (int i = 0; i < intentFilter.countMimeGroups(); i++) {
             proto.write(IntentFilterProto.MIME_GROUPS, intentFilter.getMimeGroup(i));
-        }
+        }*/
+
         if (intentFilter.getPriority() != 0
                 /* || TODO(b/271463752): Get this info - hasPartialTypes() */) {
             proto.write(IntentFilterProto.PRIORITY, intentFilter.getPriority());
             proto.write(IntentFilterProto.HAS_PARTIAL_TYPES, false /* hasPartialTypes() */);
         }
-        proto.write(IntentFilterProto.GET_AUTO_VERIFY, intentFilter.getAutoVerify());
+        proto.write(IntentFilterProto.GET_AUTO_VERIFY, false /* intentFilter.getAutoVerify() */);
         proto.end(token);
     }
 

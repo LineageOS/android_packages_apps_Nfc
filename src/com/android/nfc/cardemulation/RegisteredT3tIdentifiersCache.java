@@ -19,6 +19,7 @@ package com.android.nfc.cardemulation;
 import android.content.ComponentName;
 import android.content.Context;
 import android.nfc.cardemulation.NfcFServiceInfo;
+import android.os.ParcelFileDescriptor;
 import android.os.UserHandle;
 import android.os.UserManager;
 import android.sysprop.NfcProperties;
@@ -26,6 +27,7 @@ import android.util.Log;
 import android.util.proto.ProtoOutputStream;
 
 import java.io.FileDescriptor;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -233,14 +235,22 @@ public class RegisteredT3tIdentifiersCache {
 
     public void dump(FileDescriptor fd, PrintWriter pw, String[] args) {
         pw.println("T3T Identifier cache entries: ");
-        for (Map.Entry<String, NfcFServiceInfo> entry : mForegroundT3tIdentifiersCache.entrySet()) {
-            pw.println("    NFCID2: " + entry.getKey());
-            pw.println("    NfcFServiceInfo: ");
-            entry.getValue().dump(fd, pw, args);
+        ParcelFileDescriptor pFd;
+        try {
+            pFd = ParcelFileDescriptor.dup(fd);
+            for (Map.Entry<String, NfcFServiceInfo> entry
+                    : mForegroundT3tIdentifiersCache.entrySet()) {
+                pw.println("    NFCID2: " + entry.getKey());
+                pw.println("    NfcFServiceInfo: ");
+                entry.getValue().dump(pFd, pw, args);
+            }
+            pw.println("");
+            mRoutingManager.dump(fd, pw, args);
+            pw.println("");
+            pFd.close();
+        } catch (IOException e) {
+            pw.println("Failed to dump T3T idenitifier cache entries: " + e);
         }
-        pw.println("");
-        mRoutingManager.dump(fd, pw, args);
-        pw.println("");
     }
 
     /**

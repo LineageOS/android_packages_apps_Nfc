@@ -37,7 +37,11 @@ cc_library_shared {
         "libstatslog_nfc",
     ],
 
-    static_libs: ["libxml2"],
+    static_libs: [
+        "android_nfc_flags_aconfig_c_lib",
+        "server_configurable_flags",
+        "libxml2"
+    ],
 
     product_variables: {
         debuggable: {
@@ -52,6 +56,10 @@ cc_library_shared {
         misc_undefined: ["bounds"],
         scs: true,
     },
+    apex_available: [
+         "//apex_available:platform",
+         "com.android.nfcservices"
+    ],
 }
 
 cc_test {

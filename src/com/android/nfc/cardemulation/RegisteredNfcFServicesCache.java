@@ -30,6 +30,7 @@ import android.content.pm.ServiceInfo;
 import android.nfc.cardemulation.HostNfcFService;
 import android.nfc.cardemulation.NfcFCardEmulation;
 import android.nfc.cardemulation.NfcFServiceInfo;
+import android.os.ParcelFileDescriptor;
 import android.os.UserHandle;
 import android.os.UserManager;
 import android.sysprop.NfcProperties;
@@ -350,7 +351,7 @@ public class RegisteredNfcFServicesCache {
                     toBeRemovedDynamicSystemCode.add(componentName);
                     continue;
                 } else {
-                    service.setOrReplaceDynamicSystemCode(dynamicSystemCode.systemCode);
+                    service.setDynamicSystemCode(dynamicSystemCode.systemCode);
                 }
             }
             // Apply dynamic NFCID2 mappings
@@ -366,7 +367,7 @@ public class RegisteredNfcFServicesCache {
                     toBeRemovedDynamicNfcid2.add(componentName);
                     continue;
                 } else {
-                    service.setOrReplaceDynamicNfcid2(dynamicNfcid2.nfcid2);
+                    service.setDynamicNfcid2(dynamicNfcid2.nfcid2);
                 }
             }
             for (ComponentName removedComponent : toBeRemovedDynamicSystemCode) {
@@ -386,7 +387,7 @@ public class RegisteredNfcFServicesCache {
                 NfcFServiceInfo service = entry.getValue();
                 if (service.getNfcid2().equalsIgnoreCase("RANDOM")) {
                     String randomNfcid2 = generateRandomNfcid2();
-                    service.setOrReplaceDynamicNfcid2(randomNfcid2);
+                    service.setDynamicNfcid2(randomNfcid2);
                     DynamicNfcid2 dynamicNfcid2 =
                             new DynamicNfcid2(service.getUid(), randomNfcid2);
                     userServices.dynamicNfcid2.put(entry.getKey(), dynamicNfcid2);
@@ -581,7 +582,7 @@ public class RegisteredNfcFServicesCache {
             userServices.dynamicSystemCode.put(componentName, dynamicSystemCode);
             success = writeDynamicSystemCodeNfcid2Locked();
             if (success) {
-                service.setOrReplaceDynamicSystemCode(systemCode);
+                service.setDynamicSystemCode(systemCode);
                 newServices = new ArrayList<NfcFServiceInfo>(userServices.services.values());
             } else {
                 Log.e(TAG, "Failed to persist System Code.");
@@ -656,7 +657,7 @@ public class RegisteredNfcFServicesCache {
             userServices.dynamicNfcid2.put(componentName, dynamicNfcid2);
             success = writeDynamicSystemCodeNfcid2Locked();
             if (success) {
-                service.setOrReplaceDynamicNfcid2(nfcid2);
+                service.setDynamicNfcid2(nfcid2);
                 newServices = new ArrayList<NfcFServiceInfo>(userServices.services.values());
             } else {
                 Log.e(TAG, "Failed to persist NFCID2.");
@@ -751,18 +752,25 @@ public class RegisteredNfcFServicesCache {
 
     public void dump(FileDescriptor fd, PrintWriter pw, String[] args) {
         pw.println("Registered HCE-F services for current user: ");
-        synchronized (mLock) {
-            for (UserHandle uh : mUserHandles) {
-                UserManager um = mContext.createContextAsUser(
-                        uh, /*flags=*/0).getSystemService(UserManager.class);
-                pw.println("User " + um.getUserName() + " : ");
-                UserServices userServices = findOrCreateUserLocked(uh.getIdentifier());
-                for (NfcFServiceInfo service : userServices.services.values()) {
-                    service.dump(fd, pw, args);
+        ParcelFileDescriptor pFd;
+        try {
+            pFd = ParcelFileDescriptor.dup(fd);
+            synchronized (mLock) {
+                for (UserHandle uh : mUserHandles) {
+                    UserManager um = mContext.createContextAsUser(
+                            uh, /*flags=*/0).getSystemService(UserManager.class);
+                    pw.println("User " + um.getUserName() + " : ");
+                    UserServices userServices = findOrCreateUserLocked(uh.getIdentifier());
+                    for (NfcFServiceInfo service : userServices.services.values()) {
+                        service.dump(pFd, pw, args);
+                        pw.println("");
+                    }
                     pw.println("");
                 }
-                pw.println("");
             }
+            pFd.close();
+        } catch (IOException e) {
+            pw.println("Failed to dump HCE-F services: " + e);
         }
     }
 
