@@ -428,6 +428,19 @@ public class HostEmulationManager {
                 mPaymentServiceName = null;
             }
         }
+
+        @Override
+        public void onBindingDied(ComponentName name) {
+            synchronized (mLock) {
+                unbindPaymentServiceLocked();
+            }
+        }
+        @Override
+        public void onNullBinding(ComponentName name) {
+            synchronized (mLock) {
+                unbindPaymentServiceLocked();
+            }
+        }
     };
 
     private ServiceConnection mConnection = new ServiceConnection() {
@@ -453,6 +466,20 @@ public class HostEmulationManager {
                 Log.d(TAG, "Service unbound");
                 mService = null;
                 mServiceBound = false;
+            }
+        }
+
+        @Override
+        public void onBindingDied(ComponentName name) {
+            synchronized (mLock) {
+                unbindServiceIfNeededLocked();
+            }
+        }
+
+        @Override
+        public void onNullBinding(ComponentName name) {
+            synchronized (mLock) {
+                unbindServiceIfNeededLocked();
             }
         }
     };
