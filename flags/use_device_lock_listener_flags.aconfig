@@ -1,0 +1,9 @@
+package: "com.android.nfc.flags"
+container: "system"
+
+flag {
+    name: "use_device_lock_listener"
+    namespace: "wallet_integration"
+    description: "Use the device lock lock listener for secure NFC."
+    bug: "286735637"
+}

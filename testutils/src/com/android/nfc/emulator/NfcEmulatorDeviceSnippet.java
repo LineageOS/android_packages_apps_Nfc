@@ -15,11 +15,11 @@
  */
 package com.android.nfc.emulator;
 
-
 import android.app.Instrumentation;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.nfc.NfcAdapter;
+import android.nfc.cardemulation.PollingFrame;
 import android.util.Log;
 
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -213,6 +213,19 @@ public class NfcEmulatorDeviceSnippet extends NfcSnippet {
         mActivity = (ThroughputEmulatorActivity) instrumentation.startActivitySync(intent);
     }
 
+    /** Opens polling frame emulator activity */
+    @Rpc(description = "Opens polling frame emulator activity")
+    public void startPollingFrameEmulatorActivity() {
+        Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
+
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setClassName(
+                instrumentation.getTargetContext(), PollingFrameEmulatorActivity.class.getName());
+
+        mActivity = (PollingFrameEmulatorActivity) instrumentation.startActivitySync(intent);
+    }
+
     /** Opens large num AIDs emulator activity */
     @Rpc(description = "Opens large num AIDs emulator activity")
     public void startLargeNumAidsEmulatorActivity() {
@@ -267,7 +280,6 @@ public class NfcEmulatorDeviceSnippet extends NfcSnippet {
 
         mActivity = (ProtocolParamsEmulatorActivity) instrumentation.startActivitySync(intent);
     }
-
 
     @Rpc(description = "Returns if observe mode is supported.")
     public boolean isObserveModeSupported() {
@@ -345,7 +357,7 @@ public class NfcEmulatorDeviceSnippet extends NfcSnippet {
         mActivity = (PollingLoopEmulatorActivity) instrumentation.startActivitySync(intent);
     }
 
-    @Rpc(description = "Open two polling frame emulator activity for two readers test\"")
+    @Rpc(description = "Open two polling frame emulator activity for two readers test")
     public void startTwoPollingFrameEmulatorActivity() {
         Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
 
@@ -358,17 +370,27 @@ public class NfcEmulatorDeviceSnippet extends NfcSnippet {
         mActivity = (TwoPollingFrameEmulatorActivity) instrumentation.startActivitySync(intent);
     }
 
-    @Rpc(description = "Opens PN532 Activity\"")
+    @Rpc(description = "Opens PN532 Activity")
     public void startPN532Activity() {
         Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
 
         Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.setClassName(
-                instrumentation.getTargetContext(),
-                PN532Activity.class.getName());
+        intent.setClassName(instrumentation.getTargetContext(), PN532Activity.class.getName());
 
         mActivity = (PN532Activity) instrumentation.startActivitySync(intent);
+    }
+
+    @Rpc(description = "Opens the Event Listener Activity")
+    public void startEventListenerActivity() {
+        Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
+
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setClassName(instrumentation.getTargetContext(),
+            EventListenerEmulatorActivity.class.getName());
+
+        mActivity = (EventListenerEmulatorActivity) instrumentation.startActivitySync(intent);
     }
 
     /** Registers receiver that waits for RF field broadcast */
@@ -390,6 +412,25 @@ public class NfcEmulatorDeviceSnippet extends NfcSnippet {
             return;
         }
         ((PN532Activity) mActivity).enableReaderMode(flags);
+    }
+
+    /** Returns a list of collected polling frames */
+    @Rpc(description = "Get polling frames")
+    public PollingFrame[] getPollingFrames() {
+        if (mActivity == null || !(mActivity instanceof PollingFrameEmulatorActivity)) {
+            Log.e(TAG, "Activity is null.");
+            return new PollingFrame[] {};
+        }
+        Log.e(TAG, "Activity is not null.");
+        return ((PollingFrameEmulatorActivity) mActivity).getPollingFrames();
+    }
+
+    /** Registers receiver that waits for OFF polling frame */
+    @AsyncRpc(description = "Waits for OFF polling frame")
+    public void asyncWaitForPollingFrameOff(String callbackId, String eventName) {
+        registerSnippetBroadcastReceiver(
+                callbackId, eventName, PollingFrameEmulatorActivity.POLLING_FRAME_OFF_DETECTED);
+        Log.i("PollingFrameEmulatorActivity", "register for polling frame off");
     }
 
     /** Registers receiver for polling loop action */

@@ -27,6 +27,7 @@
 const char* APP_NAME = "NfcNci";
 uint8_t HciEventManager::sEsePipe;
 std::vector<uint8_t> HciEventManager::sSimPipeIds;
+static Mutex sSimPipeIdsMutex;
 
 using android::base::StringPrintf;
 
@@ -46,12 +47,14 @@ void HciEventManager::initialize(nfc_jni_native_data* native) {
   }
   sEsePipe = NfcConfig::getUnsigned(NAME_OFF_HOST_ESE_PIPE_ID, 0x16);
   // Backward compatibility or For vendor supporting only single sim pipe ID
+  sSimPipeIdsMutex.lock();
   if (!NfcConfig::hasKey(NAME_OFF_HOST_SIM_PIPE_IDS)) {
     uint8_t simPipeId = NfcConfig::getUnsigned(NAME_OFF_HOST_SIM_PIPE_ID, 0x0A);
     sSimPipeIds = {simPipeId};
   } else {
     sSimPipeIds = NfcConfig::getBytes(NAME_OFF_HOST_SIM_PIPE_IDS);
   }
+  sSimPipeIdsMutex.unlock();
 }
 
 void HciEventManager::notifyTransactionListenersOfAid(std::vector<uint8_t> aid,
@@ -154,6 +157,7 @@ void HciEventManager::nfaHciCallback(tNFA_HCI_EVT event,
   if (eventData->rcvd_evt.pipe == sEsePipe) {
     evtSrc = "eSE1";
   } else {
+    sSimPipeIdsMutex.lock();
     bool isSimPipeId = false;
     for (size_t i = 0; i < (size_t)sSimPipeIds.size(); i++) {
       if (eventData->rcvd_evt.pipe == sSimPipeIds[i]) {
@@ -162,6 +166,7 @@ void HciEventManager::nfaHciCallback(tNFA_HCI_EVT event,
         break;
       }
     }
+    sSimPipeIdsMutex.unlock();
 
     if (!isSimPipeId) {
       LOG(WARNING) << "Incorrect Pipe Id";

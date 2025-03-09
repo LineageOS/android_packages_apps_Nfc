@@ -27,6 +27,7 @@ using namespace std;
 struct mNfceeData {
   uint16_t mNfceeID[MAX_NUM_NFCEE];
   tNFA_EE_STATUS mNfceeStatus[MAX_NUM_NFCEE];
+  tNFA_TECHNOLOGY_MASK mNfceeTechMask[MAX_NUM_NFCEE];
   uint8_t mNfceePresent;
 };
 
@@ -106,5 +107,5 @@ class NfceeManager {
   uint8_t mNumEePresent;
   uint8_t mActualNumEe;
   mNfceeData mNfceeData_t;
-  const char* mArrayListClassName = "java/util/ArrayList";
+  const char* mHashMapClassName = "java/util/HashMap";
 };

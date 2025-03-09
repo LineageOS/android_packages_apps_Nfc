@@ -5,13 +5,14 @@ package {
 
 android_test {
     name: "NfcTestCases",
-    defaults: ["NfcNciDefaults"],
     platform_apis: true,
-
+    sdk_version: "core_current",
     libs: [
+        "framework-nfc.impl",
+        "framework",
+        "framework-res",
         "android.test.runner.stubs.system",
         "android.test.base.stubs.system",
-        "framework-nfc.impl",
         "flag-junit",
         "platform-test-annotations",
         "testables",
@@ -26,13 +27,13 @@ android_test {
         "androidx.test.core",
         "androidx.test.rules",
         "androidx.test.ext.junit",
+        "com.android.nfc.flags-aconfig",
         "frameworks-base-testutils",
         "truth",
         "androidx.annotation_annotation",
         "androidx.appcompat_appcompat",
         "com.google.android.material_material",
         "nfc-event-log-proto",
-        "nfc_flags_lib",
         "flag-junit",
         "platform-test-annotations",
         "testables",
@@ -43,9 +44,12 @@ android_test {
     // Include all test java files.
     srcs: [
         "src/**/*.java",
-        ":framework-nfc-updatable-sources",
     ],
 
-    test_suites: ["general-tests"],
+    min_sdk_version: "current",
+    test_suites: [
+        "general-tests",
+        "mts-nfc",
+    ],
 
 }

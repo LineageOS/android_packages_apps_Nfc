@@ -18,5 +18,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.android.nfc.utils">
     <uses-sdk android:targetSdkVersion="35" android:minSdkVersion="35"/>
-    <application />
+    <application>
+        <meta-data
+            android:name="mobly-object-converter"
+            android:value="com.android.nfc.utils.PollingFrameConverter"/>
+    </application>
 </manifest>

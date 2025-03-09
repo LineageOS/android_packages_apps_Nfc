@@ -20,38 +20,26 @@ package {
 }
 
 aconfig_declarations {
-    name: "nfc_aconfig_flags",
+    name: "com.android.nfc.flags-aconfig",
     package: "com.android.nfc.flags",
     container: "system",
-    srcs: ["nfc_flags.aconfig"],
+    srcs: ["*_flags.aconfig"],
 }
 
 java_aconfig_library {
-    name: "nfc_aconfig_flags_lib",
-    aconfig_declarations: "nfc_aconfig_flags",
-    min_sdk_version: "33",
+    name: "com.android.nfc.flags-aconfig-java",
+    aconfig_declarations: "com.android.nfc.flags-aconfig",
+    sdk_version: "module_current",
+    min_sdk_version: "35",
+    installable: false,
+    libs: ["framework-configinfrastructure.stubs.module_lib"],
+    visibility: [
+        "//cts/tests/tests/nfc:__subpackages__",
+        "//packages/apps/Nfc:__subpackages__",
+    ],
     apex_available: [
-        "//apex_available:platform",
         "com.android.nfcservices",
     ],
 }
 
-java_library {
-    name: "nfc_flags_lib",
-    sdk_version: "system_current",
-    min_sdk_version: "33",
-    srcs: [
-        "lib/**/*.java",
-    ],
-    static_libs: [
-        "nfc_aconfig_flags_lib",
-    ],
-    installable: false,
-    visibility: [
-        "//packages/apps/Nfc:__subpackages__",
-    ],
-    apex_available: [
-        "//apex_available:platform",
-        "com.android.nfcservices",
-    ],
-}
+

@@ -53,6 +53,8 @@
     <string name="tag_dispatch_failed" msgid="3562984995049738400">"Осы NFC картасы үшін бірде-бір қолдау көрсетілетін қолданба жоқ"</string>
     <string name="nfc_blocking_alert_title" msgid="1086172436984457085">"NFC блокталған болуы мүмкін"</string>
     <string name="nfc_blocking_alert_message" msgid="7003156052570107490">"Қалай түзетуге болатынын білу үшін түртіңіз."</string>
+    <string name="nfc_tag_alert_title" msgid="197917719004551090">"<xliff:g id="APPNAME">%1$s</xliff:g> қолданбасы NFC арқылы іске қосылды"</string>
+    <string name="nfc_tag_alert_message" msgid="3140894528184634873">"Оны өшіру жолын білу үшін түртіңіз."</string>
     <string name="nfc_logging_alert_title" msgid="5300867034660942987">"NFC деректері жазылып жатыр"</string>
     <string name="nfc_logging_alert_message" msgid="1550187184825467942">"Жазуды тоқтату үшін түртіңіз."</string>
     <string name="title_package_enabling_nfc" msgid="5736481508428918024">"<xliff:g id="PKG">%1$s</xliff:g> қызметіне NFC технологиясын қосуға рұқсат етілсін бе?"</string>

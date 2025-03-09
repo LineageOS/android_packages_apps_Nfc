@@ -53,6 +53,8 @@
     <string name="tag_dispatch_failed" msgid="3562984995049738400">"ამ NFC ტეგისთვის არცერთი მხარდაჭერილი აპლიკაცია არ მოიძებნა"</string>
     <string name="nfc_blocking_alert_title" msgid="1086172436984457085">"NFC შეიძლება დაბლოკილი იყოს"</string>
     <string name="nfc_blocking_alert_message" msgid="7003156052570107490">"შეეხეთ იმის შესატყობად, თუ როგორ უნდა მოაგვაროთ ეს."</string>
+    <string name="nfc_tag_alert_title" msgid="197917719004551090">"<xliff:g id="APPNAME">%1$s</xliff:g> გაშვებულია NFC-თ"</string>
+    <string name="nfc_tag_alert_message" msgid="3140894528184634873">"შეეხეთ, რათა გაიგოთ, თუ როგორ გათიშოთ ეს."</string>
     <string name="nfc_logging_alert_title" msgid="5300867034660942987">"მიმდინარეობს NFC მონაცემების ჩაწერა"</string>
     <string name="nfc_logging_alert_message" msgid="1550187184825467942">"შეეხეთ ჩაწერის შესაწყვეტად."</string>
     <string name="title_package_enabling_nfc" msgid="5736481508428918024">"მიეცეს <xliff:g id="PKG">%1$s</xliff:g> პაკეტს NFC-ს ჩართვის უფლება?"</string>

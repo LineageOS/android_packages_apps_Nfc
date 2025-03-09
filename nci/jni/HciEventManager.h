@@ -17,6 +17,7 @@
 
 #include <vector>
 
+#include "Mutex.h"
 #include "NfcJniUtil.h"
 #include "nfa_hci_api.h"
 #include "nfa_hci_defs.h"

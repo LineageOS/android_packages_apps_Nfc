@@ -41,6 +41,8 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.Toast;
 
+import androidx.annotation.VisibleForTesting;
+
 import com.android.nfc.R;
 
 /**
@@ -125,6 +127,14 @@ public class BluetoothPeripheralHandover implements BluetoothProfile.ServiceList
     public BluetoothPeripheralHandover(Context context, BluetoothDevice device, String name,
             int transport, OobData oobData, ParcelUuid[] uuids, BluetoothClass btClass,
             Callback callback) {
+        this(context, device, name, transport, oobData, uuids,
+                btClass, callback, BluetoothAdapter.getDefaultAdapter());
+    }
+
+    @VisibleForTesting
+    public BluetoothPeripheralHandover(Context context, BluetoothDevice device, String name,
+            int transport, OobData oobData, ParcelUuid[] uuids, BluetoothClass btClass,
+            Callback callback, BluetoothAdapter adapter) {
         checkMainThread();  // mHandler must get get constructed on Main Thread for toasts to work
         mContext = context;
         mDevice = device;
@@ -132,7 +142,7 @@ public class BluetoothPeripheralHandover implements BluetoothProfile.ServiceList
         mTransport = transport;
         mOobData = oobData;
         mCallback = callback;
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        mBluetoothAdapter = adapter;
 
         ContentResolver contentResolver = mContext.getContentResolver();
         mProvisioning = Settings.Global.getInt(contentResolver,
@@ -720,5 +730,9 @@ public class BluetoothPeripheralHandover implements BluetoothProfile.ServiceList
         if (!mHandler.hasMessages(MSG_RETRY)) {
             mHandler.sendMessageDelayed(mHandler.obtainMessage(MSG_RETRY), waitTime);
         }
+    }
+
+    public int getTransport() {
+        return mTransport;
     }
 }

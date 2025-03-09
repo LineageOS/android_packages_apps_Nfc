@@ -123,13 +123,24 @@ struct nfc_jni_native_data {
 class ScopedAttach {
  public:
   ScopedAttach(JavaVM* vm, JNIEnv** env) : vm_(vm) {
-    vm_->AttachCurrentThread(env, NULL);
+    // Check if the thread is already attached, if not,
+    // attach the current thread and store the JNIEnv pointer
+    if (vm_->GetEnv((void**)env, JNI_VERSION_1_6) != JNI_OK) {
+      vm_->AttachCurrentThread(env, NULL);
+      env_ = *env;
+      attached_ = true;
+    }
   }
 
-  ~ScopedAttach() { vm_->DetachCurrentThread(); }
+  ~ScopedAttach() {
+    // Detach the thread only if it was attached by this object
+    if (attached_) vm_->DetachCurrentThread();
+  }
 
  private:
   JavaVM* vm_;
+  JNIEnv* env_ = nullptr;
+  bool attached_ = false;
 };
 
 jint JNI_OnLoad(JavaVM* jvm, void* reserved);
@@ -142,4 +153,5 @@ int nfc_jni_get_nfc_socket_handle(JNIEnv* e, jobject o);
 struct nfc_jni_native_data* nfc_jni_get_nat(JNIEnv* e, jobject o);
 int register_com_android_nfc_NativeNfcManager(JNIEnv* e);
 int register_com_android_nfc_NativeNfcTag(JNIEnv* e);
+int register_com_android_nfc_NativeT4tNfcee(JNIEnv* e);
 }  // namespace android

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name" msgid="2676644544773839281">"Appli NFC Replay"</string>
+    <string name="service_button_text" msgid="5013402864802312301">"Démarrer Host APDU Service"</string>
+    <string name="replayed_file_text" msgid="2512008003720490850">"Nouvelle lecture du fichier :"</string>
+    <string name="log_text" msgid="5517852408962406645">"Journal des transactions :"</string>
+</resources>

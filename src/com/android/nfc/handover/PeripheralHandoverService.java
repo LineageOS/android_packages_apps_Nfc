@@ -39,6 +39,8 @@ import android.os.RemoteException;
 import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.annotation.VisibleForTesting;
+
 import java.util.Objects;
 import java.util.Set;
 
@@ -238,7 +240,7 @@ public class PeripheralHandoverService extends Service implements BluetoothPerip
     @Override
     public void onBluetoothPeripheralHandoverComplete(boolean connected) {
         // Called on the main thread
-        int transport = mBluetoothPeripheralHandover.mTransport;
+        int transport = mBluetoothPeripheralHandover.getTransport();
         mBluetoothPeripheralHandover = null;
         mBluetoothHeadsetConnected = connected;
 
@@ -333,5 +335,23 @@ public class PeripheralHandoverService extends Service implements BluetoothPerip
     public boolean onUnbind(Intent intent) {
         // prevent any future callbacks to the client, no rebind call needed.
         return false;
+    }
+
+    @VisibleForTesting
+    public PeripheralHandoverService(BluetoothAdapter bluetoothAdapter, NfcAdapter nfcAdapter,
+            BluetoothPeripheralHandover bluetoothPeripheralHandover, MessageHandler handler,
+            Messenger messenger, BluetoothDevice device, boolean bluetoothEnabledByNfc) {
+        mBluetoothAdapter = bluetoothAdapter;
+        mNfcAdapter = nfcAdapter;
+        mBluetoothPeripheralHandover = bluetoothPeripheralHandover;
+        mHandler = handler;
+        mClient = messenger;
+        mMessenger = messenger;
+        mDevice = device;
+        mBluetoothEnabledByNfc = bluetoothEnabledByNfc;
+        mBluetoothHeadsetConnected = false;
+        mStartId = 0;
+        mPendingMsgData = null;
+        mName = "Test name";
     }
 }

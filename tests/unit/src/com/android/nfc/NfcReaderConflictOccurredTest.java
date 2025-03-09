@@ -20,6 +20,7 @@ import static com.android.nfc.NfcDispatcher.DISPATCH_SUCCESS;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockingDetails;
 import static org.mockito.Mockito.when;
 
@@ -50,6 +51,7 @@ import com.android.nfc.handover.HandoverDataParser;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.After;
@@ -66,7 +68,9 @@ import org.mockito.quality.Strictness;
 public final class NfcReaderConflictOccurredTest {
 
     private static final String TAG = NfcReaderConflictOccurredTest.class.getSimpleName();
-    @Mock private NfcInjector mNfcInjector;
+    private NfcInjector mNfcInjector;
+    AtomicBoolean mAtomicBoolean;
+
     private MockitoSession mStaticMockSession;
     private NfcDispatcher mNfcDispatcher;
 
@@ -118,7 +122,10 @@ public final class NfcReaderConflictOccurredTest {
                 return Mockito.mock(Intent.class);
             }
         };
-
+        mNfcInjector = mock(NfcInjector.class);
+        NfcInjector.setNfcInjector(mNfcInjector);
+        mAtomicBoolean = mock(AtomicBoolean.class);
+        when(mNfcInjector.createAtomicBoolean()).thenReturn(mAtomicBoolean);
         InstrumentationRegistry.getInstrumentation().runOnMainSync(
               () -> mNfcDispatcher = new NfcDispatcher(
                       mockContext, new HandoverDataParser(), mNfcInjector, false));

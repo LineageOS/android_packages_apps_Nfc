@@ -53,6 +53,8 @@
     <string name="tag_dispatch_failed" msgid="3562984995049738400">"Không có ứng dụng nào hỗ trợ thẻ NFC này"</string>
     <string name="nfc_blocking_alert_title" msgid="1086172436984457085">"NFC có thể bị chặn"</string>
     <string name="nfc_blocking_alert_message" msgid="7003156052570107490">"Nhấn để tìm hiểu cách khắc phục."</string>
+    <string name="nfc_tag_alert_title" msgid="197917719004551090">"Đã khởi chạy <xliff:g id="APPNAME">%1$s</xliff:g> qua NFC"</string>
+    <string name="nfc_tag_alert_message" msgid="3140894528184634873">"Hãy nhấn để tìm hiểu cách tắt ứng dụng này."</string>
     <string name="nfc_logging_alert_title" msgid="5300867034660942987">"Dữ liệu về NFC đang được ghi lại"</string>
     <string name="nfc_logging_alert_message" msgid="1550187184825467942">"Nhấn để dừng ghi."</string>
     <string name="title_package_enabling_nfc" msgid="5736481508428918024">"Cho phép <xliff:g id="PKG">%1$s</xliff:g> bật NFC?"</string>

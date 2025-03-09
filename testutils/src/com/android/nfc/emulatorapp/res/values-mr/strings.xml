@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name" msgid="2676644544773839281">"NFC Replay App"</string>
+    <string name="service_button_text" msgid="5013402864802312301">"होस्ट APDU सेवा सुरू करा"</string>
+    <string name="replayed_file_text" msgid="2512008003720490850">"फाइल रीप्ले करत आहे:"</string>
+    <string name="log_text" msgid="5517852408962406645">"व्यवहाराचा लॉग:"</string>
+</resources>

@@ -15,6 +15,8 @@
  */
 package com.android.nfc;
 
+import static android.content.pm.PackageManager.MATCH_ALL;
+
 import static com.google.common.truth.Truth.assertThat;
 
 import static org.junit.Assert.assertFalse;
@@ -22,9 +24,12 @@ import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.PackageInfoFlags;
+import android.content.res.Resources;
 import android.nfc.NfcAdapter;
 import android.os.SystemProperties;
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.test.InstrumentationRegistry;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -62,10 +67,32 @@ public final class NfcFeatureFlagTest {
     public void tearDown() throws Exception {
     }
 
+    private String getNfcApkPkgName() throws Exception {
+        // Check if "com.google.android.nfc" or "com.android.nfc" is installed on the device.
+        return mContext.getPackageManager()
+                .getInstalledPackages(PackageInfoFlags.of(MATCH_ALL))
+                .stream()
+                .filter(p -> p.packageName.equals("com.google.android.nfc"))
+                .findFirst()
+                .map(p -> p.packageName)
+                .orElse("com.android.nfc");
+    }
+
+    private Resources getResources() throws Exception {
+        return mContext.createPackageContext(getNfcApkPkgName(), 0).getResources();
+    }
+
+
     @Test
-    public void testIsSecureNfcSupported() {
+    public void testIsSecureNfcSupported() throws Exception {
         if (!mNfcSupported) return;
-        String[] skuList = mContext.getResources().getStringArray(
+        boolean allSupport = getResources().getBoolean(
+                R.bool.enable_secure_nfc_support);
+        if (allSupport) {
+            assertTrue(mNfcAdapter.isSecureNfcSupported());
+            return;
+        }
+        String[] skuList = getResources().getStringArray(
                 R.array.config_skuSupportsSecureNfc);
         String sku = SystemProperties.get("ro.boot.hardware.sku");
         if (TextUtils.isEmpty(sku) || !ArrayUtils.contains(skuList, sku)) {
@@ -76,17 +103,17 @@ public final class NfcFeatureFlagTest {
     }
 
     @Test
-    public void testIsControllerAlwaysOnSupported() {
+    public void testIsControllerAlwaysOnSupported() throws Exception {
         if (!mNfcSupported) return;
-        assertThat(mContext.getResources()
+        assertThat(getResources()
                 .getBoolean(R.bool.nfcc_always_on_allowed))
                 .isEqualTo(mNfcAdapter.isControllerAlwaysOnSupported());
     }
 
     @Test
-    public void testIsTagIntentAppPreferenceSupported() {
+    public void testIsTagIntentAppPreferenceSupported() throws Exception {
         if (!mNfcSupported) return;
-        assertThat(mContext.getResources()
+        assertThat(getResources()
                 .getBoolean(R.bool.tag_intent_app_pref_supported))
                 .isEqualTo(mNfcAdapter.isTagIntentAppPreferenceSupported());
     }

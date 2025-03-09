@@ -49,6 +49,7 @@
             <item name="nfc_default_route" type="string"/>
             <item name="nfc_default_isodep_route" type="string"/>
             <item name="nfc_default_offhost_route" type="string"/>
+            <item name="nfc_default_sc_route" type="string"/>
             <item name="enable_developer_option_notification" type="bool" />
             <!-- Allow list that contains the package name which are allowed to use NFC -->
             <item name="nfc_allow_list" type="array" />
@@ -62,6 +63,7 @@
             <item name="check_display_state_for_screen_state" type="bool" />
             <item name="enable_euicc_support" type="bool" />
             <item name="indicate_user_activity_for_hce" type="bool" />
+            <item name="max_pause_polling_time_out_ms" type="integer" />
           <!-- Params from config.xml that can be overlaid -->
 
           <!-- Params from strings.xml that can be overlaid -->

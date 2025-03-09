@@ -37,7 +37,12 @@ public class ConfirmConnectToWifiNetworkActivity extends Activity
         mCurrentWifiConfiguration =
                 intent.getParcelableExtra(NfcWifiProtectedSetup.EXTRA_WIFI_CONFIG);
 
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
+        registerReceiver(mBroadcastReceiver, intentFilter);
+
         if (mCurrentWifiConfiguration == null) {
+            super.onCreate(savedInstanceState);
             Log.e(TAG, "mCurrentWifiConfiguration is null.");
             finish();
             return;
@@ -55,10 +60,6 @@ public class ConfirmConnectToWifiNetworkActivity extends Activity
 
         mEnableWifiInProgress = false;
         mHandler = new Handler();
-
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
-        registerReceiver(mBroadcastReceiver, intentFilter);
 
         mAlertDialog.show();
 
@@ -143,7 +144,10 @@ public class ConfirmConnectToWifiNetworkActivity extends Activity
 
     @Override
     protected void onDestroy() {
-        mAlertDialog.dismiss();
+
+        if (mAlertDialog != null) {
+            mAlertDialog.dismiss();
+        }
         ConfirmConnectToWifiNetworkActivity.this.unregisterReceiver(mBroadcastReceiver);
         super.onDestroy();
     }

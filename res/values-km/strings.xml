@@ -53,6 +53,8 @@
     <string name="tag_dispatch_failed" msgid="3562984995049738400">"មិន​មាន​កម្មវិធី​ដែលអាចប្រើ​ស្លាក NFC នេះទេ"</string>
     <string name="nfc_blocking_alert_title" msgid="1086172436984457085">"NFC អាច​ត្រូវបាន​ទប់ស្កាត់"</string>
     <string name="nfc_blocking_alert_message" msgid="7003156052570107490">"ចុច ដើម្បី​ស្វែងយល់​អំពីរបៀប​ដោះស្រាយ។"</string>
+    <string name="nfc_tag_alert_title" msgid="197917719004551090">"បានបើកដំណើរការ <xliff:g id="APPNAME">%1$s</xliff:g> តាម​រយៈ NFC"</string>
+    <string name="nfc_tag_alert_message" msgid="3140894528184634873">"ចុច ដើម្បីស្វែងយល់អំពី​របៀបបិទវា។"</string>
     <string name="nfc_logging_alert_title" msgid="5300867034660942987">"ទិន្នន័យ NFC កំពុងត្រូវបានថត"</string>
     <string name="nfc_logging_alert_message" msgid="1550187184825467942">"ចុចដើម្បីបញ្ឈប់ការថត។"</string>
     <string name="title_package_enabling_nfc" msgid="5736481508428918024">"អនុញ្ញាតឱ្យ <xliff:g id="PKG">%1$s</xliff:g> បើក NFC ឬ?"</string>

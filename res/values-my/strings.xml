@@ -53,6 +53,8 @@
     <string name="tag_dispatch_failed" msgid="3562984995049738400">"ဤ \'NFC တဂ်\' အတွက် ပံ့ပိုးထားသော အပလီကေးရှင်း မရှိပါ"</string>
     <string name="nfc_blocking_alert_title" msgid="1086172436984457085">"NFC ပိတ်နေနိုင်သည်"</string>
     <string name="nfc_blocking_alert_message" msgid="7003156052570107490">"ပြုပြင်နည်းကို လေ့လာရန် တို့ပါ။"</string>
+    <string name="nfc_tag_alert_title" msgid="197917719004551090">"NFC မှတစ်ဆင့် <xliff:g id="APPNAME">%1$s</xliff:g> စတင်ထားသည်"</string>
+    <string name="nfc_tag_alert_message" msgid="3140894528184634873">"၎င်းအား ပိတ်နည်းကို လေ့လာရန် တို့ပါ။"</string>
     <string name="nfc_logging_alert_title" msgid="5300867034660942987">"NFC ဒေတာကို မှတ်တမ်းတင်နေသည်"</string>
     <string name="nfc_logging_alert_message" msgid="1550187184825467942">"မှတ်တမ်းတင်ခြင်းရပ်ရန် တို့ပါ။"</string>
     <string name="title_package_enabling_nfc" msgid="5736481508428918024">"NFC ဖွင့်ရန် <xliff:g id="PKG">%1$s</xliff:g> ကို ခွင့်ပြုမလား။"</string>

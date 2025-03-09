@@ -20,6 +20,7 @@ android_test {
         "androidx.test.core",
         "androidx.test.rules",
         "androidx.test.ext.junit",
+        "com.android.nfc.flags-aconfig-java",
         "mockito-target-extended-minus-junit4",
         "frameworks-base-testutils",
         "truth",
@@ -27,7 +28,6 @@ android_test {
         "androidx.appcompat_appcompat",
         "com.google.android.material_material",
         "nfc-event-log-proto",
-        "nfc_flags_lib",
         "flag-junit",
         "platform-test-annotations",
         "testables",
@@ -49,8 +49,12 @@ android_test {
     ],
 
     platform_apis: true,
+    min_sdk_version: "current",
 
-    test_suites: ["device-tests"],
+    test_suites: [
+        "device-tests",
+        "mts-nfc",
+    ],
 
     instrumentation_for: "NfcNci",
 }

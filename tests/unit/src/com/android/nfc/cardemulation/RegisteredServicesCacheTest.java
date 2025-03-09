@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -116,6 +117,8 @@ public class RegisteredServicesCacheTest {
     private static final List<String> PAYMENT_AIDS = List.of("A000000004101011",
             "A000000004101012", "A000000004101013");
     private static final List<String> NON_PAYMENT_AID = List.of("F053414950454D");
+    private static final String POLLING_LOOP_FILTER1 = "filter1";
+    private static final String POLLING_LOOP_FILTER2 = "filter2";
 
     @Mock
     private Context mContext;
@@ -310,6 +313,8 @@ public class RegisteredServicesCacheTest {
         // Verify the details of service 1
         RegisteredServicesCache.DynamicSettings walletHolderSettings =
                 userServices.dynamicSettings.get(WALLET_HOLDER_SERVICE_COMPONENT);
+        assertTrue(walletHolderSettings.pollingLoopFilters.get(POLLING_LOOP_FILTER1));
+        assertFalse(walletHolderSettings.pollingLoopPatternFilters.get(POLLING_LOOP_FILTER2));
         assertEquals(OFFHOST_SE_STRING + "1", walletHolderSettings.offHostSE);
         assertEquals(1, walletHolderSettings.uid);
         assertEquals(TRUE_STRING, walletHolderSettings.shouldDefaultToObserveModeStr);
@@ -608,6 +613,8 @@ public class RegisteredServicesCacheTest {
         assertEquals(WALLET_HOLDER_SERVICE_COMPONENT,
                 readDynamicSettingsFromFile.get(USER_ID).get(1).first);
         assertEquals(newOffHostValue, dynamicSettings.offHostSE);
+        assertFalse(dynamicSettings.pollingLoopFilters.isEmpty());
+        assertFalse(dynamicSettings.pollingLoopPatternFilters.isEmpty());
     }
 
     @Test
@@ -691,6 +698,8 @@ public class RegisteredServicesCacheTest {
         assertEquals(ANOTHER_SERVICE_COMPONENT,
                 readDynamicSettingsFromFile.get(USER_ID).get(0).first);
         assertNull(dynamicSettings.offHostSE);
+        assertTrue(dynamicSettings.pollingLoopFilters.isEmpty());
+        assertTrue(dynamicSettings.pollingLoopPatternFilters.isEmpty());
     }
 
     @Test
@@ -775,6 +784,11 @@ public class RegisteredServicesCacheTest {
         assertEquals(WALLET_HOLDER_SERVICE_COMPONENT, apduServiceInfos.get(1)
                 .getComponent());
         verify(apduServiceInfos.get(1)).addPollingLoopFilter(eq(plFilter), eq(true));
+        RegisteredServicesCache.UserServices services =
+                mRegisteredServicesCache.mUserServices.get(USER_ID);
+        RegisteredServicesCache.DynamicSettings dynamicSettings = services.dynamicSettings
+                .get(WALLET_HOLDER_SERVICE_COMPONENT);
+        assertTrue(dynamicSettings.pollingLoopFilters.get(plFilter));
     }
 
     @Test
@@ -857,6 +871,11 @@ public class RegisteredServicesCacheTest {
         assertEquals(ANOTHER_SERVICE_COMPONENT, apduServiceInfos.get(0).getComponent());
         assertEquals(WALLET_HOLDER_SERVICE_COMPONENT, apduServiceInfos.get(1).getComponent());
         verify(apduServiceInfos.get(1)).addPollingLoopPatternFilter(eq(plFilter), eq(true));
+        RegisteredServicesCache.UserServices services =
+                mRegisteredServicesCache.mUserServices.get(USER_ID);
+        RegisteredServicesCache.DynamicSettings dynamicSettings = services.dynamicSettings
+                .get(WALLET_HOLDER_SERVICE_COMPONENT);
+        assertTrue(dynamicSettings.pollingLoopPatternFilters.get(plFilter));
     }
 
     @Test

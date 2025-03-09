@@ -4,6 +4,7 @@ import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 
 import android.annotation.Nullable;
 import android.app.ActivityManager;
+import android.app.AppOpsManager;
 import android.app.admin.DevicePolicyManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -47,9 +48,12 @@ public class NfcPermissions {
             "NFC_SET_CONTROLLER_ALWAYS_ON permission required";
 
     private final Context mContext;
+    private final AppOpsManager mAppOpsManager;
+
 
     public NfcPermissions(Context context) {
         mContext = context;
+        mAppOpsManager = mContext.getSystemService(AppOpsManager.class);
     }
 
 
@@ -175,5 +179,20 @@ public class NfcPermissions {
                 retrieveDevicePolicyManagerFromUserContext(uid);
         if (devicePolicyManager == null) return false;
         return devicePolicyManager.isProfileOwnerApp(packageName);
+    }
+
+    /**
+     * API to validate if a package name belongs to a UID. Throws SecurityException
+     * if pkgName does not belongs to a UID
+     *
+     * @param pkgName package name of the application requesting access
+     * @param uid The uid of the package
+     *
+     */
+    public void checkPackage(int uid, String pkgName) throws SecurityException {
+        if (pkgName == null) {
+            throw new SecurityException("Checking UID " + uid + " but Package Name is Null");
+        }
+        mAppOpsManager.checkPackage(uid, pkgName);
     }
 }

@@ -39,21 +39,13 @@ public class NfcWatchdog extends BroadcastReceiver {
     static final String ACTION_WATCHDOG = "android.nfc.intent.action.WATCHDOG";
 
     CountDownLatch mCountDownLatch;
-    private Intent mWatchdogIntent = new Intent(ACTION_WATCHDOG);
+    Context mContext;
 
     NfcWatchdog(Context context) {
+        mContext = context;
         if (android.nfc.Flags.nfcWatchdog()) {
-            PendingIntent pendingIntent =
-                    PendingIntent.getBroadcast(
-                            context, 0, mWatchdogIntent, PendingIntent.FLAG_IMMUTABLE);
             context.registerReceiver(this, new IntentFilter(ACTION_WATCHDOG),
                     Context.RECEIVER_EXPORTED);
-            AlarmManager alarmManager = context.getSystemService(AlarmManager.class);
-            alarmManager.setInexactRepeating(
-                    AlarmManager.ELAPSED_REALTIME,
-                    SystemClock.elapsedRealtime() + NFC_MONITOR_INTERVAL,
-                    NFC_MONITOR_INTERVAL,
-                    pendingIntent);
         }
     }
 
@@ -120,6 +112,29 @@ public class NfcWatchdog extends BroadcastReceiver {
             } catch (InterruptedException e) {
                 Log.wtf(TAG, e);
             }
+        }
+    }
+
+    void ensureWatchdogMonitoring() {
+        if (android.nfc.Flags.nfcWatchdog()) {
+            Intent watchdogIntent = new Intent(ACTION_WATCHDOG);
+            AlarmManager alarmManager = mContext.getSystemService(AlarmManager.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                mContext, 0, watchdogIntent, PendingIntent.FLAG_IMMUTABLE);
+            if (alarmManager != null && alarmManager.getNextAlarmClock() == null) {
+                alarmManager.setInexactRepeating(
+                    AlarmManager.ELAPSED_REALTIME,
+                    SystemClock.elapsedRealtime() + NFC_MONITOR_INTERVAL,
+                    NFC_MONITOR_INTERVAL,
+                    pendingIntent);
+            }
+        }
+    }
+
+    void stopMonitoring() {
+        AlarmManager alarmManager = mContext.getSystemService(AlarmManager.class);
+        if (alarmManager != null) {
+            alarmManager.cancelAll();
         }
     }
 }

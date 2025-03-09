@@ -53,6 +53,8 @@
     <string name="tag_dispatch_failed" msgid="3562984995049738400">"இந்த NFC குறிக்கு ஏற்ற ஆப்ஸ் இல்லை"</string>
     <string name="nfc_blocking_alert_title" msgid="1086172436984457085">"NFC தடுக்கப்படலாம்"</string>
     <string name="nfc_blocking_alert_message" msgid="7003156052570107490">"எப்படி சரிசெய்வது என்பதை அறிய தட்டவும்."</string>
+    <string name="nfc_tag_alert_title" msgid="197917719004551090">"NFC மூலம் <xliff:g id="APPNAME">%1$s</xliff:g> வெளியிடப்பட்டுள்ளது"</string>
+    <string name="nfc_tag_alert_message" msgid="3140894528184634873">"அதை எப்படி முடக்குவது என்பதை அறிய தட்டவும்."</string>
     <string name="nfc_logging_alert_title" msgid="5300867034660942987">"NFC தரவு ரெக்கார்டு செய்யப்படுகிறது"</string>
     <string name="nfc_logging_alert_message" msgid="1550187184825467942">"ரெக்கார்டிங்கை நிறுத்த தட்டவும்."</string>
     <string name="title_package_enabling_nfc" msgid="5736481508428918024">"NFCயை இயக்க <xliff:g id="PKG">%1$s</xliff:g> ஐ அனுமதிக்கவா?"</string>

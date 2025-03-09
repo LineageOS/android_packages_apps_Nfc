@@ -53,6 +53,8 @@
     <string name="tag_dispatch_failed" msgid="3562984995049738400">"没有应用支持此 NFC 标签"</string>
     <string name="nfc_blocking_alert_title" msgid="1086172436984457085">"NFC 可能被屏蔽了"</string>
     <string name="nfc_blocking_alert_message" msgid="7003156052570107490">"点按即可了解如何解决该问题。"</string>
+    <string name="nfc_tag_alert_title" msgid="197917719004551090">"通过 NFC 启动了“<xliff:g id="APPNAME">%1$s</xliff:g>”"</string>
+    <string name="nfc_tag_alert_message" msgid="3140894528184634873">"点按即可了解如何将其停用。"</string>
     <string name="nfc_logging_alert_title" msgid="5300867034660942987">"正在记录 NFC 数据"</string>
     <string name="nfc_logging_alert_message" msgid="1550187184825467942">"点按即可停止记录。"</string>
     <string name="title_package_enabling_nfc" msgid="5736481508428918024">"允许“<xliff:g id="PKG">%1$s</xliff:g>”启用 NFC？"</string>

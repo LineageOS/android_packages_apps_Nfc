@@ -104,6 +104,10 @@
     <string name="nfc_blocking_alert_title">NFC may be blocked</string>
     <!-- Notification message string informing the user that NFC may be blocked -->
     <string name="nfc_blocking_alert_message">Tap to learn how to fix.</string>
+    <!-- Notification title string informing the user that the app launched via NFC -->
+    <string name="nfc_tag_alert_title"><xliff:g id="appName">%1$s</xliff:g> launched via NFC</string>
+    <!-- Notification message string informing the user that the app launched via NFC -->
+    <string name="nfc_tag_alert_message">Tap to learn how to disable it.</string>
     <!-- Notification title string informing the user that NFC data is being recorded -->
     <string name="nfc_logging_alert_title">NFC data is being recorded</string>
     <!-- Notification message string informing the user that NFC data is being recorded -->

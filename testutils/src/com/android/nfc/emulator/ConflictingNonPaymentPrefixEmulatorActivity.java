@@ -26,11 +26,23 @@ import com.android.nfc.service.PrefixTransportService2;
 import java.util.ArrayList;
 
 public class ConflictingNonPaymentPrefixEmulatorActivity extends BaseEmulatorActivity {
+
+    private String mAidConflictOccurred = null;
+
+    private CardEmulation.NfcEventListener mEventListener = new CardEmulation.NfcEventListener() {
+        @Override
+        public void onAidConflictOccurred(String aid) {
+            mAidConflictOccurred = aid;
+        }
+    };
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupServices(
                 PrefixTransportService1.COMPONENT, PrefixTransportService2.COMPONENT);
+
+        registerEventListener(mEventListener);
     }
 
     @Override
@@ -51,8 +63,19 @@ public class ConflictingNonPaymentPrefixEmulatorActivity extends BaseEmulatorAct
     @Override
     public void onApduSequenceComplete(ComponentName component, long duration) {
         if (component.equals(PrefixTransportService2.COMPONENT)) {
-            setTestPassed();
+            if (android.nfc.Flags.nfcEventListener()) {
+                if (mAidConflictOccurred.startsWith(HceUtils.TRANSPORT_AID)) {
+                    setTestPassed();
+                }
+            } else {
+                setTestPassed();
+            }
         }
+    }
+
+    protected void onDestroy() {
+        super.onDestroy();
+        mCardEmulation.unregisterNfcEventListener(mEventListener);
     }
 
     @Override

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- Name of the app [CHAR_LIMIT=NONE]-->
+  <string name="app_name">NFC Replay App</string>
+  <!-- Text of the button to start the Host APDU service [CHAR_LIMIT=NONE]-->
+  <string name="service_button_text">Start Host APDU Service</string>
+  <!-- Text displaying the name of the snoop file being replayed [CHAR_LIMIT=NONE]-->
+  <string name="replayed_file_text">Replaying File:</string>
+  <!-- Text displaying the transaction log [CHAR_LIMIT=NONE]-->
+  <string name="log_text">Transaction Log:</string>
+</resources>

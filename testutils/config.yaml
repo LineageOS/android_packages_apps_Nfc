@@ -1,0 +1,9 @@
+TestBeds:
+- Name: TestBed
+  Controllers:
+    AndroidDevice: '*'
+  TestParams:
+    # Set the device path of the PN532 device used for this test here. This should
+    # be a uart device and the PN532 should be physically mounted on the DUT's NFC
+    # antenna.
+    pn532_serial_path: /dev/ttyUSB0

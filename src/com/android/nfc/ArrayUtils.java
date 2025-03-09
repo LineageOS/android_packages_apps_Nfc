@@ -54,6 +54,13 @@ public class ArrayUtils {
     }
 
     /**
+     * True if the byte array is null or has length 0.
+     */
+    public static boolean isEmpty(@Nullable Object[] array) {
+        return array == null || array.length == 0;
+    }
+
+    /**
      * Converts from List of bytes to byte array
      * @param list
      * @return byte[]

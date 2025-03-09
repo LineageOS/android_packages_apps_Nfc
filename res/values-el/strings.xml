@@ -53,6 +53,8 @@
     <string name="tag_dispatch_failed" msgid="3562984995049738400">"Δεν υπάρχει υποστηριζόμενη εφαρμογή για αυτή την ετικέτα NFC"</string>
     <string name="nfc_blocking_alert_title" msgid="1086172436984457085">"Η λειτουργία NFC μπορεί να έχει αποκλειστεί."</string>
     <string name="nfc_blocking_alert_message" msgid="7003156052570107490">"Πατήστε για να μάθετε πώς μπορείτε να διορθώσετε το πρόβλημα."</string>
+    <string name="nfc_tag_alert_title" msgid="197917719004551090">"Η εφαρμογή <xliff:g id="APPNAME">%1$s</xliff:g> εκκινήθηκε μέσω NFC"</string>
+    <string name="nfc_tag_alert_message" msgid="3140894528184634873">"Πατήστε για να μάθετε πώς να το απενεργοποιήσετε."</string>
     <string name="nfc_logging_alert_title" msgid="5300867034660942987">"Τα δεδομένα NFC εγγράφονται"</string>
     <string name="nfc_logging_alert_message" msgid="1550187184825467942">"Πατήστε για διακοπή της εγγραφής."</string>
     <string name="title_package_enabling_nfc" msgid="5736481508428918024">"Να επιτρέπεται στο <xliff:g id="PKG">%1$s</xliff:g> να ενεργοποιεί το NFC;"</string>

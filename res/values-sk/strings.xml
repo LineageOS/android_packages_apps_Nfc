@@ -53,6 +53,8 @@
     <string name="tag_dispatch_failed" msgid="3562984995049738400">"Pre túto značku NFC nie je k dispozícii žiadna podporovaná aplikácia"</string>
     <string name="nfc_blocking_alert_title" msgid="1086172436984457085">"Rozhranie NFC môže byť blokované"</string>
     <string name="nfc_blocking_alert_message" msgid="7003156052570107490">"Klepnutím zistite, ako to opraviť."</string>
+    <string name="nfc_tag_alert_title" msgid="197917719004551090">"Aplikácia <xliff:g id="APPNAME">%1$s</xliff:g> bola spustená cez NFC"</string>
+    <string name="nfc_tag_alert_message" msgid="3140894528184634873">"Klepnutím sa dozviete, ako ju deaktivovať."</string>
     <string name="nfc_logging_alert_title" msgid="5300867034660942987">"Nahrávajú sa údaje NFC"</string>
     <string name="nfc_logging_alert_message" msgid="1550187184825467942">"Nahrávanie zastavíte klepnutím."</string>
     <string name="title_package_enabling_nfc" msgid="5736481508428918024">"Chcete povoliť balíku <xliff:g id="PKG">%1$s</xliff:g> aktivovať NFC?"</string>

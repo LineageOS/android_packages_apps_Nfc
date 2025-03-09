@@ -17,6 +17,27 @@ android_library {
     ],
 }
 
+android_app {
+    name: "emulatorapp",
+    min_sdk_version: "33",
+    sdk_version: "35",
+    certificate: "nfc",
+    srcs: [
+        "src/com/android/nfc/emulatorapp/**/*.kt",
+    ],
+    assets: ["src/com/android/nfc/emulatorapp/parsed_files/**/*.txt"],
+    resource_dirs: ["src/com/android/nfc/emulatorapp/res"],
+    manifest: "src/com/android/nfc/emulatorapp/AndroidManifest.xml",
+    static_libs: [
+        "guava",
+        "androidx.appcompat_appcompat",
+        "kotlinx-coroutines-android",
+        "androidx.annotation_annotation",
+        "androidx.compose.ui_ui",
+        "com.google.android.material_material",
+    ],
+}
+
 android_test {
     name: "NfcEmulatorTestApp",
     sdk_version: "test_current",
@@ -29,8 +50,8 @@ android_test {
         "framework-nfc.impl",
         "compatibility-device-util-axt",
         "nfc-multidevice-utils",
+        "android.nfc.flags-aconfig-java",
         "androidx.test.runner",
-
     ],
     min_sdk_version: "35",
 }
@@ -67,5 +88,28 @@ android_library {
     ],
     manifest: "src/com/android/nfc/utils/AndroidManifest.xml",
     sdk_version: "test_current",
+    static_libs: [
+        "error_prone_annotations",
+    ],
+}
 
+python_defaults {
+    name: "GeneratedTestsPythonDefaults",
+    libs: [
+        "mobly",
+        "pyserial",
+        "pn532-python",
+    ],
+    test_suites: [
+        "general-tests",
+    ],
+    device_common_data: [
+        ":NfcEmulatorTestApp",
+        "config.yaml",
+    ],
+    version: {
+        py3: {
+            embedded_launcher: true,
+        },
+    },
 }

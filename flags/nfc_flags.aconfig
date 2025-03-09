@@ -53,3 +53,31 @@ flag {
     description: "Enable setting obseve mode state with out deactivating RF"
     bug: "368655283"
 }
+
+flag {
+    name: "post_callbacks"
+    namespace: "nfc"
+    description: "Post callbacks to CardEmulationManager to handler to get off of NFC callback thread."
+    bug: "370015438"
+}
+
+flag {
+    name: "ee_aid_select"
+    namespace: "nfc"
+    description: "Propigate NFA_EE_ACTION_EVT->NFC_EE_TRIG_SELECT up to onOffHostAidSelected()"
+    bug: "323440961"
+}
+
+flag {
+    name: "check_passed_in_package"
+    namespace: "nfc"
+    description: "Enable checking package name in nfc service"
+    bug: "364020298"
+}
+
+flag {
+    name: "nfc_alert_tag_app_launch"
+    namespace: "nfc"
+    description: "Notify user when tag app launched for the first time"
+    bug: "312390070"
+}

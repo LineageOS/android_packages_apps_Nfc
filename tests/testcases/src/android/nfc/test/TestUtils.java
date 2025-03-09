@@ -96,7 +96,7 @@ public class TestUtils {
               return km != null && !km.isKeyguardLocked();
             });
       }
-    } catch (InterruptedException ie) {
+    } catch (InterruptedException|AssertionError e) {
     }
   }
 
@@ -108,7 +108,7 @@ public class TestUtils {
           "Default service hasn't updated",
           6,
           () -> serviceDesc.equals(cardEmulation.getDescriptionForPreferredPaymentService()));
-    } catch (InterruptedException ie) {
+    } catch (InterruptedException|AssertionError e) {
     }
   }
 

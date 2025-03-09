@@ -8,6 +8,12 @@
             <aid value="A000000004101012"/>
             <aid value="A000000004101013"/>
         </aid-group>
+        <pl_filters>
+            <pl_filter value="filter1" auto_transact="true"/>
+        </pl_filters>
+        <pl_pattern_filters>
+            <pl_pattern_filter value="filter2" auto_transact="false"/>
+        </pl_pattern_filters>
     </service>
     <service component="com.android.test.nonpaymentnfc/com.android.test.nonpaymentnfc.NonPaymentApduService"
         uid="1"

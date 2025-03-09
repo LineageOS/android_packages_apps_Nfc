@@ -16,3 +16,4 @@
 
 from .pn532 import *
 from .tag import *
+from .casimir import *

@@ -16,7 +16,10 @@
 
 package com.android.nfc;
 
+import static com.google.common.truth.Truth.assertThat;
+
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -30,11 +33,15 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.pm.ServiceInfo;
 import android.content.res.Resources;
 import android.os.Handler;
+import android.os.IBinder;
+import android.os.Messenger;
+import android.os.RemoteException;
 import android.util.Log;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -47,7 +54,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.mockito.MockitoSession;
 import org.mockito.quality.Strictness;
 
@@ -57,60 +67,23 @@ import java.util.List;
 
 @RunWith(AndroidJUnit4.class)
 public class DtaServiceConnectorTest {
-
-    private static final String TAG = DtaServiceConnectorTest.class.getSimpleName();
+    @Mock
+    Context mContext;
+    @Mock
+    private PackageManager mPackageManager;
     private MockitoSession mStaticMockSession;
-    private Context mockContext;
     private DtaServiceConnector mDtaServiceConnector;
-    private Intent implicitIntent;
+
 
     @Before
     public void setUp() throws Exception {
         mStaticMockSession = ExtendedMockito.mockitoSession()
                 .strictness(Strictness.LENIENT)
                 .startMocking();
-        Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        Resources mockResources = Mockito.mock(Resources.class);
-        when(mockResources.getBoolean(eq(R.bool.tag_intent_app_pref_supported)))
-                .thenReturn(false);
+        MockitoAnnotations.initMocks(this);
 
-        implicitIntent = mock(Intent.class);
-
-        mockContext = new ContextWrapper(context) {
-
-            public PackageManager getPackageManager() {
-                Log.i(TAG, "[Mock] getPackageManager");
-                PackageManager packageManager = mock(PackageManager.class);
-                ResolveInfo resolveInfo = mock(ResolveInfo.class);
-                resolveInfo.serviceInfo = mock(ServiceInfo.class);
-                resolveInfo.serviceInfo.packageName = "com.android.nfc";
-                resolveInfo.serviceInfo.name = "Nfc";
-                List<ResolveInfo> resolveInfos = new ArrayList<>();
-                resolveInfos.add(resolveInfo);
-                when(implicitIntent.getAction()).thenReturn("nfcaction");
-                when(packageManager.queryIntentServices(implicitIntent, 0)).thenReturn(
-                        resolveInfos);
-                return packageManager;
-            }
-
-            @Override
-            public Resources getResources() {
-                Log.i(TAG, "[Mock] getResources");
-                return mockResources;
-            }
-
-            @Override
-            public Intent registerReceiverForAllUsers(@Nullable BroadcastReceiver receiver,
-                    @NonNull IntentFilter filter, @Nullable String broadcastPermission,
-                    @Nullable Handler scheduler) {
-                Log.i(TAG, "[Mock] getIntent");
-                return Mockito.mock(Intent.class);
-            }
-        };
-
-        InstrumentationRegistry.getInstrumentation().runOnMainSync(
-                () -> mDtaServiceConnector = new DtaServiceConnector(mockContext));
-        Assert.assertNotNull(mDtaServiceConnector);
+        when(mContext.getPackageManager()).thenReturn(mPackageManager);
+        mDtaServiceConnector = new DtaServiceConnector(mContext);
     }
 
     @After
@@ -120,11 +93,66 @@ public class DtaServiceConnectorTest {
 
     @Test
     public void testCreateExplicitFromImplicitIntent() {
-        Intent intent = DtaServiceConnector.createExplicitFromImplicitIntent(mockContext,
+        Intent implicitIntent = mock(Intent.class);
+        ResolveInfo resolveInfo = mock(ResolveInfo.class);
+        resolveInfo.serviceInfo = mock(ServiceInfo.class);
+        resolveInfo.serviceInfo.packageName = "com.android.nfc";
+        resolveInfo.serviceInfo.name = "Nfc";
+        List<ResolveInfo> resolveInfos = new ArrayList<>();
+        resolveInfos.add(resolveInfo);
+        when(mPackageManager.queryIntentServices(implicitIntent, 0)).thenReturn(resolveInfos);
+        Intent intent = DtaServiceConnector.createExplicitFromImplicitIntent(mContext,
                 implicitIntent);
         Assert.assertNotNull(intent);
         ComponentName componentName = intent.getComponent();
         Assert.assertNotNull(componentName);
         Assert.assertEquals("com.android.nfc", componentName.getPackageName());
+    }
+
+    @Test
+    public void testBindService() {
+        mDtaServiceConnector.bindService();
+        ArgumentCaptor<Intent> intentArgumentCaptor = ArgumentCaptor.forClass(Intent.class);
+        ArgumentCaptor<ServiceConnection> serviceConnectionArgumentCaptor = ArgumentCaptor.forClass(
+                ServiceConnection.class);
+        verify(mContext).bindService(intentArgumentCaptor.capture(),
+                serviceConnectionArgumentCaptor.capture(), anyInt());
+        ServiceConnection serviceConnection = serviceConnectionArgumentCaptor.getValue();
+        Assert.assertNotNull(serviceConnection);
+        ComponentName componentName = mock(ComponentName.class);
+        serviceConnection.onServiceConnected(componentName, mock(IBinder.class));
+        assertThat(mDtaServiceConnector.dtaMessenger).isNotNull();
+        assertThat(mDtaServiceConnector.isBound).isTrue();
+
+        serviceConnection.onServiceDisconnected(componentName);
+        assertThat(mDtaServiceConnector.dtaMessenger).isNull();
+        assertThat(mDtaServiceConnector.isBound).isFalse();
+    }
+
+    @Test
+    public void testSendMessage() throws RemoteException {
+        mDtaServiceConnector.dtaMessenger = mock(Messenger.class);
+        mDtaServiceConnector.isBound = true;
+        mDtaServiceConnector.sendMessage("message");
+        verify(mDtaServiceConnector.dtaMessenger).send(any());
+    }
+
+    @Test
+    public void testSetMessageService() {
+        mDtaServiceConnector.isBound = false;
+        DtaServiceConnector.setMessageService("test");
+        ResolveInfo resolveInfo = mock(ResolveInfo.class);
+        resolveInfo.serviceInfo = mock(ServiceInfo.class);
+        resolveInfo.serviceInfo.packageName = "com.android.nfc";
+        resolveInfo.serviceInfo.name = "Nfc";
+        List<ResolveInfo> resolveInfos = new ArrayList<>();
+        resolveInfos.add(resolveInfo);
+        when(mPackageManager.queryIntentServices(any(), anyInt())).thenReturn(resolveInfos);
+        mDtaServiceConnector.bindService();
+        ArgumentCaptor<Intent> intentArgumentCaptor = ArgumentCaptor.forClass(Intent.class);
+        verify(mContext).bindService(intentArgumentCaptor.capture(), any(), anyInt());
+        Intent intent = intentArgumentCaptor.getValue();
+        Assert.assertNotNull(intent);
+        assertThat(intent.getAction()).isEqualTo("test");
     }
 }

@@ -16,13 +16,19 @@
 
 package com.android.nfc;
 
+import android.nfc.Entry;
 import android.sysprop.NfcProperties;
 import android.util.Log;
 
 import androidx.annotation.VisibleForTesting;
 
+import com.android.nfc.cardemulation.RoutingOptionManager;
+
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.Vector;
 
@@ -34,7 +40,7 @@ public class RoutingTableParser {
     private static final String TAG = "RoutingTableParser";
     private static int sRoutingTableSize = 0;
     private static int sRoutingTableMaxSize = 0;
-    private static Vector<RoutingEntryInfo> sRoutingTable = new Vector<RoutingEntryInfo>(0);
+    private static final Vector<RoutingEntryInfo> sRoutingTable = new Vector<RoutingEntryInfo>(0);
 
     // Entry types
     static final byte TYPE_TECHNOLOGY = 0;
@@ -318,5 +324,22 @@ public class RoutingTableParser {
         }
         Log.i(TAG, String.format("RoutingTableSize: %d", lmrt_cmd.length));
         Log.i(TAG, String.format("RoutingTable: %s", lmrt_str));
+    }
+
+    public List<Entry> getRoutingTableEntryList(DeviceHost dh) {
+        update(dh);
+        List<Entry> entries = new ArrayList<>();
+        for (RoutingEntryInfo info : sRoutingTable) {
+            String entry = switch (info.mType) {
+                case TYPE_TECHNOLOGY -> getTechStr(info.mEntry);
+                case TYPE_PROTOCOL -> getProtoStr(info.mEntry);
+                case TYPE_AID -> getAidStr(info.mEntry);
+                case TYPE_SYSTEMCODE -> new String(info.mEntry, StandardCharsets.UTF_8);
+                default -> null;
+            };
+            entries.add(new Entry(entry, info.mType, info.mNfceeId,
+                    RoutingOptionManager.getInstance().getSecureElementForRoute(info.mNfceeId)));
+        }
+        return entries;
     }
 }

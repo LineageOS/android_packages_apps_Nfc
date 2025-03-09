@@ -38,12 +38,12 @@ class ScreenStateHelper {
 
     int checkScreenState(boolean checkDisplayState) {
         if (!mPowerManager.isInteractive() || (checkDisplayState && !isDisplayOn())) {
-            if (mKeyguardManager.isKeyguardLocked()) {
+            if (NfcInjector.getInstance().isDeviceLocked()) {
                 return SCREEN_STATE_OFF_LOCKED;
             } else {
                 return SCREEN_STATE_OFF_UNLOCKED;
             }
-        } else if (mKeyguardManager.isKeyguardLocked()) {
+        } else if (NfcInjector.getInstance().isDeviceLocked()) {
             return SCREEN_STATE_ON_LOCKED;
         } else {
             return SCREEN_STATE_ON_UNLOCKED;
@@ -52,12 +52,12 @@ class ScreenStateHelper {
 
     int checkScreenStateProvisionMode() {
         if (!mPowerManager.isInteractive()) {
-            if (mKeyguardManager.isDeviceLocked()) {
+            if (NfcInjector.getInstance().isDeviceLocked()) {
                 return SCREEN_STATE_OFF_LOCKED;
             } else {
                 return SCREEN_STATE_OFF_UNLOCKED;
             }
-        } else if (mKeyguardManager.isDeviceLocked()) {
+        } else if (NfcInjector.getInstance().isDeviceLocked()) {
             return SCREEN_STATE_ON_LOCKED;
         } else {
             return SCREEN_STATE_ON_UNLOCKED;

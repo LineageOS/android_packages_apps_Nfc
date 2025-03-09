@@ -53,6 +53,8 @@
     <string name="tag_dispatch_failed" msgid="3562984995049738400">"Za to oznako NFC ni podprta nobena aplikacija"</string>
     <string name="nfc_blocking_alert_title" msgid="1086172436984457085">"Vmesnik NFC je morda blokiran"</string>
     <string name="nfc_blocking_alert_message" msgid="7003156052570107490">"Dotaknite se, če želite izvedeti, kako odpravite to težavo."</string>
+    <string name="nfc_tag_alert_title" msgid="197917719004551090">"Aplikacija <xliff:g id="APPNAME">%1$s</xliff:g> je bila zagnana prek NFC-ja"</string>
+    <string name="nfc_tag_alert_message" msgid="3140894528184634873">"Dotaknite se, da si ogledate navodila za onemogočanje."</string>
     <string name="nfc_logging_alert_title" msgid="5300867034660942987">"Poteka snemanje podatkov NFC"</string>
     <string name="nfc_logging_alert_message" msgid="1550187184825467942">"Za ustavitev snemanja se dotaknite."</string>
     <string name="title_package_enabling_nfc" msgid="5736481508428918024">"Ali dovolite, da paket <xliff:g id="PKG">%1$s</xliff:g> omogoči NFC?"</string>

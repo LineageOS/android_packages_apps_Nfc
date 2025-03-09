@@ -21,10 +21,12 @@ import android.hardware.usb.UsbDeviceConnection
 import android.hardware.usb.UsbEndpoint
 import android.hardware.usb.UsbRequest
 import android.util.Log
+import com.google.errorprone.annotations.CanIgnoreReturnValue
 
 /** TransportLayer - handles reads/write to USB device */
 class TransportLayer(val device: UsbDevice, val connection: UsbDeviceConnection) {
 
+    private val MAX_READ_BUFFER_SIZE = 288
     lateinit var endpointIn: UsbEndpoint
     lateinit var endpointOut: UsbEndpoint
     val dataRequest: UsbRequest = UsbRequest()
@@ -49,7 +51,7 @@ class TransportLayer(val device: UsbDevice, val connection: UsbDeviceConnection)
         }
     }
 
-    fun read(timeout: Long, numBytes: Int = 255): ByteArray? {
+    fun read(timeout: Long, numBytes: Int = MAX_READ_BUFFER_SIZE): ByteArray? {
         if (numBytes < 0) return null
         val buffer = ByteArray(numBytes)
 
@@ -65,6 +67,7 @@ class TransportLayer(val device: UsbDevice, val connection: UsbDeviceConnection)
         return null
     }
 
+    @CanIgnoreReturnValue
     fun write(bytes: ByteArray): Boolean {
         val size = connection.bulkTransfer(endpointOut, bytes, bytes.size, endpointOut.interval)
         if (size > 0) {

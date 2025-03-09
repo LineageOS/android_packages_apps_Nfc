@@ -53,6 +53,8 @@
     <string name="tag_dispatch_failed" msgid="3562984995049738400">"ଏହି NFC ଟ୍ୟାଗ୍‌ ପାଇଁ କୌଣସି ସାମର୍ଥିତ ଆପ୍ଲିକେସନ୍‌ ନାହିଁ"</string>
     <string name="nfc_blocking_alert_title" msgid="1086172436984457085">"NFCକୁ ବ୍ଲକ୍ କରାଯାଇପାରେ"</string>
     <string name="nfc_blocking_alert_message" msgid="7003156052570107490">"କିପରି ସମାଧାନ କରିବେ ସେ ବିଷୟରେ ଜାଣିବା ପାଇଁ ଟାପ୍ କରନ୍ତୁ।"</string>
+    <string name="nfc_tag_alert_title" msgid="197917719004551090">"NFC ମାଧ୍ୟମରେ <xliff:g id="APPNAME">%1$s</xliff:g> ଲଞ୍ଚ କରାଯାଇଛି"</string>
+    <string name="nfc_tag_alert_message" msgid="3140894528184634873">"ଏହାକୁ କିପରି ଅକ୍ଷମ କରିବେ ତାହା ଜାଣିବାକୁ ଟାପ କରନ୍ତୁ।"</string>
     <string name="nfc_logging_alert_title" msgid="5300867034660942987">"NFC ଡାଟା ରେକର୍ଡ କରାଯାଉଛି"</string>
     <string name="nfc_logging_alert_message" msgid="1550187184825467942">"ରେକର୍ଡିଂ ବନ୍ଦ କରିବାକୁ ଟାପ କରନ୍ତୁ।"</string>
     <string name="title_package_enabling_nfc" msgid="5736481508428918024">"NFCକୁ ସକ୍ଷମ କରିବା ପାଇଁ <xliff:g id="PKG">%1$s</xliff:g>କୁ ଅନୁମତି ଦେବେ?"</string>

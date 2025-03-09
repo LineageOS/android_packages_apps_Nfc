@@ -47,6 +47,7 @@ class NfcTag {
                                              // RF_INTF_ACTIVATED NTF
   int mNumTechList;  // current number of NFC technologies in the list
   int mNumRfDiscId;
+  bool mIsReselecting;
 
   /*******************************************************************************
   **
@@ -104,6 +105,18 @@ class NfcTag {
   **
   *******************************************************************************/
   void connectionEventHandler(uint8_t event, tNFA_CONN_EVT_DATA* data);
+
+  /*******************************************************************************
+  **
+  ** Function:        notifyTagDiscovered
+  **
+  ** Description:     Notify NFC service about tag discovery.
+  **                  discovered: true if tag is discovered, false if tag is lost.
+  **
+  ** Returns:         None
+  **
+  *******************************************************************************/
+  void notifyTagDiscovered(bool discovered);
 
   /*******************************************************************************
   **
@@ -195,6 +208,18 @@ class NfcTag {
   **
   *******************************************************************************/
   int getT1tMaxMessageSize();
+
+  /*******************************************************************************
+  **
+  ** Function:        isNfcForumT2T
+  **
+  ** Description:     Whether tag is Nfc-Forum based and uses read command for
+  **                  presence check.
+  **
+  ** Returns:         True if tag is isNfcForumT2T.
+  **
+  *******************************************************************************/
+  bool isNfcForumT2T();
 
   /*******************************************************************************
   **
@@ -385,6 +410,28 @@ class NfcTag {
   **
   *******************************************************************************/
   void setNumDiscNtf(int numDiscNtfValue);
+
+  /*******************************************************************************
+  **
+  ** Function:        isReselecting
+  **
+  ** Description:     used to check if a reSelect() procedure is ongoing
+  **
+  ** Returns:         value of mIsReselecting variable
+  **
+  *******************************************************************************/
+  bool isReselecting();
+
+  /*******************************************************************************
+  **
+  ** Function:        setReselect
+  **
+  ** Description:     Called by JNI to indicate status of reSelect() procedure
+  **
+  ** Returns:
+  **
+  *******************************************************************************/
+  void setReselect(bool isReselecting);
 
   /*******************************************************************************
   **

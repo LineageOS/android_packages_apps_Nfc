@@ -48,6 +48,11 @@ message EventType {
     NfcWlcStateChange wlc_state_change = 12;
     NfcReaderOptionChange reader_option_change = 13;
     NfcClearPreference clear_preference = 14;
+    NfcCeRoutedAid ce_routed_aid = 15;
+    NfcAidRegistration aid_registration = 16;
+    NfcPollingLoopRegistration polling_loop_registration = 17;
+    NfcDataMigrationInProgress data_migration_in_progress = 18;
+    NfcPaymentServiceBindState payment_service_bind_state = 19;
   }
 }
 
@@ -58,6 +63,11 @@ message NfcBootupState {
 message NfcAppInfo {
   optional string package_name = 1;
   optional int32 uid = 2;
+}
+
+message NfcComponentInfo {
+  optional string package_name = 1;
+  optional string class_name = 2;
 }
 
 message NfcStateChange {
@@ -96,7 +106,7 @@ message NfcHostCardEmulationData {
 }
 
 message NfcRemoteFieldStateChange {
-  required bool enable = 1;
+  required bool field_on = 1;
 }
 
 message NfcDiscoveryTechnologyUpdate {
@@ -119,3 +129,38 @@ message NfcReaderOptionChange {
 }
 
 message NfcClearPreference {}
+
+message NfcCeRoutedAid {
+  required string aid = 1;
+  required NfcComponentInfo component_info = 2;
+}
+
+message NfcAidRegistration {
+  required NfcAppInfo app_info = 1;
+  required NfcComponentInfo component_info = 2;
+  required bool is_registration = 3;
+  repeated string aids = 4;
+}
+
+message NfcPollingLoopRegistration {
+  required NfcAppInfo app_info = 1;
+  required NfcComponentInfo component_info = 2;
+  required bool is_registration = 3;
+  required string polling_loop_filter = 4;
+}
+
+message NfcDataMigrationInProgress {
+  required NfcAppInfo app_info = 1;
+  required bool in_progress = 2;
+}
+
+enum BindState {
+  SERVICE_CONNECTED = 0;
+  SERVICE_DISCONNECTED = 1;
+  SERVICE_BINDING_DIED = 2;
+}
+
+message NfcPaymentServiceBindState {
+  required NfcComponentInfo component_info = 1;
+  required BindState bind_state = 2;
+}

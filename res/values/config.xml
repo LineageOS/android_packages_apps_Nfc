@@ -35,7 +35,7 @@
     <!-- Allow list that contains the package name which are allowed to use NFC -->
     <string-array name="nfc_allow_list" translatable="false" />
     <!-- Number of persistent events to store  -->
-    <integer name="max_event_log_num">50</integer>
+    <integer name="max_event_log_num">100</integer>
     <!-- Overlay to indicate that the OEM plans to use OEM extension -->
     <bool name="enable_oem_extension">false</bool>
     <string name="nfc_default_route" translatable="false"></string>
@@ -43,6 +43,8 @@
     <string name="nfc_default_isodep_route" translatable="false"></string>
     <!-- Default OffHost Route value -->
     <string name="nfc_default_offhost_route" translatable="false"></string>
+    <!-- Default System Code Route value -->
+    <string name="nfc_default_sc_route" translatable="false"></string>
     <!-- Overlay to enable NFC developer option notification-->
     <bool name="enable_developer_option_notification">true</bool>
     <!-- Whether to enable NFC by default on boot or not. -->
@@ -59,4 +61,5 @@
     <bool name="enable_euicc_support">false</bool>
     <!-- Whether to indicate user activity using PowerManager.userActivity for HCE activation -->
     <bool name="indicate_user_activity_for_hce">true</bool>
+    <integer name="max_pause_polling_time_out_ms">0</integer>
 </resources>

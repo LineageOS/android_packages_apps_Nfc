@@ -29,6 +29,8 @@ import android.os.ParcelUuid;
 import android.sysprop.NfcProperties;
 import android.util.Log;
 
+import androidx.annotation.VisibleForTesting;
+
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -111,7 +113,12 @@ public class HandoverDataParser {
     }
 
     public HandoverDataParser() {
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        this(BluetoothAdapter.getDefaultAdapter());
+    }
+
+    @VisibleForTesting
+    public HandoverDataParser(BluetoothAdapter adapter) {
+        mBluetoothAdapter = adapter;
     }
 
     static NdefRecord createCollisionRecord() {

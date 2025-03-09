@@ -53,6 +53,8 @@
     <string name="tag_dispatch_failed" msgid="3562984995049738400">"この NFC タグをサポートしているアプリはありません"</string>
     <string name="nfc_blocking_alert_title" msgid="1086172436984457085">"NFC がブロックされている可能性があります"</string>
     <string name="nfc_blocking_alert_message" msgid="7003156052570107490">"タップして修正方法をご確認ください。"</string>
+    <string name="nfc_tag_alert_title" msgid="197917719004551090">"NFC 経由で <xliff:g id="APPNAME">%1$s</xliff:g> を起動しました"</string>
+    <string name="nfc_tag_alert_message" msgid="3140894528184634873">"タップして、無効にする方法をご確認ください。"</string>
     <string name="nfc_logging_alert_title" msgid="5300867034660942987">"NFC データを記録しています"</string>
     <string name="nfc_logging_alert_message" msgid="1550187184825467942">"タップすると記録を停止します。"</string>
     <string name="title_package_enabling_nfc" msgid="5736481508428918024">"<xliff:g id="PKG">%1$s</xliff:g> が NFC を有効にすることを許可しますか？"</string>

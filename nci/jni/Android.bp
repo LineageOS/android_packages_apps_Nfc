@@ -29,7 +29,7 @@ cc_defaults {
     ],
 
     srcs: ["**/*.cpp"],
-    exclude_srcs: ["NfcTagTest.cpp"],
+    exclude_srcs: ["**/*Test.cpp"],
 
     include_dirs: [
         "system/nfc/src/nfa/include",
@@ -96,12 +96,13 @@ cc_defaults {
         // does not ship one in /product
         "libnfc-nci.conf-default",
     ],
+    min_sdk_version: "35", // Make it 36 once available.
 }
 
 cc_test {
-    name: "nfc.nci.jni.tests",
+    name: "libnfc-nci-jni-tests",
 
-    srcs: ["NfcTagTest.cpp"],
+    srcs: ["**/*Test.cpp"],
 
     shared_libs: [
         "libnativehelper",
@@ -153,5 +154,22 @@ cc_test {
         "system/nfc/src/nfc/include",
         "system/nfc/utils/include",
     ],
-    test_suites: ["general-tests"],
+    test_suites: [
+        "general-tests",
+        "mts-nfc",
+    ],
+    test_config_template: "nfc_test_config_template.xml",
+    // Support multilib variants (using different suffix per sub-architecture), which is needed on
+    // build targets with secondary architectures, as the MTS test suite packaging logic flattens
+    // all test artifacts into a single `testcases` directory.
+    compile_multilib: "both",
+    multilib: {
+        lib32: {
+            suffix: "32",
+        },
+        lib64: {
+            suffix: "64",
+        },
+    },
+    auto_gen_config: true,
 }

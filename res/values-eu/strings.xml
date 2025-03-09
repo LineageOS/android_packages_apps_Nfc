@@ -35,7 +35,7 @@
     <string name="could_not_use_app" msgid="8137587876138569083">"Ezin izan da <xliff:g id="APP">%1$s</xliff:g> erabili."</string>
     <string name="pay_with" msgid="5531545488795798945">"Ordaindu honekin"</string>
     <string name="complete_with" msgid="6797459104103012992">"Ekintza osatzeko aplikazioak"</string>
-    <string name="default_pay_app_removed" msgid="4108250545457437360">"Ukitu eta ordaindu eginbidea erabiltzeko zerbitzu hobetsia kendu egin da. Beste bat aukeratu nahi duzu?"</string>
+    <string name="default_pay_app_removed" msgid="4108250545457437360">"Kontakturik gabe ordaintzeko eginbidea erabiltzeko zerbitzu hobetsia kendu egin da. Beste bat aukeratu nahi duzu?"</string>
     <string name="ask_nfc_tap" msgid="2925239870458286340">"Datuak bidaltzeko, ukitu beste gailu bat"</string>
     <string name="wifi_connect" msgid="6250727951843550671">"Konektatu"</string>
     <string name="status_unable_to_connect" msgid="9183908200295307657">"Ezin da sarera konektatu"</string>
@@ -53,6 +53,8 @@
     <string name="tag_dispatch_failed" msgid="3562984995049738400">"Ez dago NFC etiketa hau onartzen duen aplikaziorik"</string>
     <string name="nfc_blocking_alert_title" msgid="1086172436984457085">"Baliteke NFC bidezko konexioa blokeatzea"</string>
     <string name="nfc_blocking_alert_message" msgid="7003156052570107490">"Sakatu hau arazoa konpontzeko argibideak lortzeko."</string>
+    <string name="nfc_tag_alert_title" msgid="197917719004551090">"<xliff:g id="APPNAME">%1$s</xliff:g> exekutatu da NFC bidez"</string>
+    <string name="nfc_tag_alert_message" msgid="3140894528184634873">"Desgaitzeko argibideak lortzeko, sakatu hau."</string>
     <string name="nfc_logging_alert_title" msgid="5300867034660942987">"NFCari buruzko datuak erregistratzen"</string>
     <string name="nfc_logging_alert_message" msgid="1550187184825467942">"Sakatu hau grabatzeari uzteko."</string>
     <string name="title_package_enabling_nfc" msgid="5736481508428918024">"NFC gaitzeko baimena eman nahi diozu <xliff:g id="PKG">%1$s</xliff:g> zerbitzuari?"</string>

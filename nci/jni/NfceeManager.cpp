@@ -76,12 +76,18 @@ NfceeManager& NfceeManager::getInstance() { return sNfceeManager; }
 **
 *******************************************************************************/
 jobject NfceeManager::getActiveNfceeList(JNIEnv* e) {
-  ScopedLocalRef<jclass> listClass(e, e->FindClass(mArrayListClassName));
-  jmethodID listConstructor = e->GetMethodID(listClass.get(), "<init>", "()V");
-  jmethodID listAdd =
-      e->GetMethodID(listClass.get(), "add", "(Ljava/lang/Object;)Z");
-  jobject nfceeListObj = e->NewObject(listClass.get(), listConstructor);
-  if (!getNFCEeInfo()) return (nfceeListObj);
+  ScopedLocalRef<jclass> hashMapClass(e, e->FindClass(mHashMapClassName));
+  jmethodID hashMapConstructor =
+      e->GetMethodID(hashMapClass.get(), "<init>", "()V");
+  jmethodID hashMapPut = e->GetMethodID(
+      hashMapClass.get(), "put",
+      "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;");
+  jobject nfceeHashMaptObj =
+      e->NewObject(hashMapClass.get(), hashMapConstructor);
+  ScopedLocalRef<jclass> integerClass(e, e->FindClass("java/lang/Integer"));
+  jmethodID integerConstructor =
+      e->GetMethodID(integerClass.get(), "<init>", "(I)V");
+  if (!getNFCEeInfo()) return (nfceeHashMaptObj);
 
   vector<uint8_t> eSERoute;
   vector<uint8_t> uiccRoute;
@@ -109,11 +115,13 @@ jobject NfceeManager::getActiveNfceeList(JNIEnv* e) {
     if ((nfceeMap.find(id) != nfceeMap.end()) &&
         (status == NFC_NFCEE_STATUS_ACTIVE)) {
       jstring element = e->NewStringUTF(nfceeMap[id].c_str());
-      e->CallBooleanMethod(nfceeListObj, listAdd, element);
+      jobject jtechmask = e->NewObject(integerClass.get(), integerConstructor,
+                                       mNfceeData_t.mNfceeTechMask[i]);
+      e->CallObjectMethod(nfceeHashMaptObj, hashMapPut, element, jtechmask);
       e->DeleteLocalRef(element);
     }
   }
-  return nfceeListObj;
+  return nfceeHashMaptObj;
 }
 
 /*******************************************************************************
@@ -140,11 +148,16 @@ bool NfceeManager::getNFCEeInfo() {
     LOG(INFO) << StringPrintf("%s: num NFCEE discovered: %u", fn, mActualNumEe);
     if (mActualNumEe != 0) {
       for (uint8_t xx = 0; xx < mActualNumEe; xx++) {
+        tNFA_TECHNOLOGY_MASK eeTechnology = 0x00;
         if (mEeInfo[xx].ee_interface[0] != NCI_NFCEE_INTERFACE_HCI_ACCESS)
           mNumEePresent++;
 
         mNfceeData_t.mNfceeID[xx] = mEeInfo[xx].ee_handle;
         mNfceeData_t.mNfceeStatus[xx] = mEeInfo[xx].ee_status;
+        if (mEeInfo[xx].la_protocol) eeTechnology |= NFA_TECHNOLOGY_MASK_A;
+        if (mEeInfo[xx].lb_protocol) eeTechnology |= NFA_TECHNOLOGY_MASK_B;
+        if (mEeInfo[xx].lf_protocol) eeTechnology |= NFA_TECHNOLOGY_MASK_F;
+        mNfceeData_t.mNfceeTechMask[xx] = eeTechnology;
       }
     }
   }
