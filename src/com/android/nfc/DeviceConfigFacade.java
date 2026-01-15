@@ -141,6 +141,9 @@ public class DeviceConfigFacade {
     public boolean getDefaultReaderOption() { return mReaderOptionDefault; }
     public boolean isSecureNfcCapable() {return mSecureNfcCapable; }
     public boolean getDefaultSecureNfcState() { return mSecureNfcDefault; }
+    public void setDefaultSecureNfcState(boolean SecureNfcDefault) {
+        mSecureNfcDefault = SecureNfcDefault;
+    }
     public String getDefaultRoute() { return mDefaultRoute; }
     public String getDefaultIsoDepRoute() { return mDefaultIsoDepRoute; }
     public String getDefaultOffHostRoute() { return mDefaultOffHostRoute; }
