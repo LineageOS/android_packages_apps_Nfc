@@ -427,6 +427,33 @@ public class NfcService implements DeviceHostListener {
         public int presenceCheckDelay;
     }
 
+    /**
+     * Returns the SharedPreferences key for the Secure NFC setting for a specific user.
+     * @param userId The user ID.
+     * @return The user-specific preference key.
+     */
+    private String getSecureNfcPreferenceKeyForUser(int userId) {
+        return PREF_SECURE_NFC_ON + "_" + userId;
+    }
+
+    /**
+     * Loads the Secure NFC setting for the given user.
+     * @param userId The user ID for which to load the settings.
+     */
+    private void loadSecureNfcSettings(int userId) {
+        String secureNfcPreferenceKey = getSecureNfcPreferenceKeyForUser(userId);
+        // Get the user-specific preference.
+        // Fall back to the device's default setting if not found.
+        mIsSecureNfcEnabled = mPrefs.getBoolean(secureNfcPreferenceKey, SECURE_NFC_ON_DEFAULT)
+                && mIsSecureNfcCapable;
+
+        Log.i(TAG, "Reloaded Secure NFC setting for user "
+                + userId + ". Enabled: " + mIsSecureNfcEnabled);
+
+        // Apply the newly loaded setting to the NFC controller
+        mDeviceHost.setNfcSecure(mIsSecureNfcEnabled);
+    }
+
     public NfcService(Application nfcApplication) {
         mUserId = ActivityManager.getCurrentUser();
         mContext = nfcApplication;
@@ -531,10 +558,10 @@ public class NfcService implements DeviceHostListener {
         }
         mForegroundUtils = ForegroundUtils.getInstance();
 
-        mIsSecureNfcCapable = mNfcAdapter.deviceSupportsNfcSecure();
-        mIsSecureNfcEnabled =
-            mPrefs.getBoolean(PREF_SECURE_NFC_ON, SECURE_NFC_ON_DEFAULT) &&
-            mIsSecureNfcCapable;
+        mIsSecureNfcCapable = mIsHceCapable && mNfcAdapter.deviceSupportsNfcSecure();
+        String secureNfcPreferenceKey = getSecureNfcPreferenceKeyForUser(mUserId);
+        mIsSecureNfcEnabled = mPrefs.getBoolean(secureNfcPreferenceKey, SECURE_NFC_ON_DEFAULT)
+            && mIsSecureNfcCapable;
         mDeviceHost.setNfcSecure(mIsSecureNfcEnabled);
 
         sToast_debounce_time_ms =
@@ -1035,7 +1062,12 @@ public class NfcService implements DeviceHostListener {
 
             synchronized (NfcService.this) {
                 Log.i(TAG, "setting Secure NFC " + enable);
-                mPrefsEditor.putBoolean(PREF_SECURE_NFC_ON, enable);
+                final int currentUserId = getUserId();
+                final String secureNfcPreferenceKey =
+                        getSecureNfcPreferenceKeyForUser(currentUserId);
+                mPrefsEditor.putBoolean(secureNfcPreferenceKey, enable);
+                Log.i(TAG, "currentUserId: " + currentUserId);
+
                 mPrefsEditor.apply();
                 mIsSecureNfcEnabled = enable;
                 mBackupManager.dataChanged();
@@ -2957,6 +2989,7 @@ public class NfcService implements DeviceHostListener {
                 }
                 if (mIsHceCapable) {
                     mCardEmulationManager.onUserSwitched(getUserId());
+                    loadSecureNfcSettings(userId);
                 }
                 int screenState = mScreenStateHelper.checkScreenState();
                 if (screenState != mScreenState) {
