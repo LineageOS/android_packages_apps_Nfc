@@ -262,6 +262,7 @@ public class NfcService implements DeviceHostListener {
             NfcDiscoveryParameters.getNfcOffParameters();
 
     ReaderModeParams mReaderModeParams;
+    int mDispatchedUid = Process.INVALID_UID;
 
     private int mUserId;
     boolean mPollingPaused;
@@ -425,6 +426,7 @@ public class NfcService implements DeviceHostListener {
         public int flags;
         public IAppCallback callback;
         public int presenceCheckDelay;
+        public int uid;
     }
 
     /**
@@ -1472,6 +1474,7 @@ public class NfcService implements DeviceHostListener {
                 mReaderModeParams = new ReaderModeParams();
                 mReaderModeParams.callback = callback;
                 mReaderModeParams.flags = flags;
+                mReaderModeParams.uid = Binder.getCallingUid();
                 mReaderModeParams.presenceCheckDelay = extras != null
                         ? (extras.getInt(NfcAdapter.EXTRA_READER_PRESENCE_CHECK_DELAY,
                                 DEFAULT_PRESENCE_CHECK_DELAY))
@@ -1496,9 +1499,24 @@ public class NfcService implements DeviceHostListener {
     }
 
     final class TagService extends INfcTag.Stub {
+        private boolean isTagAccessAllowed() {
+            int callingUid = Binder.getCallingUid();
+            if (mDispatchedUid != Process.INVALID_UID && mDispatchedUid != callingUid) {
+                if (DBG) {
+                    Log.d(TAG, "Tag access denied for UID " + callingUid + ", active UID is "
+                            + mDispatchedUid);
+                }
+                return false;
+            }
+            return true;
+        }
+
         @Override
         public int connect(int nativeHandle, int technology) throws RemoteException {
             NfcPermissions.enforceUserPermissions(mContext);
+            if (!isTagAccessAllowed()) {
+                return ErrorCodes.ERROR_DISCONNECT;
+            }
 
             TagEndpoint tag = null;
 
@@ -1529,6 +1547,9 @@ public class NfcService implements DeviceHostListener {
         @Override
         public int reconnect(int nativeHandle) throws RemoteException {
             NfcPermissions.enforceUserPermissions(mContext);
+            if (!isTagAccessAllowed()) {
+                return ErrorCodes.ERROR_DISCONNECT;
+            }
 
             TagEndpoint tag = null;
 
@@ -1554,7 +1575,8 @@ public class NfcService implements DeviceHostListener {
             NfcPermissions.enforceUserPermissions(mContext);
 
             // Check if NFC is enabled
-            if (!isNfcEnabled()) {
+            if (!isNfcEnabled()
+                    || !isTagAccessAllowed()) {
                 return null;
             }
 
@@ -1568,15 +1590,14 @@ public class NfcService implements DeviceHostListener {
 
         @Override
         public boolean isPresent(int nativeHandle) throws RemoteException {
-            TagEndpoint tag = null;
-
             // Check if NFC is enabled
-            if (!isNfcEnabled()) {
+            if (!isNfcEnabled()
+                    || !isTagAccessAllowed()) {
                 return false;
             }
 
             /* find the tag in the hmap */
-            tag = (TagEndpoint) findObject(nativeHandle);
+            TagEndpoint tag = (TagEndpoint) findObject(nativeHandle);
             if (tag == null) {
                 return false;
             }
@@ -1588,15 +1609,14 @@ public class NfcService implements DeviceHostListener {
         public boolean isNdef(int nativeHandle) throws RemoteException {
             NfcPermissions.enforceUserPermissions(mContext);
 
-            TagEndpoint tag = null;
-
             // Check if NFC is enabled
-            if (!isNfcEnabled()) {
+            if (!isNfcEnabled()
+                    || !isTagAccessAllowed()) {
                 return false;
             }
 
             /* find the tag in the hmap */
-            tag = (TagEndpoint) findObject(nativeHandle);
+            TagEndpoint tag = (TagEndpoint) findObject(nativeHandle);
             int[] ndefInfo = new int[2];
             if (tag == null) {
                 return false;
@@ -1609,23 +1629,21 @@ public class NfcService implements DeviceHostListener {
                 throws RemoteException {
             NfcPermissions.enforceUserPermissions(mContext);
 
-            TagEndpoint tag = null;
-            byte[] response;
-
             // Check if NFC is enabled
-            if (!isNfcEnabled()) {
+            if (!isNfcEnabled()
+                    || !isTagAccessAllowed()) {
                 return null;
             }
 
             /* find the tag in the hmap */
-            tag = (TagEndpoint) findObject(nativeHandle);
+            TagEndpoint tag = (TagEndpoint) findObject(nativeHandle);
             if (tag != null) {
                 // Check if length is within limits
                 if (data.length > getMaxTransceiveLength(tag.getConnectedTechnology())) {
                     return new TransceiveResult(TransceiveResult.RESULT_EXCEEDED_LENGTH, null);
                 }
                 int[] targetLost = new int[1];
-                response = tag.transceive(data, raw, targetLost);
+                byte[] response = tag.transceive(data, raw, targetLost);
                 int result;
                 if (response != null) {
                     result = TransceiveResult.RESULT_SUCCESS;
@@ -1643,15 +1661,14 @@ public class NfcService implements DeviceHostListener {
         public NdefMessage ndefRead(int nativeHandle) throws RemoteException {
             NfcPermissions.enforceUserPermissions(mContext);
 
-            TagEndpoint tag;
-
             // Check if NFC is enabled
-            if (!isNfcEnabled()) {
+            if (!isNfcEnabled()
+                    || !isTagAccessAllowed()) {
                 return null;
             }
 
             /* find the tag in the hmap */
-            tag = (TagEndpoint) findObject(nativeHandle);
+            TagEndpoint tag = (TagEndpoint) findObject(nativeHandle);
             if (tag != null) {
                 byte[] buf = tag.readNdef();
                 if (buf == null) {
@@ -1671,6 +1688,9 @@ public class NfcService implements DeviceHostListener {
         @Override
         public int ndefWrite(int nativeHandle, NdefMessage msg) throws RemoteException {
             NfcPermissions.enforceUserPermissions(mContext);
+            if (!isTagAccessAllowed()) {
+                return ErrorCodes.ERROR_IO;
+            }
 
             TagEndpoint tag;
 
@@ -1703,6 +1723,9 @@ public class NfcService implements DeviceHostListener {
         @Override
         public int ndefMakeReadOnly(int nativeHandle) throws RemoteException {
             NfcPermissions.enforceUserPermissions(mContext);
+            if (!isTagAccessAllowed()) {
+                return ErrorCodes.ERROR_IO;
+            }
 
             TagEndpoint tag;
 
@@ -1727,6 +1750,9 @@ public class NfcService implements DeviceHostListener {
         @Override
         public int formatNdef(int nativeHandle, byte[] key) throws RemoteException {
             NfcPermissions.enforceUserPermissions(mContext);
+            if (!isTagAccessAllowed()) {
+                return ErrorCodes.ERROR_IO;
+            }
 
             TagEndpoint tag;
 
@@ -1752,15 +1778,14 @@ public class NfcService implements DeviceHostListener {
         public Tag rediscover(int nativeHandle) throws RemoteException {
             NfcPermissions.enforceUserPermissions(mContext);
 
-            TagEndpoint tag = null;
-
             // Check if NFC is enabled
-            if (!isNfcEnabled()) {
+            if (!isNfcEnabled()
+                    || !isTagAccessAllowed()) {
                 return null;
             }
 
             /* find the tag in the hmap */
-            tag = (TagEndpoint) findObject(nativeHandle);
+            TagEndpoint tag = (TagEndpoint) findObject(nativeHandle);
             if (tag != null) {
                 // For now the prime usecase for rediscover() is to be able
                 // to access the NDEF technology after formatting without
@@ -2360,6 +2385,7 @@ public class NfcService implements DeviceHostListener {
                             new DeviceHost.TagDisconnectedCallback() {
                                 @Override
                                 public void onTagDisconnected(long handle) {
+                                    mDispatchedUid = Process.INVALID_UID;
                                     applyRouting(false);
                                 }
                             };
@@ -2847,6 +2873,7 @@ public class NfcService implements DeviceHostListener {
                             playSound(SOUND_END);
                         }
                         if (readerParams.callback != null) {
+                            mDispatchedUid = readerParams.uid;
                             if (mScreenState == ScreenStateHelper.SCREEN_STATE_ON_UNLOCKED) {
                                 mPowerManager.userActivity(SystemClock.uptimeMillis(),
                                         PowerManager.USER_ACTIVITY_EVENT_OTHER, 0);
@@ -2866,8 +2893,11 @@ public class NfcService implements DeviceHostListener {
                     }
                 }
                 int dispatchResult = mNfcDispatcher.dispatchTag(tag);
+                if (dispatchResult == NfcDispatcher.DISPATCH_FAIL) {
+                    mDispatchedUid = Process.INVALID_UID;
+                }
                 if (dispatchResult == NfcDispatcher.DISPATCH_FAIL && !mInProvisionMode) {
-                    if (DBG) Log.d(TAG, "Tag dispatch failed");
+                    if (DBG) Log.d(TAG, "dispatchTagEndpoint: Tag dispatch failed");
                     unregisterObject(tagEndpoint.getHandle());
                     if (mPollDelay > NO_POLL_DELAY) {
                         tagEndpoint.stopPresenceChecking();
